@@ -1,0 +1,166 @@
+.filterSection{ padding: 20px 24px 29px; border: 1px solid #0000001a; border-radius:20px ; -webkit-border-radius:20px ; -moz-border-radius:20px ; -ms-border-radius:20px ; -o-border-radius:20px ;
+  height: fit-content;
+}
+.filterHeadingArea{
+  justify-content: space-between;
+  align-items: center;
+margin-bottom: 20px;
+}
+.filterHeadings{
+    font-size: 20px;
+
+}
+.filterLine{
+border: 1px solid #0000001a;
+margin-block: 24px;
+}
+.filterLinks{
+    flex-direction: column;
+    gap: 20px;
+}
+.filterLinks div{
+    color: #00000099;
+}
+.rangeValue{
+    margin-top: 10px;
+}
+.sizeSelectArea .sizeBtn{
+    margin: 5px;
+}
+.xxSmall , .xSmall , .small , .mdm  , .large , .xl , .xxl , .xxxl , .xxxxl{
+    background-color: black;
+    color: white;
+}
+.casualBtn , .formalBtn , .PartyBtn , .gymBtn{
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    color: #00000099;
+    text-align: start;
+    cursor: pointer;
+}
+
+.apllyFilterBtn{
+  background-color: black;
+  color: white;
+  border: none;
+  margin-top: 20px;
+  padding: 15px 85px;
+  border-radius:62px ;
+  -webkit-border-radius:62px ;
+  -moz-border-radius:62px ;
+  -ms-border-radius:62px ;
+  -o-border-radius:62px ;
+  cursor: pointer;
+}
+/***** Range Style Section *****/ 
+
+.rangeContainer {
+    /* Adjust the width as needed */
+    margin: 10px auto; /* Center the range slider */
+  }
+  
+  .customRange {
+    -webkit-appearance: none; /* Remove default styling in WebKit browsers */
+    appearance: none;
+    width: 100%;
+    height: 8px; /* Height of the track */
+    background: var(--searchBar); /* Black track */
+    border-radius: 5px; /* Rounded track */
+    outline: none; /* Remove outline on focus */
+  }
+  
+  .customRange::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Remove default styling in WebKit browsers */
+    appearance: none;
+    width: 20px; /* Width of the thumb */
+    height: 20px; /* Height of the thumb */
+    background: black; /* Black thumb */
+    border-radius: 50%; /* Circular thumb */
+    cursor: pointer; /* Pointer cursor on hover */
+    border: 2px solid white; /* Optional border for better visibility */
+  }
+  
+  .customRange::-moz-range-thumb {
+    width: 20px; /* Width of the thumb */
+    height: 20px; /* Height of the thumb */
+    background: black; /* Black thumb */
+    border-radius: 50%; /* Circular thumb */
+    cursor: pointer; /* Pointer cursor on hover */
+    border: 2px solid white; /* Optional border for better visibility */
+  }
+  
+
+/***** End Range Style Section *****/
+
+@media screen and (width < 1280px) {
+  .filterSection{
+    display: none;
+  }
+  .show{
+    width: 30%;
+    position: fixed;
+    left: 0px; 
+    top: 0px;
+    background-color: white;
+    height: 100vh;
+    overflow: auto;
+    z-index: 5;
+    display: block;
+    padding: 20px 24px 29px; border: 1px solid #0000001a; border-radius:20px ; -webkit-border-radius:20px ; -moz-border-radius:20px ; -ms-border-radius:20px ; -o-border-radius:20px ;
+  }
+
+  
+}
+@media screen and (width > 1280px) {
+  .filterArrowLeft{
+display: none;
+  }
+}
+@media screen and (width < 976px) {
+  .apllyFilterBtn{
+    background-color: black;
+    color: white;
+    border: none;
+    margin-top: 20px;
+    width: 100%;
+    padding: 15px 0px;
+    border-radius:62px ;
+    -webkit-border-radius:62px ;
+    -moz-border-radius:62px ;
+    -ms-border-radius:62px ;
+    -o-border-radius:62px ;
+    cursor: pointer;
+
+  }
+}
+@media screen and (width < 850px) {
+  .show{
+    width: 35%;
+   
+  }
+}
+@media screen and (width < 750px) {
+  .show{
+    width: 40%;
+   
+  }
+}
+@media screen and (width < 600px) {
+  .show{
+    width: 50%;
+   
+  }
+}
+@media screen and (width < 450px) {
+  .show{
+    width: 60%;
+   
+  }
+}
+@media screen and (width < 390px) {
+  .show{
+    width: 80%;
+   
+  }
+}

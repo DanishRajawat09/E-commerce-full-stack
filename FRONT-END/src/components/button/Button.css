@@ -1,0 +1,17 @@
+
+@media screen and (width < 855px)  {
+    .btn{
+        width: 30%;
+    }
+}
+@media screen and (width < 620px) {
+    .btn{
+        width: 100%;
+    }
+}
+@media screen and (width < 550px) {
+    .btn{
+        margin-bottom: 20px;
+    }
+}
+

@@ -1,0 +1,18 @@
+.casualContainer{
+    grid-template-columns: 295px 1fr;
+    gap: 20px;
+}
+@media screen and (width < 1280px) {
+    .casualContainer{
+        grid-template-columns: 1fr;
+        gap: 20px;
+        justify-items: center;
+    }
+}
+@media screen and (width < 405px) {
+    .casualContainer{
+        grid-template-columns: 1fr;
+        gap: 20px;
+        justify-items: normal;
+    }
+}

@@ -1,0 +1,50 @@
+.testimonialSection{
+    overflow: hidden;
+}
+.testimonialSection .container{
+    padding-inline: 0px;
+}
+.headArea .commonHeading{
+    text-align: left;
+    margin-bottom: 0px;
+    font-size: 36px;
+    font-weight: 800;
+}
+.headArea{
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+.arrows{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.testimonialCard{
+    margin-right: 20px;
+    
+    padding: 28px 32px;
+    border: 1px solid #0000001A;
+    border-radius:20px ;
+    -webkit-border-radius:20px ;
+    -moz-border-radius:20px ;
+    -ms-border-radius:20px ;
+    -o-border-radius:20px ;
+}
+.stars{
+    margin-bottom: 15px;
+}
+.textMark{
+    gap: 4px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.titleTestimonial{
+    font-size: 20px;
+    font-weight: 700;
+}
+.testimonialText{
+    color: #00000099;
+    font-size: 14px
+}

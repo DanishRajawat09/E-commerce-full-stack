@@ -1,0 +1,36 @@
+.brandSection{
+    background-color: var(--black);
+   
+}
+.brandContainer{
+    
+display: flex;
+justify-content: space-evenly;
+flex-wrap: wrap;
+align-items: center;
+padding: 44px 0px;
+gap: 20px; 
+}
+
+@media screen and (width < 550px) {
+    .versache{
+        width: 117px;
+        height: auto;
+    }
+    .zara{
+width:64px ;
+height: auto;
+    }
+    .gucci{
+width: 109px;
+height: auto;
+    }
+    .prada{
+width: 127px;
+height: auto;
+    }
+    .ck{
+width: 135px;
+height: auto;
+    }
+}

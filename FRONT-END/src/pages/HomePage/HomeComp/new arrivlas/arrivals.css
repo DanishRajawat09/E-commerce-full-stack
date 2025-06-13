@@ -1,0 +1,50 @@
+.sectionArrivals{
+    overflow: hidden;
+}
+
+.container{
+padding: 72px 14px;
+}
+.commonHeading{
+    font-size: 48px;
+    font-weight: 700;
+    font-family: var(--primaryFont);
+   text-align: center;
+   margin-bottom:52px ;
+}
+.arrivalsProducts{
+   
+    
+    padding-right:20px ;
+}
+.viewAllBtn{
+    display: flex;
+    justify-content: center;
+    margin-top: 48px;
+   & button{
+    font-weight: 500;
+   }
+}
+.viewAllBtn .link{
+    
+    justify-content: center;
+}
+.arrivalsBtn{
+    background-color: transparent;
+    padding: 16px 54px;
+    border-radius: 62px;
+    -webkit-border-radius: 62px;
+    -moz-border-radius: 62px;
+    -ms-border-radius: 62px;
+    -o-border-radius: 62px;
+    border: 1px solid #0000001A ;
+cursor: pointer;
+}
+
+/* @media screen and (width < 1212px) {
+    .arrivalsProducts{
+        grid-template-columns: repeat(2 , max(295px));
+        grid-template-rows: repeat(2 , 1fr);
+       justify-content: center;
+    }
+} */

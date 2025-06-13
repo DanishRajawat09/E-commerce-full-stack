@@ -1,0 +1,99 @@
+
+.newsLatter{
+    background-color: var(--black);
+    border-radius: 20px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    -ms-border-radius: 20px;
+    -o-border-radius: 20px;
+    width: 100%;
+    padding: 36px 64px;
+    position: relative;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    z-index: 2;
+    top: 100px;
+}
+.nlText{
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--white);
+}
+.inputArea{
+    background-color: var(--white);
+    padding: 12px 16px;
+    border-radius:62px ;
+    -webkit-border-radius:62px ;
+    -moz-border-radius:62px ;
+    -ms-border-radius:62px ;
+    -o-border-radius:62px ;
+    gap: 12px;
+    min-width: 349px;
+    margin-bottom: 10px;
+}
+.inputEmail{
+    width: 100%;
+    
+    border: none;
+}
+.inputEmail:focus{
+    outline: none;
+}
+.inputEmail::placeholder{
+    font-size: 16px;
+}
+.nlButton{
+    background-color: var(--white);
+    width: 100%;
+    border-radius: 62px;
+    padding: 12px 0px;
+    -webkit-border-radius: 62px;
+    -moz-border-radius: 62px;
+    -ms-border-radius: 62px;
+    -o-border-radius: 62px;
+    font-size: 16px;
+    font-family: var(--primaryFont);
+    font-weight: 600;
+}
+@media screen and (width < 970px) {
+    .inputArea{
+      
+        min-width: 311px;
+    
+    }
+    .nlText{
+        font-size: 36px;
+        font-weight: 600;
+        color: var(--white);
+        margin-bottom: 40px;
+    }
+    .newsLatter{
+        justify-content: center;
+    
+    }
+}
+@media screen and (width < 400px) {
+    .newsLatter{
+        padding: 32px 24px;
+    }
+    .nlButton{
+        font-size: 14px;
+    }
+    .inputEmail::placeholder{
+font-size: 14px;
+    }
+}
+@media screen and (width < 360px) {
+    .inputArea{
+      
+        min-width: 290px;
+    
+    }
+    .nlText{
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--white);
+        margin-bottom: 40px;
+    }
+}

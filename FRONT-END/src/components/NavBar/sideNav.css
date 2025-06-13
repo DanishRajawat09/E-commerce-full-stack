@@ -1,0 +1,57 @@
+.sideNav{
+    width: 60%;
+    height: 100vh;
+    background-color: white;
+    position: fixed;
+    z-index: 10;
+    padding: 20px;
+    display: block;
+    visibility: visible;
+
+}
+.topArea{
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+
+}
+.topArea .icon{
+    font-size: 32px;
+    font-weight: 700;
+    font-family: var(--primaryFont);
+
+}
+.close{
+    width: 40px;
+    aspect-ratio: 1;
+
+}
+
+.sideBarNav{
+    flex-direction: column;
+    gap: 30px;
+    justify-content: center;
+    list-style-type: none;
+
+}
+
+.discard{
+    visibility: hidden;
+    display: none;
+}
+
+
+@media screen and (width > 630px) {
+    .sideNav{
+        display: none;
+    }
+}
+@media screen and (width < 400px) {
+    .topArea .icon {
+        font-size: 24px;
+    }
+    .topArea .close{
+        width: 30px;
+    }
+    .sideBarNav{font-size: 14px;}
+}

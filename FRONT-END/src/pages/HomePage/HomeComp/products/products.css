@@ -1,0 +1,73 @@
+.productImg{
+    background-color: var(--productBG);
+    gap: 10px;
+    border-radius: 20px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    -ms-border-radius: 20px;
+    -o-border-radius: 20px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.title{
+    font-size: 22px;
+    font-weight: 700;
+margin-bottom: 8px;
+}
+.rating{
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+.rate{
+    font-size: 14px;
+    font-weight: 400;
+}
+.priceArea{
+    gap: 10px;
+    align-items: center;
+}
+.price{
+    font-size: 24px;
+    font-weight: 700;
+}
+.actualPrice{
+    font-size: 24px;
+    font-weight: 700;
+    color: #00000061;
+    text-decoration: line-through;
+}
+.offPer{
+    padding: 6px 14px;
+    background-color: #FF33331A;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 62px;
+    color: red;
+    -webkit-border-radius: 62px;
+    -moz-border-radius: 62px;
+    -ms-border-radius: 62px;
+    -o-border-radius: 62px;
+}
+.arrivalsBtn{
+    background-color: transparent;
+    padding: 16px 54px;
+    border-radius: 62px;
+    -webkit-border-radius: 62px;
+    -moz-border-radius: 62px;
+    -ms-border-radius: 62px;
+    -o-border-radius: 62px;
+    border: 1px solid #0000001A
+    ;
+}
+.mainImg{
+    min-width:295px ;
+}
+
+.productLink{
+    text-decoration: none;
+    color: black;
+}
