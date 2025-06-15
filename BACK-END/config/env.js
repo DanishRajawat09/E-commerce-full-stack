@@ -2,4 +2,4 @@ import dotenv from "dotenv";
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV || "development"}.local` });
 
-export const { PORT, MONGODB_URI, NODE_ENV } = process.env;
+export const { PORT, MONGODB_URI, NODE_ENV  ,CORS_ORIGIN ,JWT_ACCESSTOKEN_SECRET , JWT_ACCESSTOKEN_EXPIRY , JWT_REFRESHTOKEN_SECRET , JWT_REFRESHTOKEN_EXPIRY} = process.env;
