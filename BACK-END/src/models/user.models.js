@@ -60,17 +60,16 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: false,
     },
-    otp : {
-      type : String,
-      trim : true
+    otp: {
+      type: String,
+      trim: true,
     },
-    otpExpiry :{
-      type : Date,
+    otpExpiry: {
+      type: Date,
     },
-    refreshToken : {
-      type : String
-    }
-
+    refreshToken: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
@@ -79,6 +78,11 @@ userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   this.password = bcrypt.hash(this.password, 10);
 
+  next();
+});
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("otp")) return next();
+  this.otp = bcrypt.hash((this.otp, 10));
   next();
 });
 
@@ -93,10 +97,8 @@ userSchema.methods.generateAccessToken = async function () {
   );
 };
 userSchema.methods.generateRefreshToken = async function () {
-  return jwt.sign(
-    { _id: this._id},
-    JWT_REFRESHTOKEN_SECRET,
-    { expiresIn: JWT_REFRESHTOKEN_EXPIRY }
-  );
+  return jwt.sign({ _id: this._id }, JWT_REFRESHTOKEN_SECRET, {
+    expiresIn: JWT_REFRESHTOKEN_EXPIRY,
+  });
 };
 export const User = mongoose.model("User", userSchema);

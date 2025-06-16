@@ -1,34 +1,33 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/apiError.js";
-import ApiResponse from "../utils/apiResponse.js"
+import ApiResponse from "../utils/apiResponse.js";
 import { User } from "../models/user.models.js";
-import cookie from "cookie-parser"
+import cookie from "cookie-parser";
 import { NODE_ENV } from "../../config/env.js";
-const generateOtp = () => { 
-    let otp = ""
+import bcrypt from "bcrypt";
+const generateOtp = () => {
+  let otp = "";
 
-    for (let i = 0; i < 6; i++) {
-      const randomVal = Math.floor(Math.random() * 10)
+  for (let i = 0; i < 6; i++) {
+    const randomVal = Math.floor(Math.random() * 10);
 
-      otp += randomVal
-    }
-    const expiry = new Date(Date.now() + 5 * 60 * 1000);
+    otp += randomVal;
+  }
+  const expiry = new Date(Date.now() + 5 * 60 * 1000);
 
-    return {otp , expiry}
- }
+  return { otp, expiry };
+};
+const generateAccessRefreshToken = async (id) => {
+  const user = await User.findById(id);
 
- const generateAccessRefreshToken = async (id) => {
-    const user = await User.findById(id)
+  const accessToken = await user.generateAccessToken();
+  const refreshToken = await user.generateRefreshToken();
 
-    const accessToken = await user.generateAccessToken()
-    const refreshToken = await user.generateRefreshToken()
+  user.refreshToken = refreshToken;
+  await user.save({ validateBeforeSave: false });
 
-    user.refreshToken = refreshToken
-    user.save({validateBeforeSave : false})
-
-    return {accessToken , refreshToken}
-
- }
+  return { accessToken, refreshToken };
+};
 const registerUser = asyncHandler(async (req, res) => {
   const { email, contact, password } = req.body;
 
@@ -54,80 +53,89 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(500, "we cant create user database error");
   }
 
-  res.status(200).json(
-    new ApiResponse(200 , "user created successfully" , {email : user.email , contact : user.contact})
-  )
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, "user created successfully", {
+        email: user.email,
+        contact: user.contact,
+      })
+    );
 });
-const sendOtp = asyncHandler(async (req , res) => {
-   const {contact , email} = req.body
+const sendOtp = asyncHandler(async (req, res) => {
+  const { contact, email } = req.body;
 
-   if(!contact && !email) throw new ApiError(400 , "atlest select one option")
+  if (!contact && !email) throw new ApiError(400, "atlest select one option");
 
-   const {otp , expiry } = generateOtp()
+  const { otp, expiry } = generateOtp();
 
-   const user = await User.findOneAndUpdate({$or : [{email : email} , {contact : contact}]} , {
-    otp  : otp,
-    otpExpiry : expiry
-   })
+  const user = await User.findOneAndUpdate(
+    { $or: [{ email: email }, { contact: contact }] },
+    {
+      otp: otp,
+      otpExpiry: expiry,
+    }
+  );
 
-   if (!user) {
-    throw new ApiError(500 , "database error while setting otp")
-   }
+  if (!user) {
+    throw new ApiError(500, "database error while setting otp");
+  }
 
-   if (email) {
-    console.log("otp send on email" , otp);
-     
-   }
-   if (contact) {
-    console.log("otp send on contact" , otp);
-     
-   }
+  if (email) {
+    console.log("otp send on email", otp);
+  }
+  if (contact) {
+    console.log("otp send on contact", otp);
+  }
 
-   res.status(200).json(
-    new ApiResponse(200 , "otp sent succesfully" , {id : user._id})
-   )
-
-   
-})
+  res
+    .status(200)
+    .json(new ApiResponse(200, "otp sent succesfully", { id: user._id }));
+});
 
 const enterOtp = asyncHandler(async (req, res) => {
-    const {otp , id} = req.body
+  const { otp, id } = req.body;
 
-    if (!otp) {
-        throw new ApiError(400 , "enter otp")
-    }
+  if (!otp) {
+    throw new ApiError(400, "enter otp");
+  }
 
-    const user = await User.findById(id)
+  const user = await User.findById(id);
 
-      if (!user) {
- throw new ApiError(500 , "database error we cant find user")       
-    }
+  if (!user) {
+    throw new ApiError(500, "database error we cant find user");
+  }
 
-    if (user.otpExpiry < new Date()) {
-        throw new ApiError(401 , "otp is expired")
-    }
+  if (user.otpExpiry < new Date()) {
+    throw new ApiError(401, "otp is expired");
+  }
 
-    if (user.otp !== otp) {
-        throw new ApiError(401 , "incorrect otp")
-    }
-  
-    if (user.otp === otp) {
-        user.isVerified = true
-        user.otp = null
-        user.otpExpiry= null
-       await user.save({validateBeforeSave : false})
-    }
+  const isOtp = bcrypt.compare(otp, user.otp);
 
-  const {accessToken , refreshToken} = await generateAccessRefreshToken(user._id)
+  if (!isOtp) {
+    throw new ApiError(500, "incorrect otp");
+  }
+
+  if (isOtp) {
+    user.isVerified = true;
+    user.otp = null;
+    user.otpExpiry = null;
+    await user.save({ validateBeforeSave: false });
+  }
+
+  const { accessToken, refreshToken } = await generateAccessRefreshToken(
+    user._id
+  );
 
   const option = {
-    httpOnly : true,
-    secure : NODE_ENV === "production"
-  }
-  res.status(200).cookie("accessToken" , accessToken , option).cookie("refreshToken",refreshToken,option).json(
-    new ApiResponse(200 , "otp verified user created successfully",user)
-  )
+    httpOnly: true,
+    secure: NODE_ENV === "production",
+  };
+  res
+    .status(200)
+    .cookie("accessToken", accessToken, option)
+    .cookie("refreshToken", refreshToken, option)
+    .json(new ApiResponse(200, "otp verified user created successfully", user));
+});
 
-})
-
-export {registerUser , sendOtp , enterOtp}
+export { registerUser, sendOtp, enterOtp };
