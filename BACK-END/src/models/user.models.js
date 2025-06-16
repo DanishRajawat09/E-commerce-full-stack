@@ -76,15 +76,23 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
-  this.password = bcrypt.hash(this.password, 10);
+
+  this.password = await bcrypt.hash(this.password, 10);
 
   next();
 });
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("otp")) return next();
-  this.otp = bcrypt.hash((this.otp, 10));
+userSchema.pre("findOneAndUpdate", async function (next) {
+  const update = this.getUpdate();
+
+  // Only hash OTP if it’s being updated
+  if (update.otp) {
+    const hashedOtp = await bcrypt.hash(update.otp, 10);
+    this.setUpdate({ ...update, otp: hashedOtp });
+  }
+
   next();
 });
+
 
 userSchema.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);

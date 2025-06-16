@@ -17,6 +17,20 @@ const generateOtp = () => {
 
   return { otp, expiry };
 };
+const responseFormat = async (user) => {
+  const userdata = user.toObject()
+  const excludedKeys = ["password", "refreshToken", "otp", "otpExpiry"];
+const newdata = {}
+
+  Object.keys(userdata).forEach((key) => {
+    if (!excludedKeys.includes(key)) {
+      newdata[key] = userdata[key];
+    }
+  });
+
+   return newdata
+   
+}
 const generateAccessRefreshToken = async (id) => {
   const user = await User.findById(id);
 
@@ -44,9 +58,9 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   const user = await User.create({
-    email: email,
-    password: password,
-    contact: contact,
+ email,
+ password,
+ contact,
   });
 
   if (!user) {
@@ -70,8 +84,8 @@ const sendOtp = asyncHandler(async (req, res) => {
   const user = await User.findOneAndUpdate(
     { $or: [{ email: email }, { contact: contact }] },
     {
-      otp: otp,
-      otpExpiry: expiry,
+    otp,
+    otpExpiry :  expiry,
     }
   );
 
@@ -125,6 +139,8 @@ const verifyOtp = asyncHandler(async (req, res) => {
     user._id
   );
 
+  const userData = await responseFormat(user)
+
   const option = {
     httpOnly: true,
     secure: NODE_ENV === "production",
@@ -133,7 +149,79 @@ const verifyOtp = asyncHandler(async (req, res) => {
     .status(200)
     .cookie("accessToken", accessToken, option)
     .cookie("refreshToken", refreshToken, option)
-    .json(new ApiResponse(200, "otp verified user created successfully", user));
+    .json(new ApiResponse(200, "otp verified user created successfully", userData));
 });
 
-export { registerUser, sendOtp, verifyOtp };
+
+const loginUser = asyncHandler(async (req, res) => {
+ const {email , contact , password} = req.body
+
+if (!email && !contact) {
+  throw new ApiError(400, "Please provide either email or contact");
+}
+
+if (!password) {
+  throw new ApiError(400, "Password is required");
+}
+
+const user = await User.findOne({$or :[{email} , {contact}]})
+
+if (!user) {
+  throw new ApiError(400 , "user not found register first")
+}
+
+const isPasswordCorrect =  await user.isPasswordCorrect(password)
+
+if (!isPasswordCorrect) {
+  throw new ApiError(400 , "incorrect password")
+}
+
+user.isVerified = true
+await user.save({validateBeforeSave : false})
+
+
+const userData = await responseFormat(user)
+
+
+const {accessToken , refreshToken} = await generateAccessRefreshToken(user._id)
+const option = {
+  httpOnly : true,
+secure : NODE_ENV === "production"
+}
+
+
+
+res.status(200).cookie("accessToken" , accessToken ,option ).cookie("refreshToken" , refreshToken ,option).json(
+  new ApiResponse(200 , "user logged in" ,userData )
+)
+
+
+})
+
+const logoutUser = asyncHandler(async (req ,res) => {
+  const {_id} = req.user
+
+  if (!_id) {
+    throw new ApiError(400 , "userId not found")
+  }
+
+  const user = await User.findByIdAndUpdate(_id , {refreshToken : null , isVerified : false}).select("-password -refreshToken -otp -otpExpiry")
+
+  if (!user) {
+ throw new ApiError(400 , "we cant nullish refresh token")   
+  }
+
+  const option = {
+    httpOnly : true,
+    secure : NODE_ENV === "production"
+  }
+
+  res.status(200).clearCookie("accessToken" , option).clearCookie("refreshToken" , option).json(
+    new ApiResponse(200 , "user logout successfully" ,{})
+  )
+
+
+
+})
+
+export { registerUser, sendOtp, verifyOtp , loginUser , logoutUser};
