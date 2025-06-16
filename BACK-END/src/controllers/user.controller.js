@@ -2,35 +2,12 @@ import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/apiError.js";
 import ApiResponse from "../utils/apiResponse.js";
 import { User } from "../models/user.models.js";
-import cookie from "cookie-parser";
+
 import { NODE_ENV } from "../../config/env.js";
 import bcrypt from "bcrypt";
-const generateOtp = () => {
-  let otp = "";
+import { responseFormat } from "../utils/besicUtils.js";
 
-  for (let i = 0; i < 6; i++) {
-    const randomVal = Math.floor(Math.random() * 10);
 
-    otp += randomVal;
-  }
-  const expiry = new Date(Date.now() + 5 * 60 * 1000);
-
-  return { otp, expiry };
-};
-const responseFormat = async (user) => {
-  const userdata = user.toObject()
-  const excludedKeys = ["password", "refreshToken", "otp", "otpExpiry"];
-const newdata = {}
-
-  Object.keys(userdata).forEach((key) => {
-    if (!excludedKeys.includes(key)) {
-      newdata[key] = userdata[key];
-    }
-  });
-
-   return newdata
-   
-}
 const generateAccessRefreshToken = async (id) => {
   const user = await User.findById(id);
 
@@ -74,66 +51,21 @@ const registerUser = asyncHandler(async (req, res) => {
     })
   );
 });
-const sendOtp = asyncHandler(async (req, res) => {
-  const { contact, email } = req.body;
-
-  if (!contact && !email) throw new ApiError(400, "atlest select one option");
-
-  const { otp, expiry } = generateOtp();
-
-  const user = await User.findOneAndUpdate(
-    { $or: [{ email: email }, { contact: contact }] },
-    {
-    otp,
-    otpExpiry :  expiry,
-    }
-  );
-
-  if (!user) {
-    throw new ApiError(500, "database error while setting otp");
-  }
-
-  if (email) {
-    console.log("otp send on email", otp);
-  }
-  if (contact) {
-    console.log("otp send on contact", otp);
-  }
-
-  res
+const afterSend = asyncHandler(async (req, res) => {
+  const userId = req.user._id
+    res
     .status(200)
-    .json(new ApiResponse(200, "otp sent succesfully", { id: user._id }));
-});
+    .json(new ApiResponse(200, "otp sent succesfully",userId));
+})
 
-const verifyOtp = asyncHandler(async (req, res) => {
-  const { otp, id } = req.body;
+const afterVerify = asyncHandler(async (req, res) => {
+ const user = req.user
 
-  if (!otp) {
-    throw new ApiError(400, "enter otp");
-  }
-
-  const user = await User.findById(id);
-
-  if (!user) {
-    throw new ApiError(500, "database error we cant find user");
-  }
-
-  if (user.otpExpiry < new Date()) {
-    throw new ApiError(401, "otp is expired");
-  }
-
-  const isOtp = bcrypt.compare(otp, user.otp);
-
-  if (!isOtp) {
-    throw new ApiError(500, "incorrect otp");
-  }
-
-  if (isOtp) {
     user.isVerified = true;
     user.otp = null;
     user.otpExpiry = null;
     await user.save({ validateBeforeSave: false });
-  }
+
 
   const { accessToken, refreshToken } = await generateAccessRefreshToken(
     user._id
@@ -224,4 +156,4 @@ const logoutUser = asyncHandler(async (req ,res) => {
 
 })
 
-export { registerUser, sendOtp, verifyOtp , loginUser , logoutUser};
+export { registerUser, afterSend, afterVerify, loginUser , logoutUser};
