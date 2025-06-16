@@ -53,14 +53,12 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(500, "we cant create user database error");
   }
 
-  res
-    .status(200)
-    .json(
-      new ApiResponse(200, "user created successfully", {
-        email: user.email,
-        contact: user.contact,
-      })
-    );
+  res.status(200).json(
+    new ApiResponse(200, "user created successfully", {
+      email: user.email,
+      contact: user.contact,
+    })
+  );
 });
 const sendOtp = asyncHandler(async (req, res) => {
   const { contact, email } = req.body;
@@ -93,7 +91,7 @@ const sendOtp = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "otp sent succesfully", { id: user._id }));
 });
 
-const enterOtp = asyncHandler(async (req, res) => {
+const verifyOtp = asyncHandler(async (req, res) => {
   const { otp, id } = req.body;
 
   if (!otp) {
@@ -138,4 +136,4 @@ const enterOtp = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "otp verified user created successfully", user));
 });
 
-export { registerUser, sendOtp, enterOtp };
+export { registerUser, sendOtp, verifyOtp };
