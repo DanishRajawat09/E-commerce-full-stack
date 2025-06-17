@@ -7,8 +7,7 @@ const sendOtp = (purpose) =>
   asyncHandler(async (req, res, next) => {
     const { contact, email } = req.body;
 
-    if (!contact && !email)
-      throw new ApiError(400, "Select at least one option");
+    if (!contact && !email) throw new ApiError(400, "Please provide either a contact number or email address.");
 
     const { otp, expiry } = generateOtp();
 
@@ -25,7 +24,7 @@ const sendOtp = (purpose) =>
       { new: true }
     );
 
-    if (!user) throw new ApiError(404, "User not found");
+    if (!user) throw new ApiError(404, "No user found with the provided information.");
 
     if (email) {
       console.log("otp send on email", otp);

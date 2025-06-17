@@ -10,19 +10,25 @@ const verifyJwt = asyncHandler(async (req, res, next) => {
     req.header("Authorization")?.replace("Bearer ", "");
 
   if (!incomingToken) {
-    throw new ApiError(400, "we cant find token");
+     throw new ApiError(401, "Authentication token is missing. Please login again.");
   }
 
-  const decoded = jwt.verify(incomingToken, JWT_ACCESSTOKEN_SECRET);
-
-  if (!decoded) {
-    throw new ApiError(500, "error while decoded");
+  let decoded;
+  try {
+    decoded = jwt.verify(incomingToken, JWT_ACCESSTOKEN_SECRET);
+  } catch (error) {
+    throw new ApiError(401, "Invalid or expired token. Please login again.");
   }
+
+    if (!decoded || !decoded._id) {
+    throw new ApiError(400, "Token decoded data is invalid.");
+  }
+
 
   const user = await User.findById(decoded._id);
 
   if (!user) {
-    throw new ApiError(500, "user not found");
+     throw new ApiError(404, "User not found. Please register or try logging in again.");
   }
   // console.log(user);
 

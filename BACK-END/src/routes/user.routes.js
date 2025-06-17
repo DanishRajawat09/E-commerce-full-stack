@@ -11,7 +11,7 @@ import {
 } from "../controllers/user.controller.js";
 import sendOtp from "../middlewares/sendOtp.middleware.js";
 import verifyOtp from "../middlewares/verifyOtp.js";
-import otpAuth from "../middlewares/resetJwtverify.middleware.js";
+import resetJwt from "../middlewares/resetJwtverify.middleware.js";
 import verifyJwt from "../middlewares/verifyJwt.middleware.js";
 
 const router = Router();
@@ -20,7 +20,7 @@ const router = Router();
 // ✅ User Auth
 router.route("/register").post(registerUser);
 router.route("/register/send-otp").post(sendOtp("register"), afterSend);
-router.route("/register/verify-otp").post(otpAuth, verifyOtp, afterVerify);
+router.route("/register/verify-otp").post(resetJwt, verifyOtp, afterVerify);
 
 router.route("/login").post(loginUser);
 router.route("/logout").post(verifyJwt, logoutUser);
@@ -31,7 +31,7 @@ router
   .post(sendOtp("reset"), handleForgotOtpSent);
 router
   .route("/password/forgot/verify-otp")
-  .post(otpAuth, verifyOtp, handleForgotOtpVerified);
-router.route("/password/reset").post(otpAuth, handleNewPasswordSet);
+  .post(resetJwt, verifyOtp, handleForgotOtpVerified);
+router.route("/password/reset").post(resetJwt, handleNewPasswordSet);
 
 export default router;

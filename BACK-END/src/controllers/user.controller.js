@@ -17,7 +17,7 @@ const generateAccessRefreshToken = async (id) => {
   const user = await User.findById(id);
 
   if (!user) {
-    throw new ApiError(401, "unValid user id");
+    throw new ApiError(401, "inValid user id");
   }
 
   const accessToken = await user.generateAccessToken();
@@ -36,8 +36,16 @@ const registerUser = asyncHandler(async (req, res) => {
   const { email, contact, password } = req.body;
 
   if ([email, contact, password].some((val) => val.trim() === "")) {
-    throw new ApiError(400, "sare field bharna zaroori hai");
+    throw new ApiError(
+      400,
+      "Email, contact number, and password are required."
+    );
   }
+
+if (!password || typeof password !== "string" || password.trim().length < 6) {
+  throw new ApiError(400, "Password is required and must be at least 6 characters long.");
+}
+
 
   const exsistingUser = await User.findOne({
     $and: [
@@ -47,7 +55,7 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (exsistingUser) {
-    throw new ApiError(400, "user already exsisted");
+  throw new ApiError(400, "An account with this email or contact number already exists and is verified.");
   }
 
   const unVerifiedUser = await User.findOne({
@@ -65,7 +73,7 @@ const registerUser = asyncHandler(async (req, res) => {
         secure: NODE_ENV === "production",
       })
       .json(
-        new ApiResponse(200, "user created successfully", {
+        new ApiResponse(200,  "Account already exists but not verified. Please verify to continue.", {
           email: unVerifiedUser.email,
           contact: unVerifiedUser.contact,
         })
@@ -79,11 +87,11 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (!user) {
-    throw new ApiError(500, "we cant create user database error");
+    throw new ApiError(500, "Failed to create account due to a server error. Please try again.");
   }
 
   res.status(200).json(
-    new ApiResponse(200, "user created successfully", {
+    new ApiResponse(200, "Account created successfully. Please verify your account to continue.", {
       email: user.email,
       contact: user.contact,
     })
@@ -93,14 +101,20 @@ const afterSend = asyncHandler(async (req, res) => {
   const { _id, email } = req?.user;
 
   if (!_id || !email) {
-    throw new ApiError(500, "after send otp getting id and email error");
+     throw new ApiError(
+      500,
+      "Unable to retrieve user information for OTP process. Please try again."
+    );
   }
   const resetToken = jwt.sign({ id: _id, email: email }, JWT_RESET_SECRET, {
     expiresIn: JWT_RESET_EXPIRY,
   });
 
   if (!resetToken) {
-    throw new ApiError(500, "jwt reset token issue");
+    throw new ApiError(
+      500,
+      "An error occurred while generating the reset token. Please try again later."
+    );
   }
 
   const option = {
@@ -112,11 +126,15 @@ const afterSend = asyncHandler(async (req, res) => {
   res
     .status(200)
     .cookie("resetToken", resetToken, option)
-    .json(new ApiResponse(200, "otp send successfully", {}));
+    .json(new ApiResponse(200, "OTP sent successfully", {}));
 });
 
 const afterVerify = asyncHandler(async (req, res) => {
   const user = req.user;
+
+  if (!user) {
+    throw new ApiError(401, "User not found during OTP verification.");
+  }
 
   user.isVerified = true;
   user.otp = null;
@@ -126,6 +144,13 @@ const afterVerify = asyncHandler(async (req, res) => {
   const { accessToken, refreshToken } = await generateAccessRefreshToken(
     user._id
   );
+
+    if (!accessToken || !refreshToken) {
+    throw new ApiError(
+      500,
+      "Failed to generate authentication tokens. Please try logging in again."
+    );
+  }
 
   const userData = await responseFormat(user);
 
@@ -148,7 +173,7 @@ const afterVerify = asyncHandler(async (req, res) => {
       secure: NODE_ENV === "production",
     })
     .json(
-      new ApiResponse(200, "otp verified user created successfully", userData)
+      new ApiResponse(200, "OTP verified. Account created and signed in successfully.", userData)
     );
 });
 
@@ -156,27 +181,27 @@ const loginUser = asyncHandler(async (req, res) => {
   const { email, contact, password } = req.body;
 
   if (!email && !contact) {
-    throw new ApiError(400, "Please provide either email or contact");
+    throw new ApiError(400, "Please provide either an email or contact number to log in.");
   }
 
   if (!password) {
-    throw new ApiError(400, "Password is required");
+   throw new ApiError(400, "Password is required to log in.");
   }
 
   const user = await User.findOne({ $or: [{ email }, { contact }] });
 
   if (!user) {
-    throw new ApiError(400, "user not found register first");
+    throw new ApiError(400, "No account found with the provided credentials. Please register first.");
   }
 
   if (user.isVerified === false) {
-    throw new ApiError(400, "user is not verified");
+   throw new ApiError(400, "Your account is not verified yet. Please complete OTP verification.");
   }
 
   const isPasswordCorrect = await user.isPasswordCorrect(password);
 
   if (!isPasswordCorrect) {
-    throw new ApiError(400, "incorrect password");
+    throw new ApiError(400, "The password you entered is incorrect. Please try again.");
   }
 
   const userData = await responseFormat(user);
@@ -199,14 +224,14 @@ const loginUser = asyncHandler(async (req, res) => {
       ...option,
       maxAge: ms(JWT_REFRESHTOKEN_EXPIRY),
     })
-    .json(new ApiResponse(200, "user logged in", userData));
+    .json(new ApiResponse(200, "Welcome back! You’re now logged in.", userData));
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
   const { _id } = req.user;
 
   if (!_id) {
-    throw new ApiError(400, "userId not found");
+ throw new ApiError(400, "User ID is missing in the request.");
   }
 
   const user = await User.findByIdAndUpdate(_id, { refreshToken: null }).select(
@@ -214,7 +239,7 @@ const logoutUser = asyncHandler(async (req, res) => {
   );
 
   if (!user) {
-    throw new ApiError(400, "we cant nullish refresh token");
+    throw new ApiError(400, "User not found or unable to clear access token.");
   }
 
   const option = {
@@ -226,21 +251,21 @@ const logoutUser = asyncHandler(async (req, res) => {
     .status(200)
     .clearCookie("accessToken", option)
     .clearCookie("refreshToken", option)
-    .json(new ApiResponse(200, "user logout successfully", {}));
+    .json(new ApiResponse(200,  "Logout successful. You have been signed out.", {}));
 });
 
 const handleForgotOtpSent = asyncHandler((req, res) => {
   const { _id, email } = req?.user;
 
   if (!_id || !email) {
-    throw new ApiError(500, "after send otp getting id and email error");
+    throw new ApiError(500, "Failed to retrieve user ID or email after sending OTP.");
   }
   const resetToken = jwt.sign({ id: _id, email: email }, JWT_RESET_SECRET, {
     expiresIn: JWT_RESET_EXPIRY,
   });
 
   if (!resetToken) {
-    throw new ApiError(500, "jwt reset token issue");
+      throw new ApiError(500, "Unable to generate password reset token.");
   }
 
   const option = {
@@ -251,11 +276,15 @@ const handleForgotOtpSent = asyncHandler((req, res) => {
   res
     .status(200)
     .cookie("resetToken", resetToken, option)
-    .json(new ApiResponse(200, "otp send successfully", {}));
+    .json(new ApiResponse(200, "OTP sent successfully. Please check your email or SMS.", {}));
 });
 
 const handleForgotOtpVerified = asyncHandler(async (req, res) => {
   const user = req.user;
+
+  if (!user) {
+    throw new ApiError(401, "Unauthorized request. User not found.");
+  }
 
   user.otp = null;
   user.otpExpiry = null;
@@ -265,8 +294,8 @@ const handleForgotOtpVerified = asyncHandler(async (req, res) => {
     expiresIn: JWT_RESET_EXPIRY,
   });
 
-  if (!token) {
-    throw new ApiError(500, "reset token error");
+   if (!token) {
+    throw new ApiError(500, "Failed to generate password reset token.");
   }
   const option = {
     httpOnly: true,
@@ -277,20 +306,19 @@ const handleForgotOtpVerified = asyncHandler(async (req, res) => {
   res
     .status(200)
     .cookie("resetToken", token, option)
-    .json(new ApiResponse(200, "reset token setup"));
+    .json(new ApiResponse(200, "OTP verified successfully. Reset token set."));
 });
 
 const handleNewPasswordSet = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   const { newPassword } = req.body;
-  if (!newPassword) {
-    throw new ApiError(400, "new password is required");
-  }
+
   if (!_id) {
-    throw new ApiError(
-      400,
-      "something went wrong in enter new password otpAuth"
-    );
+    throw new ApiError(401, "Unauthorized request. User ID missing.");
+  }
+
+    if (!newPassword || typeof newPassword !== "string" || newPassword.trim().length < 6) {
+    throw new ApiError(400, "New password is required and must be at least 6 characters long.");
   }
 
   const user = await User.findOne({ _id, authProvider: "local" });
@@ -299,7 +327,7 @@ const handleNewPasswordSet = asyncHandler(async (req, res) => {
   await user.save({ validateBeforeSave: false });
 
   if (!user) {
-    throw new ApiError(500, "error while updating password ");
+    throw new ApiError(404, "User not found or invalid authentication provider.");
   }
   const option = {
     httpOnly: true,
@@ -309,7 +337,7 @@ const handleNewPasswordSet = asyncHandler(async (req, res) => {
   res
     .status(200)
     .clearCookie("resetToken", option)
-    .json(new ApiResponse(200, "password updated", {}));
+    .json(new ApiResponse(200, "Password has been successfully updated.", {}));
 });
 
 export {
