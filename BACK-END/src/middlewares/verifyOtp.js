@@ -1,8 +1,10 @@
 import { User } from "../models/user.models.js";
+import ApiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
-import bcrypt from "bcrypt"
-const verifyOtp = asyncHandler(async (req ,res , next) => { 
-     const { otp, id } = req.body;
+import bcrypt from "bcrypt";
+const verifyOtp = asyncHandler(async (req, res, next) => {
+  const { otp } = req.body;
+  const id = req.user.id;
 
   if (!otp) {
     throw new ApiError(400, "enter otp");
@@ -14,20 +16,19 @@ const verifyOtp = asyncHandler(async (req ,res , next) => {
     throw new ApiError(500, "database error we cant find user");
   }
 
-  if (user.otpExpiry < new Date()) {
-    throw new ApiError(401, "otp is expired");
+  if (!user.otpExpiry || user.otpExpiry < new Date()) {
+    throw new ApiError(401, "OTP is expired or not set");
   }
 
   const isOtp = bcrypt.compare(otp, user.otp);
 
   if (!isOtp) {
-    throw new ApiError(500, "incorrect otp");
+    throw new ApiError(401, "Incorrect OTP");
   }
 
-  req.user = user
+  req.user = user;
 
-  next()
- })
+  next();
+});
 
-
- export default verifyOtp
+export default verifyOtp;

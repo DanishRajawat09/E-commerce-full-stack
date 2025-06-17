@@ -1,5 +1,3 @@
-import { User } from "../models/user.models.js";
-
 const generateOtp = () => {
   let otp = "";
 
@@ -13,9 +11,9 @@ const generateOtp = () => {
   return { otp, expiry };
 };
 const responseFormat = async (user) => {
-  const userdata = user.toObject()
+  const userdata = user.toObject();
   const excludedKeys = ["password", "refreshToken", "otp", "otpExpiry"];
-const newdata = {}
+  const newdata = {};
 
   Object.keys(userdata).forEach((key) => {
     if (!excludedKeys.includes(key)) {
@@ -23,9 +21,7 @@ const newdata = {}
     }
   });
 
-   return newdata
-   
-}
+  return newdata;
+};
 
-
-export { generateOtp , responseFormat}
+export { generateOtp, responseFormat };

@@ -1,37 +1,41 @@
-
 import { User } from "../models/user.models.js";
+import ApiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
-import { generateOtp } from "../utils/besicUtils.js";
+import { generateOtp } from "../utils/basicUtils.js";
 
-const sendOtp = asyncHandler(async (req, res , next) => {
-  const { contact, email } = req.body;
+const sendOtp = (purpose) =>
+  asyncHandler(async (req, res, next) => {
+    const { contact, email } = req.body;
 
-  if (!contact && !email) throw new ApiError(400, "atlest select one option");
+    if (!contact && !email)
+      throw new ApiError(400, "Select at least one option");
 
-  const { otp, expiry } = generateOtp();
+    const { otp, expiry } = generateOtp();
 
-  const user = await User.findOneAndUpdate(
-    { $or: [{ email: email }, { contact: contact }] },
-    {
-    otp,
-    otpExpiry :  expiry,
+    const user = await User.findOneAndUpdate(
+      {
+        $and: [
+          { $or: [{ email }, { contact }] },
+          { isVerified: purpose === "reset" },
+        ],
+      },
+      {
+        $set: { otp, otpExpiry: expiry },
+      },
+      { new: true }
+    );
+
+    if (!user) throw new ApiError(404, "User not found");
+
+    if (email) {
+      console.log("otp send on email", otp);
     }
-  );
+    if (contact) {
+      console.log("otp send on contact", otp);
+    }
 
-  if (!user) {
-    throw new ApiError(500, "database error while setting otp");
-  }
+    req.user = user;
+    next();
+  });
 
-  if (email) {
-    console.log("otp send on email", otp);
-  }
-  if (contact) {
-    console.log("otp send on contact", otp);
-  }
-
-  req.user = user
-
-next()
-});
-
-export default sendOtp
+export default sendOtp;
