@@ -21,7 +21,7 @@ const uploadImage = async (filepath) => {
     };
     try {
          const result = await cloudinary.uploader.upload(filepath, options);
-         console.log(result);
+
          fs.unlinkSync(filepath)
          return result
          
