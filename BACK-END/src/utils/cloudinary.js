@@ -12,16 +12,18 @@ cloudinary.config({
   api_secret: CLOUD_API_SECRET,
 });
 
+const options = {
+  use_filename: true,
+  unique_filename: false,
+  overwrite: true,
+  resource_type: "auto",
+};
+
 const uploadImage = async (filepath) => {
   if (!filepath) {
     return null;
   }
-  const options = {
-    use_filename: true,
-    unique_filename: false,
-    overwrite: true,
-    resource_type: "auto",
-  };
+
   try {
     const result = await cloudinary.uploader.upload(filepath, options);
 
@@ -34,4 +36,16 @@ const uploadImage = async (filepath) => {
   }
 };
 
-export default uploadImage;
+const deleteFile = async (publicId) => {
+  if (!publicId) {
+    return null;
+  }
+  try {
+    return await cloudinary.uploader.destroy(publicId);
+  } catch (error) {
+    console.error("error while deleting image from cloudinary");
+    return null;
+  }
+};
+
+export { uploadImage, deleteFile };

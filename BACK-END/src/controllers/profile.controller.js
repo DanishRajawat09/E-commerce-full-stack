@@ -1,6 +1,6 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/apiError.js";
-import uploadImage from "../utils/cloudinary.js";
+import { deleteFile, uploadImage } from "../utils/cloudinary.js";
 import { Profile } from "../models/profile.models.js";
 import ApiResponse from "../utils/apiResponse.js";
 const createProfile = asyncHandler(async (req, res) => {
@@ -77,4 +77,41 @@ const updateFullName = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "fullname updated successfully", profile));
 });
 
-export { createProfile, updateFullName };
+const updateAvatar = asyncHandler(async (req, res) => {
+  const filePath = req.file?.path;
+  const user = req.user;
+
+  if (!filePath) {
+    throw new ApiError(400, "avatar is required");
+  }
+  if (!user) {
+    throw new ApiError(400, "User is not properly login");
+  }
+
+  const profile = await Profile.findOne({ user: user._id });
+
+  if (!profile) {
+    throw new ApiError(500, "profile not found");
+  }
+
+  const deletefile = await deleteFile(profile.toObject().avatar.publicId);
+
+  if (!deletefile) {
+    throw new ApiError(500, "deleting previuos avatar causing error");
+  }
+
+  const avatar = await uploadImage(filePath);
+
+  if (!avatar) {
+    throw new ApiError(400, "error while uploading files");
+  }
+
+  profile.avatar.url = avatar.url;
+  profile.avatar.publicId = avatar.public_id;
+  profile.save({ validateBeforeSave: false });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, "avatar updated successfully", profile));
+});
+export { createProfile, updateFullName, updateAvatar };
