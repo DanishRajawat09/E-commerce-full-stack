@@ -8,6 +8,12 @@ import {
   handleForgotOtpSent,
   handleForgotOtpVerified,
   handleNewPasswordSet,
+  handleEmailResetSendOtp,
+  hanldeEmailResetVerifyOtp,
+  handleNewEmailSet,
+  handleContactResetSendOtp,
+  hanldeContactResetVerifyOtp,
+  handleNewContactSet,
 } from "../controllers/user.controller.js";
 import sendOtp from "../middlewares/sendOtp.middleware.js";
 import verifyOtp from "../middlewares/verifyOtp.js";
@@ -28,10 +34,44 @@ router.route("/logout").post(verifyJwt, logoutUser);
 // ✅ Forgot Password
 router
   .route("/password/forgot/send-otp")
-  .post(sendOtp("reset"), handleForgotOtpSent);
+  .post(sendOtp("resetPassword"), handleForgotOtpSent);
 router
   .route("/password/forgot/verify-otp")
-  .post(resetJwt, verifyOtp, handleForgotOtpVerified);
-router.route("/password/reset").post(resetJwt, handleNewPasswordSet);
+  .post(resetJwt("resetPassword"), verifyOtp, handleForgotOtpVerified);
+router
+  .route("/password/reset")
+  .patch(resetJwt("resetPassword"), handleNewPasswordSet);
+
+// reset Email
+router
+  .route("/email/reset/send-otp")
+  .post(verifyJwt, sendOtp("resetEmail"), handleEmailResetSendOtp);
+router
+  .route("/email/reset/verify-otp")
+  .post(
+    verifyJwt,
+    resetJwt("resetEmail"),
+    verifyOtp,
+    hanldeEmailResetVerifyOtp
+  );
+router
+  .route("/email/reset")
+  .patch(verifyJwt, resetJwt("resetEmail"), handleNewEmailSet);
+
+// reset contact
+router
+  .route("/contact/reset/send-otp")
+  .post(verifyJwt, sendOtp("resetContact"), handleContactResetSendOtp);
+router
+  .route("/contact/reset/verify-otp")
+  .post(
+    verifyJwt,
+    resetJwt("resetContact"),
+    verifyOtp,
+    hanldeContactResetVerifyOtp
+  );
+router
+  .route("/contact/reset")
+  .patch(verifyJwt, resetJwt("resetContact"), handleNewContactSet);
 
 export default router;
