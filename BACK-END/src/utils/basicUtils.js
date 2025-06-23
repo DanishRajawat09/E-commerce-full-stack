@@ -12,7 +12,7 @@ const generateOtp = () => {
 };
 const responseFormat = async (user) => {
   const userdata = user.toObject();
-  const excludedKeys = ["password", "refreshToken", "otp", "otpExpiry"];
+  const excludedKeys = ["password", "refreshToken", "otp", "otpExpiry", "_v"];
   const newdata = {};
 
   Object.keys(userdata).forEach((key) => {
