@@ -1,5 +1,5 @@
 import { Router } from "express";
-import verifyJwt from "../middlewares/verifyJwt.middleware";
+import verifyJwt from "../middlewares/verifyJwt.middleware.js";
 import {
   addAddress,
   address,
@@ -11,6 +11,6 @@ const router = Router();
 
 router.route("/add-address").post(verifyJwt, addAddress);
 router.route("/update-address/:id").post(verifyJwt, updateAddress);
-router.route("address").get(verifyJwt, address);
+router.route("/getAddress").get(verifyJwt, address);
 router.route("/delete-address/:id").delete(verifyJwt, deleteAddress);
 export default router;

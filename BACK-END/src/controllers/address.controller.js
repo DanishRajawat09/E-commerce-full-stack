@@ -1,6 +1,6 @@
 import { Address } from "../models/address.models.js";
 import ApiError from "../utils/apiError.js";
-import ApiResponse from "../utils/apiResponse";
+import ApiResponse from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
 const addAddress = asyncHandler(async (req, res) => {
@@ -28,7 +28,7 @@ const addAddress = asyncHandler(async (req, res) => {
   const existingAddress = await Address.findOne({
     ...normalizedAddress,
     user: user._id,
-  });
+  }).select("-createdAt -updatedAt -__v ");
 
   if (existingAddress) {
     throw new ApiError(400, "This address already exists in your account.");
@@ -42,7 +42,7 @@ const addAddress = asyncHandler(async (req, res) => {
   if (!userAddress) {
     throw new ApiError(400, "error while adding address");
   }
-  res.status(200).json(new ApiResponse(200, "Address added successfully", {}));
+  res.status(200).json(new ApiResponse(200, "Address added successfully", userAddress));
 });
 
 const address = asyncHandler(async (req, res) => {
@@ -56,7 +56,7 @@ const address = asyncHandler(async (req, res) => {
   }
 
   const addresses = await Address.find({ user: userId }).select(
-    "-createdAt -updatedAt -_v"
+    "-createdAt -updatedAt -__v"
   );
 
   if (!addresses) {

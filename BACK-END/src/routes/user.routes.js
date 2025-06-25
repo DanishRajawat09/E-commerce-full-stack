@@ -26,7 +26,7 @@ const router = Router();
 // ✅ User Auth
 router.route("/register").post(registerUser);
 router.route("/register/send-otp").post(sendOtp("register"), afterSend);
-router.route("/register/verify-otp").post(resetJwt, verifyOtp, afterVerify);
+router.route("/register/verify-otp").post(resetJwt("register"), verifyOtp, afterVerify);
 
 router.route("/login").post(loginUser);
 router.route("/logout").post(verifyJwt, logoutUser);
