@@ -114,7 +114,7 @@ const registerUser = asyncHandler(async (req, res) => {
   );
 });
 const afterSend = asyncHandler(async (req, res) => {
-  const { _id, email  , purpose} = req?.user;
+  const { _id, email, purpose } = req?.user;
 
   if (!_id || !email) {
     throw new ApiError(
@@ -122,9 +122,13 @@ const afterSend = asyncHandler(async (req, res) => {
       "Unable to retrieve user information for OTP process. Please try again."
     );
   }
-  const resetToken = jwt.sign({ id: _id, email: email , purpose }, JWT_RESET_SECRET, {
-    expiresIn: JWT_RESET_EXPIRY,
-  });
+  const resetToken = jwt.sign(
+    { id: _id, email: email, purpose },
+    JWT_RESET_SECRET,
+    {
+      expiresIn: JWT_RESET_EXPIRY,
+    }
+  );
 
   if (!resetToken) {
     throw new ApiError(

@@ -12,7 +12,7 @@ const sendOtp = (purpose) =>
       userData.email = req.body.email;
       userData.contact = req.body.contact;
       if (purpose === "register") {
-        purposeOtp = purpose
+        purposeOtp = purpose;
       }
     }
 
@@ -84,7 +84,7 @@ const sendOtp = (purpose) =>
     if (userData.contact) {
       console.log("otp send on contact", otp);
     }
-const data = user.toObject()
+    const data = user.toObject();
     const updateUser = { ...data, purpose: purposeOtp };
 
     req.user = updateUser;

@@ -42,7 +42,9 @@ const addAddress = asyncHandler(async (req, res) => {
   if (!userAddress) {
     throw new ApiError(400, "error while adding address");
   }
-  res.status(200).json(new ApiResponse(200, "Address added successfully", userAddress));
+  res
+    .status(200)
+    .json(new ApiResponse(200, "Address added successfully", userAddress));
 });
 
 const address = asyncHandler(async (req, res) => {
