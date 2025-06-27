@@ -2,13 +2,16 @@ import Router from "express";
 import {
   afterSend,
   afterVerify,
+  handleEmailResetSendOtp,
   handleForgotOtpSent,
   handleForgotOtpVerified,
+  handleNewEmailSet,
   handleNewPasswordSet,
+  hanldeEmailResetVerifyOtp,
   loginUser,
   logoutUser,
   registerUser,
-} from "../controllers/user.controller.js";
+} from "../controllers/adminUser.controller.js";
 import sendOtp from "../middlewares/sendOtp.middleware.js";
 import resetJwt from "../middlewares/resetJwtverify.middleware.js";
 import { verifyJwtAdmin } from "../middlewares/verifyJwt.middleware.js";
@@ -43,5 +46,12 @@ router
   .post(resetJwt("resetAdminPassword"), verifyOtp, handleForgotOtpVerified);
 router
   .route("/new-password")
-  .post(resetJwt("resetAdminRegister"), handleNewPasswordSet);
+  .post(resetJwt("resetAdminPasswordVerify"), handleNewPasswordSet);
+
+  // reset email 
+
+  router.route("/email/reset/send-otp").post(verifyJwtAdmin , isAdmin , sendOtp("resetAdminEmail") , handleEmailResetSendOtp)
+router.route("/email/reset/verify-otp").post(verifyJwtAdmin , isAdmin , resetJwt("resetAdminEmail"),  verifyOtp , hanldeEmailResetVerifyOtp )
+
+router.route("/new-email").post(verifyJwtAdmin , isAdmin ,  resetJwt("resetAdminEmailVerify") , handleNewEmailSet )
 export default router;

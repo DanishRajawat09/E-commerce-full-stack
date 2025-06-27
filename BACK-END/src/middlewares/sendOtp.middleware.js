@@ -33,7 +33,7 @@ const sendOtp = (purpose) =>
       purposeOtp = purpose;
     }
 
-    if (purpose === "resetEmail") {
+    if (purpose === "resetEmail" || purpose === "resetAdminEmail") {
       if (!req.user?.contact) {
         throw new ApiError(
           400,
@@ -64,7 +64,7 @@ const sendOtp = (purpose) =>
         );
     }
 
-    if (purpose === "resetEmail") {
+    if (purpose === "resetEmail" || purpose === "resetAdminEmail") {
       if (!userData.contact)
         throw new ApiError(400, "Please provide email address.");
     }

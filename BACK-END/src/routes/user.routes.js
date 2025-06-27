@@ -14,7 +14,7 @@ import {
   handleContactResetSendOtp,
   hanldeContactResetVerifyOtp,
   handleNewContactSet,
-} from "../controllers/user.controller.js";
+} from "../controllers/adminUser.controller.js";
 import sendOtp from "../middlewares/sendOtp.middleware.js";
 import verifyOtp from "../middlewares/verifyOtp.js";
 import resetJwt from "../middlewares/resetJwtverify.middleware.js";
@@ -42,7 +42,7 @@ router
   .post(resetJwt("resetPassword"), verifyOtp, handleForgotOtpVerified);
 router
   .route("/password/reset")
-  .patch(resetJwt("resetPassword"), handleNewPasswordSet);
+  .patch(resetJwt("resetPasswordVerify"), handleNewPasswordSet);
 
 // reset Email
 router
@@ -58,7 +58,7 @@ router
   );
 router
   .route("/email/reset")
-  .patch(verifyJwtUser, resetJwt("resetEmail"), handleNewEmailSet);
+  .patch(verifyJwtUser, resetJwt("resetEmailVerify"), handleNewEmailSet);
 
 // reset contact
 router

@@ -367,7 +367,7 @@ const handleForgotOtpVerified = asyncHandler(async (req, res) => {
   }
   const role = user.role;
 
-  const purpose = role === "user" ? "resetPassword" : "resetAdminPassword";
+  const purpose = role === "user" ? "resetPasswordVerify" : "resetAdminPasswordVerify";
 
   user.otp = null;
   user.otpExpiry = null;
@@ -449,7 +449,7 @@ const handleEmailResetSendOtp = asyncHandler(async (req, res) => {
     );
   }
   const resetToken = jwt.sign(
-    { id: _id, email: email, purpose: purpose, role: role },
+    { id: _id, purpose: purpose, role: role },
     JWT_RESET_SECRET,
     {
       expiresIn: JWT_RESET_EXPIRY,
@@ -466,9 +466,10 @@ const handleEmailResetSendOtp = asyncHandler(async (req, res) => {
     maxAge: ms(JWT_RESET_EXPIRY),
   };
 
+  const resetTokenName = await resetTokenNameFunc(role)
   res
     .status(200)
-    .cookie("resetToken", resetToken, option)
+    .cookie(resetTokenName, resetToken, option)
     .json(
       new ApiResponse(
         200,
@@ -487,9 +488,9 @@ const hanldeEmailResetVerifyOtp = asyncHandler(async (req, res) => {
   user.otp = null;
   user.otpExpiry = null;
   await user.save({ validateBeforeSave: false });
-
+const purpose = user.role === "user" ? "resetEmailVerify" : "resetAdminEmailVerify";
   const token = await jwt.sign(
-    { id: user._id, purpose: "resetEmail", role: user.role },
+    { id: user._id, email : user.email  , purpose, role: user.role },
     JWT_RESET_SECRET,
     {
       expiresIn: JWT_RESET_EXPIRY,
@@ -504,10 +505,10 @@ const hanldeEmailResetVerifyOtp = asyncHandler(async (req, res) => {
     secure: NODE_ENV === "production",
     maxAge: ms(JWT_RESET_EXPIRY),
   };
-
+const resetTokenName = await resetTokenNameFunc(user.role)
   res
     .status(200)
-    .cookie("resetToken", token, option)
+    .cookie(resetTokenName, token, option)
     .json(new ApiResponse(200, "OTP verified successfully. Reset token set."));
 });
 
@@ -529,7 +530,7 @@ const handleNewEmailSet = asyncHandler(async (req, res) => {
   }
 
   const userdata = await User.findByIdAndUpdate(
-    { _id: user._id },
+    { _id: user._id  , role : user.role},
     { email: newEmail },
     { new: true }
   );
@@ -541,10 +542,10 @@ const handleNewEmailSet = asyncHandler(async (req, res) => {
     httpOnly: true,
     secure: NODE_ENV === "production",
   };
-
+const resetTokenName = await resetTokenNameFunc(user.role)
   res
     .status(200)
-    .clearCookie("resetCookie", option)
+    .clearCookie(resetTokenName, option)
     .json(new ApiResponse(200, "Email Updated SuccessFull", userdata.email));
 });
 
