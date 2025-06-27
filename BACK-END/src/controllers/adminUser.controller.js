@@ -367,7 +367,8 @@ const handleForgotOtpVerified = asyncHandler(async (req, res) => {
   }
   const role = user.role;
 
-  const purpose = role === "user" ? "resetPasswordVerify" : "resetAdminPasswordVerify";
+  const purpose =
+    role === "user" ? "resetPasswordVerify" : "resetAdminPasswordVerify";
 
   user.otp = null;
   user.otpExpiry = null;
@@ -466,7 +467,7 @@ const handleEmailResetSendOtp = asyncHandler(async (req, res) => {
     maxAge: ms(JWT_RESET_EXPIRY),
   };
 
-  const resetTokenName = await resetTokenNameFunc(role)
+  const resetTokenName = await resetTokenNameFunc(role);
   res
     .status(200)
     .cookie(resetTokenName, resetToken, option)
@@ -488,9 +489,10 @@ const hanldeEmailResetVerifyOtp = asyncHandler(async (req, res) => {
   user.otp = null;
   user.otpExpiry = null;
   await user.save({ validateBeforeSave: false });
-const purpose = user.role === "user" ? "resetEmailVerify" : "resetAdminEmailVerify";
+  const purpose =
+    user.role === "user" ? "resetEmailVerify" : "resetAdminEmailVerify";
   const token = await jwt.sign(
-    { id: user._id, email : user.email  , purpose, role: user.role },
+    { id: user._id, email: user.email, purpose, role: user.role },
     JWT_RESET_SECRET,
     {
       expiresIn: JWT_RESET_EXPIRY,
@@ -505,7 +507,7 @@ const purpose = user.role === "user" ? "resetEmailVerify" : "resetAdminEmailVeri
     secure: NODE_ENV === "production",
     maxAge: ms(JWT_RESET_EXPIRY),
   };
-const resetTokenName = await resetTokenNameFunc(user.role)
+  const resetTokenName = await resetTokenNameFunc(user.role);
   res
     .status(200)
     .cookie(resetTokenName, token, option)
@@ -530,7 +532,7 @@ const handleNewEmailSet = asyncHandler(async (req, res) => {
   }
 
   const userdata = await User.findByIdAndUpdate(
-    { _id: user._id  , role : user.role},
+    { _id: user._id, role: user.role },
     { email: newEmail },
     { new: true }
   );
@@ -542,7 +544,7 @@ const handleNewEmailSet = asyncHandler(async (req, res) => {
     httpOnly: true,
     secure: NODE_ENV === "production",
   };
-const resetTokenName = await resetTokenNameFunc(user.role)
+  const resetTokenName = await resetTokenNameFunc(user.role);
   res
     .status(200)
     .clearCookie(resetTokenName, option)
@@ -575,10 +577,10 @@ const handleContactResetSendOtp = asyncHandler(async (req, res) => {
     secure: NODE_ENV === "production",
     maxAge: ms(JWT_RESET_EXPIRY),
   };
-
+  const resetTokenName = await resetTokenNameFunc(role);
   res
     .status(200)
-    .cookie("resetToken", resetToken, option)
+    .cookie(resetTokenName, resetToken, option)
     .json(
       new ApiResponse(
         200,
@@ -599,8 +601,11 @@ const hanldeContactResetVerifyOtp = asyncHandler(async (req, res) => {
   user.otpExpiry = null;
   await user.save({ validateBeforeSave: false });
 
+  const purpose =
+    user.role === "user" ? "resetContactVerify" : "resetAdminContactVerify";
+
   const token = await jwt.sign(
-    { id: user._id, purpose: "resetContact", role: user.role },
+    { id: user._id, purpose, role: user.role },
     JWT_RESET_SECRET,
     {
       expiresIn: JWT_RESET_EXPIRY,
@@ -615,10 +620,10 @@ const hanldeContactResetVerifyOtp = asyncHandler(async (req, res) => {
     secure: NODE_ENV === "production",
     maxAge: ms(JWT_RESET_EXPIRY),
   };
-
+  const resetTokenName = await resetTokenNameFunc(user.role);
   res
     .status(200)
-    .cookie("resetToken", token, option)
+    .cookie(resetTokenName, token, option)
     .json(new ApiResponse(200, "OTP verified successfully. Reset token set."));
 });
 
@@ -640,7 +645,7 @@ const handleNewContactSet = asyncHandler(async (req, res) => {
   // }
 
   const userdata = await User.findByIdAndUpdate(
-    { _id: user._id },
+    { _id: user._id, role: user.role },
     { contact: newContact },
     { new: true }
   );
@@ -652,10 +657,10 @@ const handleNewContactSet = asyncHandler(async (req, res) => {
     httpOnly: true,
     secure: NODE_ENV === "production",
   };
-
+  const resetTokenName = await resetTokenNameFunc(user.role);
   res
     .status(200)
-    .clearCookie("resetCookie", option)
+    .clearCookie(resetTokenName, option)
     .json(new ApiResponse(200, "Email Updated SuccessFull", userdata.contact));
 });
 

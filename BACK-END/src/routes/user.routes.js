@@ -74,6 +74,6 @@ router
   );
 router
   .route("/contact/reset")
-  .patch(verifyJwtUser, resetJwt("resetContact"), handleNewContactSet);
+  .patch(verifyJwtUser, resetJwt("resetContactVerify"), handleNewContactSet);
 
 export default router;

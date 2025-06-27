@@ -2,11 +2,14 @@ import Router from "express";
 import {
   afterSend,
   afterVerify,
+  handleContactResetSendOtp,
   handleEmailResetSendOtp,
   handleForgotOtpSent,
   handleForgotOtpVerified,
+  handleNewContactSet,
   handleNewEmailSet,
   handleNewPasswordSet,
+  hanldeContactResetVerifyOtp,
   hanldeEmailResetVerifyOtp,
   loginUser,
   logoutUser,
@@ -48,10 +51,62 @@ router
   .route("/new-password")
   .post(resetJwt("resetAdminPasswordVerify"), handleNewPasswordSet);
 
-  // reset email 
+// reset email
 
-  router.route("/email/reset/send-otp").post(verifyJwtAdmin , isAdmin , sendOtp("resetAdminEmail") , handleEmailResetSendOtp)
-router.route("/email/reset/verify-otp").post(verifyJwtAdmin , isAdmin , resetJwt("resetAdminEmail"),  verifyOtp , hanldeEmailResetVerifyOtp )
+router
+  .route("/email/reset/send-otp")
+  .post(
+    verifyJwtAdmin,
+    isAdmin,
+    sendOtp("resetAdminEmail"),
+    handleEmailResetSendOtp
+  );
+router
+  .route("/email/reset/verify-otp")
+  .post(
+    verifyJwtAdmin,
+    isAdmin,
+    resetJwt("resetAdminEmail"),
+    verifyOtp,
+    hanldeEmailResetVerifyOtp
+  );
 
-router.route("/new-email").post(verifyJwtAdmin , isAdmin ,  resetJwt("resetAdminEmailVerify") , handleNewEmailSet )
+router
+  .route("/new-email")
+  .post(
+    verifyJwtAdmin,
+    isAdmin,
+    resetJwt("resetAdminEmailVerify"),
+    handleNewEmailSet
+  );
+
+// resetContact
+
+router
+  .route("/contact/reset/send-otp")
+  .post(
+    verifyJwtAdmin,
+    isAdmin,
+    sendOtp("resetAdminContact"),
+    handleContactResetSendOtp
+  );
+
+router
+  .route("/contact/reset/verify-otp")
+  .post(
+    verifyJwtAdmin,
+    isAdmin,
+    resetJwt("resetAdminContact"),
+    verifyOtp,
+    hanldeContactResetVerifyOtp
+  );
+
+router
+  .route("/new-contact")
+  .patch(
+    verifyJwtAdmin,
+    isAdmin,
+    resetJwt("resetAdminContactVerify"),
+    handleNewContactSet
+  );
 export default router;
