@@ -4,10 +4,11 @@ import ApiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
 
-const resetJwt = (expactedPurpose = "") =>
+const resetJwt = (expectedPurpose = "") =>
   asyncHandler(async (req, res, next) => {
     const token =
-      req.cookies?.resetToken ||
+      req.cookies?.adminResetToken ||
+      req.cookies?.userResetToken ||
       req.header("Authorization")?.replace("Bearer ", "");
 
     if (!token) {
@@ -21,15 +22,18 @@ const resetJwt = (expactedPurpose = "") =>
       throw new ApiError(401, "Invalid or expired reset token.");
     }
 
-    if (!decoded || !decoded.id) {
+    if (!decoded || !decoded.id || !decoded.role) {
       throw new ApiError(401, "Invalid token payload.");
     }
 
-    if (decoded.purpose !== expactedPurpose) {
-      throw new ApiError(403, "Token not valid for this operation");
+    if (decoded.purpose !== expectedPurpose) {
+      throw new ApiError(
+        403,
+        `Invalid token purpose. Expected '${expectedPurpose}', got '${decoded.purpose}'.`
+      );
     }
 
-    const user = await User.findById(decoded.id);
+    const user = await User.findOne({ _id: decoded.id, role: decoded.role });
 
     if (!user) {
       throw new ApiError(404, "User associated with this token was not found.");

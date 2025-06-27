@@ -8,12 +8,25 @@ const sendOtp = (purpose) =>
     const userData = {};
     let purposeOtp = "";
 
-    if (purpose === "register" || purpose === "resetPassword") {
+    if (
+      purpose === "register" ||
+      purpose === "resetPassword" ||
+      purpose === "adminRegister" ||
+      purpose === "resetAdminPassword"
+    ) {
       userData.email = req.body.email;
       userData.contact = req.body.contact;
-      if (purpose === "register") {
-        purposeOtp = purpose;
-      }
+    }
+
+    if (purpose === "resetAdminPassword") {
+      purposeOtp = purpose;
+    }
+    if (purpose === "adminRegister") {
+      purposeOtp = purpose;
+    }
+
+    if (purpose === "register") {
+      purposeOtp = purpose;
     }
 
     if (purpose === "resetPassword") {
@@ -62,11 +75,13 @@ const sendOtp = (purpose) =>
 
     const { otp, expiry } = generateOtp();
 
+    const isRegisterPurpose = ["register", "adminRegister"].includes(purpose);
+
     const user = await User.findOneAndUpdate(
       {
         $and: [
           { $or: [{ email: userData.email }, { contact: userData.contact }] },
-          { isVerified: purpose !== "register" },
+          { isVerified: !isRegisterPurpose },
         ],
       },
       {

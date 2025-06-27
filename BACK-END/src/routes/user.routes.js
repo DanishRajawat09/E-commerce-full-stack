@@ -18,7 +18,7 @@ import {
 import sendOtp from "../middlewares/sendOtp.middleware.js";
 import verifyOtp from "../middlewares/verifyOtp.js";
 import resetJwt from "../middlewares/resetJwtverify.middleware.js";
-import verifyJwt from "../middlewares/verifyJwt.middleware.js";
+import { verifyJwtUser } from "../middlewares/verifyJwt.middleware.js";
 
 const router = Router();
 
@@ -31,7 +31,7 @@ router
   .post(resetJwt("register"), verifyOtp, afterVerify);
 
 router.route("/login").post(loginUser);
-router.route("/logout").post(verifyJwt, logoutUser);
+router.route("/logout").post(verifyJwtUser, logoutUser);
 
 // ✅ Forgot Password
 router
@@ -47,33 +47,33 @@ router
 // reset Email
 router
   .route("/email/reset/send-otp")
-  .post(verifyJwt, sendOtp("resetEmail"), handleEmailResetSendOtp);
+  .post(verifyJwtUser, sendOtp("resetEmail"), handleEmailResetSendOtp);
 router
   .route("/email/reset/verify-otp")
   .post(
-    verifyJwt,
+    verifyJwtUser,
     resetJwt("resetEmail"),
     verifyOtp,
     hanldeEmailResetVerifyOtp
   );
 router
   .route("/email/reset")
-  .patch(verifyJwt, resetJwt("resetEmail"), handleNewEmailSet);
+  .patch(verifyJwtUser, resetJwt("resetEmail"), handleNewEmailSet);
 
 // reset contact
 router
   .route("/contact/reset/send-otp")
-  .post(verifyJwt, sendOtp("resetContact"), handleContactResetSendOtp);
+  .post(verifyJwtUser, sendOtp("resetContact"), handleContactResetSendOtp);
 router
   .route("/contact/reset/verify-otp")
   .post(
-    verifyJwt,
+    verifyJwtUser,
     resetJwt("resetContact"),
     verifyOtp,
     hanldeContactResetVerifyOtp
   );
 router
   .route("/contact/reset")
-  .patch(verifyJwt, resetJwt("resetContact"), handleNewContactSet);
+  .patch(verifyJwtUser, resetJwt("resetContact"), handleNewContactSet);
 
 export default router;

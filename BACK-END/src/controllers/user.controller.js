@@ -9,7 +9,11 @@ import {
   JWT_RESET_SECRET,
   NODE_ENV,
 } from "../../config/env.js";
-import { responseFormat } from "../utils/basicUtils.js";
+import {
+  resetTokenNameFunc,
+  responseFormat,
+  verifyTokenName,
+} from "../utils/basicUtils.js";
 import jwt from "jsonwebtoken";
 import ms from "ms";
 
@@ -22,6 +26,16 @@ const generateAccessRefreshToken = async (id) => {
 
   const accessToken = await user.generateAccessToken();
   const refreshToken = await user.generateRefreshToken();
+  let accessTokenName = "";
+  let refreshTokenName = "";
+  if (user.role === "admin") {
+    accessTokenName = "adminAccessToken";
+    refreshTokenName = "adminRefreshToken";
+  }
+  if (user.role === "user") {
+    accessTokenName = "userAccessToken";
+    refreshTokenName = "userRefreshToken";
+  }
 
   if (!accessToken || !refreshToken) {
     throw new ApiError(500, "Failed to generate tokens");
@@ -30,10 +44,10 @@ const generateAccessRefreshToken = async (id) => {
   user.refreshToken = refreshToken;
   await user.save({ validateBeforeSave: false });
 
-  return { accessToken, refreshToken };
+  return { accessToken, refreshToken, accessTokenName, refreshTokenName };
 };
 const registerUser = asyncHandler(async (req, res) => {
-  const { email, contact, password } = req.body;
+  const { email, contact, password, role } = req.body;
 
   if ([email, contact, password].some((val) => val.trim() === "")) {
     throw new ApiError(
@@ -56,10 +70,16 @@ const registerUser = asyncHandler(async (req, res) => {
     ],
   });
 
-  if (exsistingUser) {
+  if (exsistingUser && exsistingUser.role === "admin") {
     throw new ApiError(
       400,
-      "An account with this email or contact number already exists and is verified."
+      "An account with this email or contact number already exists for admin you have to create an new account with new email and contact number"
+    );
+  }
+  if (exsistingUser && exsistingUser.role === "user") {
+    throw new ApiError(
+      400,
+      "An account with this email or contact number already exists for user you have to create an new account with new email and contact number"
     );
   }
 
@@ -67,13 +87,15 @@ const registerUser = asyncHandler(async (req, res) => {
     $and: [
       { $or: [{ email: email }, { contact: contact }] },
       { isVerified: false },
+      { role: role || "user" },
     ],
   });
 
   if (unVerifiedUser) {
+    const resetTokenName = await resetTokenNameFunc(unVerifiedUser.role);
     return res
       .status(200)
-      ?.clearCookie("resetToken", {
+      ?.clearCookie(resetTokenName, {
         httpOnly: true,
         secure: NODE_ENV === "production",
       })
@@ -93,6 +115,7 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     password,
     contact,
+    role: role || "user",
   });
 
   if (!user) {
@@ -109,12 +132,13 @@ const registerUser = asyncHandler(async (req, res) => {
       {
         email: user.email,
         contact: user.contact,
+        role: user.role,
       }
     )
   );
 });
 const afterSend = asyncHandler(async (req, res) => {
-  const { _id, email, purpose } = req?.user;
+  const { _id, email, purpose, role } = req?.user;
 
   if (!_id || !email) {
     throw new ApiError(
@@ -123,7 +147,7 @@ const afterSend = asyncHandler(async (req, res) => {
     );
   }
   const resetToken = jwt.sign(
-    { id: _id, email: email, purpose },
+    { id: _id, email: email, purpose, role },
     JWT_RESET_SECRET,
     {
       expiresIn: JWT_RESET_EXPIRY,
@@ -142,10 +166,10 @@ const afterSend = asyncHandler(async (req, res) => {
     secure: NODE_ENV === "production",
     maxAge: ms(JWT_RESET_EXPIRY),
   };
-
+  const resetTokenName = await resetTokenNameFunc(role);
   res
     .status(200)
-    .cookie("resetToken", resetToken, option)
+    .cookie(resetTokenName, resetToken, option)
     .json(new ApiResponse(200, "OTP sent successfully", {}));
 });
 
@@ -161,17 +185,16 @@ const afterVerify = asyncHandler(async (req, res) => {
   user.otpExpiry = null;
   await user.save({ validateBeforeSave: false });
 
-  const { accessToken, refreshToken } = await generateAccessRefreshToken(
-    user._id
-  );
+  const { accessToken, refreshToken, accessTokenName, refreshTokenName } =
+    await generateAccessRefreshToken(user._id);
 
-  if (!accessToken || !refreshToken) {
+  if (!accessToken || !refreshToken || !accessTokenName || !refreshTokenName) {
     throw new ApiError(
       500,
       "Failed to generate authentication tokens. Please try logging in again."
     );
   }
-
+  const resetTokenName = await resetTokenNameFunc(user.role);
   const userData = await responseFormat(user);
 
   const option = {
@@ -180,15 +203,15 @@ const afterVerify = asyncHandler(async (req, res) => {
   };
   res
     .status(200)
-    .cookie("accessToken", accessToken, {
+    .cookie(accessTokenName, accessToken, {
       ...option,
       maxAge: ms(JWT_ACCESSTOKEN_EXPIRY),
     })
-    .cookie("refreshToken", refreshToken, {
+    .cookie(refreshTokenName, refreshToken, {
       ...option,
       maxAge: ms(JWT_REFRESHTOKEN_EXPIRY),
     })
-    .clearCookie("resetToken", {
+    .clearCookie(resetTokenName, {
       httpOnly: true,
       secure: NODE_ENV === "production",
     })
@@ -202,7 +225,7 @@ const afterVerify = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-  const { email, contact, password } = req.body;
+  const { email, contact, password, role } = req.body;
 
   if (!email && !contact) {
     throw new ApiError(
@@ -215,7 +238,12 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Password is required to log in.");
   }
 
-  const user = await User.findOne({ $or: [{ email }, { contact }] });
+  const user = await User.findOne({
+    $and: [
+      { $or: [{ email: email }, { contact: contact }] },
+      { role: role || "user" },
+    ],
+  });
 
   if (!user) {
     throw new ApiError(
@@ -242,9 +270,8 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const userData = await responseFormat(user);
 
-  const { accessToken, refreshToken } = await generateAccessRefreshToken(
-    user._id
-  );
+  const { accessToken, refreshToken, accessTokenName, refreshTokenName } =
+    await generateAccessRefreshToken(user._id);
   const option = {
     httpOnly: true,
     secure: NODE_ENV === "production",
@@ -252,11 +279,11 @@ const loginUser = asyncHandler(async (req, res) => {
 
   res
     .status(200)
-    .cookie("accessToken", accessToken, {
+    .cookie(accessTokenName, accessToken, {
       ...option,
       maxAge: ms(JWT_ACCESSTOKEN_EXPIRY),
     })
-    .cookie("refreshToken", refreshToken, {
+    .cookie(refreshTokenName, refreshToken, {
       ...option,
       maxAge: ms(JWT_REFRESHTOKEN_EXPIRY),
     })
@@ -266,15 +293,17 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
-  const { _id } = req.user;
+  const { _id, role } = req.user;
 
   if (!_id) {
     throw new ApiError(400, "User ID is missing in the request.");
   }
 
-  const user = await User.findByIdAndUpdate(_id, { refreshToken: null }).select(
-    "-password -refreshToken -otp -otpExpiry"
-  );
+  const user = await User.findByIdAndUpdate(
+    _id,
+    { refreshToken: null },
+    { new: true }
+  ).select("-password -refreshToken -otp -otpExpiry");
 
   if (!user) {
     throw new ApiError(400, "User not found or unable to clear access token.");
@@ -284,18 +313,19 @@ const logoutUser = asyncHandler(async (req, res) => {
     httpOnly: true,
     secure: NODE_ENV === "production",
   };
-
+  const { verifyAccessTokenName, verifyRefreshTokenName } =
+    await verifyTokenName(role);
   res
     .status(200)
-    .clearCookie("accessToken", option)
-    .clearCookie("refreshToken", option)
+    .clearCookie(verifyAccessTokenName, option)
+    .clearCookie(verifyRefreshTokenName, option)
     .json(
       new ApiResponse(200, "Logout successful. You have been signed out.", {})
     );
 });
 
-const handleForgotOtpSent = asyncHandler((req, res) => {
-  const { _id, email, purpose } = req?.user?.toObject?.() || req.user;
+const handleForgotOtpSent = asyncHandler(async (req, res) => {
+  const { _id, email, purpose, role } = req?.user?.toObject?.() || req.user;
 
   if (!_id || !email) {
     throw new ApiError(500, "Failed to retrieve user ID or email.");
@@ -303,16 +333,18 @@ const handleForgotOtpSent = asyncHandler((req, res) => {
 
   let resetToken;
   try {
-    resetToken = jwt.sign({ id: _id, email, purpose }, JWT_RESET_SECRET, {
+    resetToken = jwt.sign({ id: _id, email, purpose, role }, JWT_RESET_SECRET, {
       expiresIn: JWT_RESET_EXPIRY,
     });
   } catch (err) {
     throw new ApiError(500, "Unable to generate reset token.");
   }
 
+  const resetTokenName = await resetTokenNameFunc(role);
+
   res
     .status(200)
-    .cookie("resetToken", resetToken, {
+    .cookie(resetTokenName, resetToken, {
       httpOnly: true,
       secure: NODE_ENV === "production",
       sameSite: "Strict",
@@ -333,6 +365,9 @@ const handleForgotOtpVerified = asyncHandler(async (req, res) => {
   if (!user) {
     throw new ApiError(401, "Unauthorized request. User not found.");
   }
+  const role = user.role;
+
+  const purpose = role === "user" ? "resetPassword" : "resetAdminPassword";
 
   user.otp = null;
   user.otpExpiry = null;
@@ -341,7 +376,7 @@ const handleForgotOtpVerified = asyncHandler(async (req, res) => {
   let token;
   try {
     token = jwt.sign(
-      { id: user._id, purpose: "resetPassword" },
+      { id: user._id, purpose, role: user.role },
       JWT_RESET_SECRET,
       { expiresIn: JWT_RESET_EXPIRY }
     );
@@ -353,15 +388,15 @@ const handleForgotOtpVerified = asyncHandler(async (req, res) => {
     secure: NODE_ENV === "production",
     maxAge: ms(JWT_RESET_EXPIRY),
   };
-
+  const resetTokenName = await resetTokenNameFunc(user.toObject().role);
   res
     .status(200)
-    .cookie("resetToken", token, option)
+    .cookie(resetTokenName, token, option)
     .json(new ApiResponse(200, "OTP verified successfully. Reset token set."));
 });
 
 const handleNewPasswordSet = asyncHandler(async (req, res) => {
-  const { _id } = req.user;
+  const { _id, role } = req.user;
   const { newPassword } = req.body;
 
   if (!_id) {
@@ -379,10 +414,7 @@ const handleNewPasswordSet = asyncHandler(async (req, res) => {
     );
   }
 
-  const user = await User.findOne({ _id, authProvider: "local" });
-
-  user.password = newPassword;
-  await user.save({ validateBeforeSave: false });
+  const user = await User.findOne({ _id, authProvider: "local", role });
 
   if (!user) {
     throw new ApiError(
@@ -390,19 +422,25 @@ const handleNewPasswordSet = asyncHandler(async (req, res) => {
       "User not found or invalid authentication provider."
     );
   }
+
+  user.password = newPassword;
+  await user.save({ validateBeforeSave: false });
+
   const option = {
     httpOnly: true,
     secure: NODE_ENV === "production",
   };
 
+  const resetTokenName = await resetTokenNameFunc(role);
+
   res
     .status(200)
-    .clearCookie("resetToken", option)
+    .clearCookie(resetTokenName, option)
     .json(new ApiResponse(200, "Password has been successfully updated.", {}));
 });
 
 const handleEmailResetSendOtp = asyncHandler(async (req, res) => {
-  const { _id, email, purpose } = req?.user;
+  const { _id, email, purpose, role } = req?.user;
 
   if (!_id || !email) {
     throw new ApiError(
@@ -411,7 +449,7 @@ const handleEmailResetSendOtp = asyncHandler(async (req, res) => {
     );
   }
   const resetToken = jwt.sign(
-    { id: _id, email: email, purpose: purpose },
+    { id: _id, email: email, purpose: purpose, role: role },
     JWT_RESET_SECRET,
     {
       expiresIn: JWT_RESET_EXPIRY,
@@ -451,7 +489,7 @@ const hanldeEmailResetVerifyOtp = asyncHandler(async (req, res) => {
   await user.save({ validateBeforeSave: false });
 
   const token = await jwt.sign(
-    { id: user._id, purpose: "resetEmail" },
+    { id: user._id, purpose: "resetEmail", role: user.role },
     JWT_RESET_SECRET,
     {
       expiresIn: JWT_RESET_EXPIRY,
@@ -511,7 +549,7 @@ const handleNewEmailSet = asyncHandler(async (req, res) => {
 });
 
 const handleContactResetSendOtp = asyncHandler(async (req, res) => {
-  const { _id, email, purpose } = req?.user;
+  const { _id, email, purpose, role } = req?.user;
 
   if (!_id || !email) {
     throw new ApiError(
@@ -520,7 +558,7 @@ const handleContactResetSendOtp = asyncHandler(async (req, res) => {
     );
   }
   const resetToken = jwt.sign(
-    { id: _id, email: email, purpose },
+    { id: _id, email: email, purpose, role },
     JWT_RESET_SECRET,
     {
       expiresIn: JWT_RESET_EXPIRY,
@@ -561,7 +599,7 @@ const hanldeContactResetVerifyOtp = asyncHandler(async (req, res) => {
   await user.save({ validateBeforeSave: false });
 
   const token = await jwt.sign(
-    { id: user._id, purpose: "resetContact" },
+    { id: user._id, purpose: "resetContact", role: user.role },
     JWT_RESET_SECRET,
     {
       expiresIn: JWT_RESET_EXPIRY,

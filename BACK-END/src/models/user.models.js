@@ -19,13 +19,13 @@ const userSchema = new mongoose.Schema(
         },
         message: "enter an velid email",
       },
-      unique: true,
+
       lowercase: true,
     },
     contact: {
       type: String,
       trim: true,
-      unique: true,
+
       validate: {
         validator: function (value) {
           return /^\+?[1-9]\d{1,14}$/.test(value);
@@ -54,6 +54,12 @@ const userSchema = new mongoose.Schema(
         message:
           "Password is required and must be at least 6 characters for local auth",
       },
+    },
+    role: {
+      type: String,
+      enum: ["admin", "user"],
+      required: true,
+      default: "user",
     },
     isVerified: {
       type: Boolean,
@@ -93,19 +99,18 @@ userSchema.pre("findOneAndUpdate", async function (next) {
   next();
 });
 
-
 userSchema.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 userSchema.methods.generateAccessToken = async function () {
   return jwt.sign(
-    { _id: this._id, email: this.email },
+    { _id: this._id, email: this.email, role: this.role },
     JWT_ACCESSTOKEN_SECRET,
     { expiresIn: JWT_ACCESSTOKEN_EXPIRY }
   );
 };
 userSchema.methods.generateRefreshToken = async function () {
-  return jwt.sign({ _id: this._id }, JWT_REFRESHTOKEN_SECRET, {
+  return jwt.sign({ _id: this._id, role: this.role }, JWT_REFRESHTOKEN_SECRET, {
     expiresIn: JWT_REFRESHTOKEN_EXPIRY,
   });
 };
