@@ -21,33 +21,40 @@ import { generateResetToken } from "../utils/resetToken.utils.js";
 import cookieOption from "../utils/cookieOption.utils.js";
 
 const generateAccessRefreshToken = async (id) => {
-  const user = await User.findById(id);
+  try {
+    const user = await User.findById(id);
 
-  if (!user) {
-    throw new ApiError(401, "inValid user id");
+    if (!user) {
+      throw new ApiError(401, "inValid user id");
+    }
+
+    const accessToken = await user.generateAccessToken();
+    const refreshToken = await user.generateRefreshToken();
+    let accessTokenName = "";
+    let refreshTokenName = "";
+    if (user.role === "admin") {
+      accessTokenName = "adminAccessToken";
+      refreshTokenName = "adminRefreshToken";
+    }
+    if (user.role === "user") {
+      accessTokenName = "userAccessToken";
+      refreshTokenName = "userRefreshToken";
+    }
+
+    if (!accessToken || !refreshToken) {
+      throw new ApiError(500, "Failed to generate tokens");
+    }
+
+    user.refreshToken = refreshToken;
+    await user.save({ validateBeforeSave: false });
+
+    return { accessToken, refreshToken, accessTokenName, refreshTokenName };
+  } catch (error) {
+    throw new ApiError(
+      500,
+      "Failed to generate authentication tokens. Please try again."
+    );
   }
-
-  const accessToken = await user.generateAccessToken();
-  const refreshToken = await user.generateRefreshToken();
-  let accessTokenName = "";
-  let refreshTokenName = "";
-  if (user.role === "admin") {
-    accessTokenName = "adminAccessToken";
-    refreshTokenName = "adminRefreshToken";
-  }
-  if (user.role === "user") {
-    accessTokenName = "userAccessToken";
-    refreshTokenName = "userRefreshToken";
-  }
-
-  if (!accessToken || !refreshToken) {
-    throw new ApiError(500, "Failed to generate tokens");
-  }
-
-  user.refreshToken = refreshToken;
-  await user.save({ validateBeforeSave: false });
-
-  return { accessToken, refreshToken, accessTokenName, refreshTokenName };
 };
 const registerUser = asyncHandler(async (req, res) => {
   let { email, contact, password, role } = req.body;
@@ -336,7 +343,7 @@ const handleForgotOtpVerified = asyncHandler(async (req, res) => {
   user.otpExpiry = null;
   await user.save({ validateBeforeSave: false });
 
-  const resetToken = await generateResetToken({...user.toObject(), purpose });
+  const resetToken = await generateResetToken({ ...user.toObject(), purpose });
 
   const resetTokenName = await resetTokenNameFunc(user.toObject().role);
   const resetCookieOptions = cookieOption(ms(JWT_RESET_EXPIRY));
@@ -452,7 +459,7 @@ const handleNewEmailSet = asyncHandler(async (req, res) => {
       "New email must be different from the current one."
     );
   }
-    const existingEmail = await User.findOne({ email : newEmail });
+  const existingEmail = await User.findOne({ email: newEmail });
 
   if (existingEmail) {
     throw new ApiError(
@@ -460,7 +467,6 @@ const handleNewEmailSet = asyncHandler(async (req, res) => {
       `email already exist for ${existingEmail.role} try again`
     );
   }
-
 
   const updatedUser = await User.findByIdAndUpdate(
     { _id: user._id, role: user.role },
@@ -586,6 +592,46 @@ const handleNewContactSet = asyncHandler(async (req, res) => {
     );
 });
 
+const handleUpdateAccessToken = asyncHandler(async (req, res) => {
+  const user = req.user;
+
+  if (!user._id || !user.refreshToken) {
+    throw new ApiError(400, "User id or token not found, login again");
+  }
+  const userData = await User.findOne({
+    _id: user._id,
+    refreshToken: user.refreshToken,
+    role: user.role,
+  });
+
+  if (!userData) {
+    throw new ApiError(
+      401,
+      "Invalid or expired refresh token. Please login again."
+    );
+  }
+
+  const { accessToken, accessTokenName, refreshToken, refreshTokenName } =
+    await generateAccessRefreshToken(user._id);
+
+  if (
+    [accessToken, accessTokenName, refreshToken, refreshTokenName].some(
+      (val) => !val
+    )
+  ) {
+    throw new ApiError(500, "Error generating access and refresh tokens.");
+  }
+
+  const accessCookieOptions = cookieOption(ms(JWT_ACCESSTOKEN_EXPIRY));
+  const refreshCookieOptions = cookieOption(ms(JWT_REFRESHTOKEN_EXPIRY));
+
+  res
+    .status(200)
+    .cookie(accessTokenName, accessToken, accessCookieOptions)
+    .cookie(refreshTokenName, refreshToken, refreshCookieOptions)
+    .json(new ApiResponse(200, "access token updated", {}));
+});
+
 export {
   registerUser,
   afterSend,
@@ -601,4 +647,5 @@ export {
   handleContactResetSendOtp,
   handleContactResetVerifyOtp,
   handleNewContactSet,
+  handleUpdateAccessToken
 };

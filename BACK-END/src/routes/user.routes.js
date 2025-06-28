@@ -14,6 +14,7 @@ import {
   handleContactResetSendOtp,
   handleContactResetVerifyOtp,
   handleNewContactSet,
+  handleUpdateAccessToken,
 } from "../controllers/adminUser.controller.js";
 import sendOtp from "../middlewares/sendOtp.middleware.js";
 import verifyOtp from "../middlewares/verifyOtp.js";
@@ -76,4 +77,6 @@ router
   .route("/contact/reset")
   .patch(verifyJwtUser, resetJwt("resetContactVerify"), handleNewContactSet);
 
+  // update access token
+  router.route("/update/auth-tokens").patch(verifyJwtUser , handleUpdateAccessToken)
 export default router;
