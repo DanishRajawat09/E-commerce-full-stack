@@ -7,7 +7,7 @@ const createProfile = asyncHandler(async (req, res) => {
   const { fullName } = req.body;
   const user = req.user;
   if (!fullName) {
-    throw new ApiError(400, "fullname is required");
+    throw new ApiError(400, "Full name is required.");
   }
   if (!user) {
     throw new ApiError(400, "User not found invalid token");
@@ -18,10 +18,10 @@ const createProfile = asyncHandler(async (req, res) => {
   if (!filePath) {
     throw new ApiError(400, "avatar not found upload again");
   }
-  const result = await uploadImage(filePath);
+  const avatarUpload = await uploadImage(filePath);
 
-  if (!result) {
-    throw new ApiError(400, "avatar not upload properly");
+  if (!avatarUpload) {
+    throw new ApiError(400, "Failed to upload avatar. Please try again.");
   }
 
   const profile = await Profile.create({
@@ -36,7 +36,7 @@ const createProfile = asyncHandler(async (req, res) => {
   if (!profile) {
     throw new ApiError(
       500,
-      "we could not create profile. something went wrong try again"
+      "We could not create the profile. Please try again."
     );
   }
 
@@ -50,16 +50,16 @@ const updateFullName = asyncHandler(async (req, res) => {
   const user = req.user;
 
   if (!fullName) {
-    throw new ApiError(400, "fullname is required");
+    throw new ApiError(400, "full name is required");
   }
   if (!user) {
-    throw new ApiError(400, "Unauthorized user, login again");
+    throw new ApiError(400, "Unauthorized user. Please log in again.");
   }
 
   const exsistingProfile = await Profile.findOne({ user: user._id });
 
   if (!exsistingProfile) {
-    throw new ApiError(400, "Profile already exsist. you can update only");
+    throw new ApiError(400, "Profile does not exist. Please create one first.");
   }
 
   const profile = await Profile.findOneAndUpdate(
@@ -69,7 +69,7 @@ const updateFullName = asyncHandler(async (req, res) => {
   );
 
   if (!profile) {
-    throw new ApiError(400, "Profile not found create an profile first");
+    throw new ApiError(400, "Profile not found. Please create a profile first.");
   }
 
   res
@@ -82,10 +82,10 @@ const updateAvatar = asyncHandler(async (req, res) => {
   const user = req.user;
 
   if (!filePath) {
-    throw new ApiError(400, "avatar is required");
+    throw new ApiError(400, "Avatar file is required.");
   }
   if (!user) {
-    throw new ApiError(400, "User is not properly login");
+    throw new ApiError(400, "Unauthorized request. Please log in again.");
   }
 
   const profile = await Profile.findOne({ user: user._id });
@@ -97,7 +97,7 @@ const updateAvatar = asyncHandler(async (req, res) => {
   const deletefile = await deleteFile(profile.toObject().avatar.publicId);
 
   if (!deletefile) {
-    throw new ApiError(500, "deleting previuos avatar causing error");
+    throw new ApiError(500, "Error occurred while deleting the previous avatar.");
   }
 
   const avatar = await uploadImage(filePath);
@@ -108,7 +108,7 @@ const updateAvatar = asyncHandler(async (req, res) => {
 
   profile.avatar.url = avatar.url;
   profile.avatar.publicId = avatar.public_id;
-  profile.save({ validateBeforeSave: false });
+  await profile.save({ validateBeforeSave: false });
 
   res
     .status(200)

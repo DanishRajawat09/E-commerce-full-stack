@@ -9,8 +9,8 @@ import {
   handleNewContactSet,
   handleNewEmailSet,
   handleNewPasswordSet,
-  hanldeContactResetVerifyOtp,
-  hanldeEmailResetVerifyOtp,
+  handleContactResetVerifyOtp,
+  handleEmailResetVerifyOtp,
   loginUser,
   logoutUser,
   registerUser,
@@ -49,7 +49,7 @@ router
   .post(resetJwt("resetAdminPassword"), verifyOtp, handleForgotOtpVerified);
 router
   .route("/new-password")
-  .post(resetJwt("resetAdminPasswordVerify"), handleNewPasswordSet);
+  .patch(resetJwt("resetAdminPasswordVerify"), handleNewPasswordSet);
 
 // reset email
 
@@ -68,12 +68,12 @@ router
     isAdmin,
     resetJwt("resetAdminEmail"),
     verifyOtp,
-    hanldeEmailResetVerifyOtp
+   handleEmailResetVerifyOtp
   );
 
 router
   .route("/new-email")
-  .post(
+  .patch(
     verifyJwtAdmin,
     isAdmin,
     resetJwt("resetAdminEmailVerify"),
@@ -98,7 +98,7 @@ router
     isAdmin,
     resetJwt("resetAdminContact"),
     verifyOtp,
-    hanldeContactResetVerifyOtp
+    handleContactResetVerifyOtp
   );
 
 router

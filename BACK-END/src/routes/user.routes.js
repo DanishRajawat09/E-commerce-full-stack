@@ -9,10 +9,10 @@ import {
   handleForgotOtpVerified,
   handleNewPasswordSet,
   handleEmailResetSendOtp,
-  hanldeEmailResetVerifyOtp,
+  handleEmailResetVerifyOtp,
   handleNewEmailSet,
   handleContactResetSendOtp,
-  hanldeContactResetVerifyOtp,
+  handleContactResetVerifyOtp,
   handleNewContactSet,
 } from "../controllers/adminUser.controller.js";
 import sendOtp from "../middlewares/sendOtp.middleware.js";
@@ -54,7 +54,7 @@ router
     verifyJwtUser,
     resetJwt("resetEmail"),
     verifyOtp,
-    hanldeEmailResetVerifyOtp
+    handleEmailResetVerifyOtp
   );
 router
   .route("/email/reset")
@@ -70,7 +70,7 @@ router
     verifyJwtUser,
     resetJwt("resetContact"),
     verifyOtp,
-    hanldeContactResetVerifyOtp
+    handleContactResetVerifyOtp
   );
 router
   .route("/contact/reset")

@@ -4,7 +4,7 @@ import asyncHandler from "../utils/asyncHandler.js";
 import bcrypt from "bcrypt";
 const verifyOtp = asyncHandler(async (req, res, next) => {
   const { otp } = req.body;
-  const id = req.user.id;
+  const id = req.user._id;
 
   if (!otp) {
     throw new ApiError(400, "OTP is required.");
@@ -16,13 +16,14 @@ const verifyOtp = asyncHandler(async (req, res, next) => {
     throw new ApiError(404, "User not found.");
   }
   if (!user.otpExpiry || new Date(user.otpExpiry).getTime() < Date.now()) {
+    console.log("OTP expired at:", user.otpExpiry);
     throw new ApiError(401, "OTP has expired. Please request a new one.");
   }
 
-  const isOtp = bcrypt.compare(otp, user.otp);
+  const isOtpValid = await bcrypt.compare(otp , user.otp);
 
-  if (!isOtp) {
-    throw new ApiError(401, "Invalid OTP. Please check and try again.");
+  if (!isOtpValid) {
+    throw new ApiError(401, "The OTP you entered is incorrect.");
   }
 
   req.user = user;

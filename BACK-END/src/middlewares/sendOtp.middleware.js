@@ -2,80 +2,60 @@ import { User } from "../models/user.models.js";
 import ApiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { generateOtp } from "../utils/basicUtils.js";
-
+import bcrypt from "bcrypt"
 const sendOtp = (purpose) =>
   asyncHandler(async (req, res, next) => {
     const userData = {};
-    let purposeOtp = "";
+    const purposeOtp = purpose;
 
-    if (
-      purpose === "register" ||
-      purpose === "resetPassword" ||
-      purpose === "adminRegister" ||
-      purpose === "resetAdminPassword"
-    ) {
+    const emailResetPurposes = ["resetEmail", "resetAdminEmail"];
+    const contactResetPurposes = ["resetContact", "resetAdminContact"];
+    const publicPurposes = [
+      "register",
+      "adminRegister",
+      "resetPassword",
+      "resetAdminPassword",
+    ];
+
+    if (publicPurposes.includes(purpose)) {
       userData.email = req.body.email;
       userData.contact = req.body.contact;
     }
 
-    if (purpose === "resetAdminPassword") {
-      purposeOtp = purpose;
-    }
-    if (purpose === "adminRegister") {
-      purposeOtp = purpose;
-    }
-
-    if (purpose === "register") {
-      purposeOtp = purpose;
-    }
-
-    if (purpose === "resetPassword") {
-      purposeOtp = purpose;
-    }
-
-    if (purpose === "resetEmail" || purpose === "resetAdminEmail") {
+    if (emailResetPurposes.includes(purpose)) {
       if (!req.user?.contact) {
-        throw new ApiError(
-          400,
-          "we cant find contact for reseting email contact is required"
-        );
-      } else {
-        userData.contact = req.user.contact;
-        purposeOtp = purpose;
+        throw new ApiError(400, "Contact is required to reset email.");
       }
+      userData.contact = req.user.contact;
     }
-    if (purpose === "resetContact" || purpose === "resetAdminContact") {
-      if (!req.user.email) {
-        throw new ApiError(
-          400,
-          "we cant find contact for reseting contact email is required"
-        );
-      } else {
-        purposeOtp = purpose;
-        userData.email = req.user.email;
+
+    if (contactResetPurposes.includes(purpose)) {
+      if (!req.user?.email) {
+        throw new ApiError(400, "Email is required to reset contact.");
+      }
+      userData.email = req.user.email;
+    }
+
+    // Validations
+    if (["register", "resetPassword"].includes(purpose)) {
+      if (!userData.email && !userData.contact) {
+        throw new ApiError(400, "Please provide email or contact number.");
       }
     }
 
-    if (purpose === "resetPassword" || purpose === "register") {
-      if (!userData.contact && !userData.email)
-        throw new ApiError(
-          400,
-          "Please provide either a contact number or email address."
-        );
+    if (emailResetPurposes.includes(purpose) && !userData.contact) {
+      throw new ApiError(400, "Contact is required to reset email.");
     }
 
-    if (purpose === "resetEmail" || purpose === "resetAdminEmail") {
-      if (!userData.contact)
-        throw new ApiError(400, "Please provide email address.");
-    }
-    if (purpose === "resetContact" || purpose === "resetAdminContact") {
-      if (!userData.email)
-        throw new ApiError(400, "Please provide email address.");
+    if (contactResetPurposes.includes(purpose) && !userData.email) {
+      throw new ApiError(400, "Email is required to reset contact.");
     }
 
     const { otp, expiry } = generateOtp();
-
     const isRegisterPurpose = ["register", "adminRegister"].includes(purpose);
+
+const hashedOtp = await bcrypt.hash(otp , 10)
+console.log(hashedOtp);
 
     const user = await User.findOneAndUpdate(
       {
@@ -84,25 +64,19 @@ const sendOtp = (purpose) =>
           { isVerified: !isRegisterPurpose },
         ],
       },
-      {
-        $set: { otp, otpExpiry: expiry },
-      },
+      { $set: { otp : hashedOtp, otpExpiry: expiry } },
       { new: true }
     );
 
-    if (!user)
+    if (!user) {
       throw new ApiError(404, "No user found with the provided information.");
-
-    if (userData.email) {
-      console.log("otp send on email", otp);
     }
-    if (userData.contact) {
-      console.log("otp send on contact", otp);
-    }
-    const data = user.toObject();
-    const updateUser = { ...data, purpose: purposeOtp };
 
-    req.user = updateUser;
+    if (userData.email) console.log("OTP sent to email:", otp);
+    if (userData.contact) console.log("OTP sent to contact:", otp);
+
+
+    req.user = { ...user.toObject(), purpose: purposeOtp };
     next();
   });
 

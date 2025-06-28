@@ -16,6 +16,9 @@ import {
 } from "../utils/basicUtils.js";
 import jwt from "jsonwebtoken";
 import ms from "ms";
+import { generateResetToken } from "../utils/resetToken.utils.js";
+
+import cookieOption from "../utils/cookieOption.utils.js";
 
 const generateAccessRefreshToken = async (id) => {
   const user = await User.findById(id);
@@ -47,81 +50,75 @@ const generateAccessRefreshToken = async (id) => {
   return { accessToken, refreshToken, accessTokenName, refreshTokenName };
 };
 const registerUser = asyncHandler(async (req, res) => {
-  const { email, contact, password, role } = req.body;
+  let { email, contact, password, role } = req.body;
 
-  if ([email, contact, password].some((val) => val.trim() === "")) {
+  // Normalize input
+  email = email?.trim();
+  contact = contact?.trim();
+  password = password?.trim();
+  role = role?.trim() || "user";
+
+  // Basic validations
+  if (!email && !contact) {
+    throw new ApiError(400, "Email or contact number is required.");
+  }
+
+  if (!password || password.length < 6) {
     throw new ApiError(
       400,
-      "Email, contact number, and password are required."
+      "Password must be a string and at least 6 characters long."
     );
   }
 
-  if (!password || typeof password !== "string" || password.trim().length < 6) {
-    throw new ApiError(
-      400,
-      "Password is required and must be at least 6 characters long."
-    );
-  }
-
-  const exsistingUser = await User.findOne({
-    $and: [
-      { $or: [{ email: email }, { contact: contact }] },
-      { isVerified: true },
-    ],
+  // Check for verified existing user
+  const existingUser = await User.findOne({
+    $and: [{ $or: [{ email }, { contact }] }, { isVerified: true }],
   });
 
-  if (exsistingUser && exsistingUser.role === "admin") {
+  if (existingUser) {
     throw new ApiError(
       400,
-      "An account with this email or contact number already exists for admin you have to create an new account with new email and contact number"
-    );
-  }
-  if (exsistingUser && exsistingUser.role === "user") {
-    throw new ApiError(
-      400,
-      "An account with this email or contact number already exists for user you have to create an new account with new email and contact number"
+      `An account with this email or contact already exists for ${existingUser.role}. Please use different credentials.`
     );
   }
 
-  const unVerifiedUser = await User.findOne({
-    $and: [
-      { $or: [{ email: email }, { contact: contact }] },
-      { isVerified: false },
-      { role: role || "user" },
-    ],
+  // Check if an unverified account exists with same credentials
+  const unverifiedUser = await User.findOne({
+    $and: [{ $or: [{ email }, { contact }] }, { isVerified: false }, { role }],
   });
 
-  if (unVerifiedUser) {
-    const resetTokenName = await resetTokenNameFunc(unVerifiedUser.role);
+  if (unverifiedUser) {
+    const resetTokenName = await resetTokenNameFunc(unverifiedUser.role);
     return res
       .status(200)
-      ?.clearCookie(resetTokenName, {
+      .clearCookie(resetTokenName, {
         httpOnly: true,
         secure: NODE_ENV === "production",
       })
       .json(
         new ApiResponse(
           200,
-          "Account already exists but not verified. Please verify to continue.",
+          "Account already exists but is not verified. Please complete verification.",
           {
-            email: unVerifiedUser.email,
-            contact: unVerifiedUser.contact,
+            email: unverifiedUser.email,
+            contact: unverifiedUser.contact,
           }
         )
       );
   }
 
-  const user = await User.create({
+  // Create new user
+  const newUser = await User.create({
     email,
-    password,
     contact,
-    role: role || "user",
+    password,
+    role,
   });
 
-  if (!user) {
+  if (!newUser) {
     throw new ApiError(
       500,
-      "Failed to create account due to a server error. Please try again."
+      "Something went wrong while creating the account. Please try again later."
     );
   }
 
@@ -130,15 +127,16 @@ const registerUser = asyncHandler(async (req, res) => {
       200,
       "Account created successfully. Please verify your account to continue.",
       {
-        email: user.email,
-        contact: user.contact,
-        role: user.role,
+        email: newUser.email,
+        contact: newUser.contact,
+        role: newUser.role,
       }
     )
   );
 });
+
 const afterSend = asyncHandler(async (req, res) => {
-  const { _id, email, purpose, role } = req?.user;
+  const { _id, email, purpose, role } = req.user || {};
 
   if (!_id || !email) {
     throw new ApiError(
@@ -146,37 +144,21 @@ const afterSend = asyncHandler(async (req, res) => {
       "Unable to retrieve user information for OTP process. Please try again."
     );
   }
-  const resetToken = jwt.sign(
-    { id: _id, email: email, purpose, role },
-    JWT_RESET_SECRET,
-    {
-      expiresIn: JWT_RESET_EXPIRY,
-    }
-  );
 
-  if (!resetToken) {
-    throw new ApiError(
-      500,
-      "An error occurred while generating the reset token. Please try again later."
-    );
-  }
+  const resetToken = await generateResetToken({ _id, email, purpose, role });
 
-  const option = {
-    httpOnly: true,
-    secure: NODE_ENV === "production",
-    maxAge: ms(JWT_RESET_EXPIRY),
-  };
   const resetTokenName = await resetTokenNameFunc(role);
+  const cookieOptions = cookieOption(ms(JWT_RESET_EXPIRY));
   res
     .status(200)
-    .cookie(resetTokenName, resetToken, option)
+    .cookie(resetTokenName, resetToken, cookieOptions)
     .json(new ApiResponse(200, "OTP sent successfully", {}));
 });
 
 const afterVerify = asyncHandler(async (req, res) => {
-  const user = req.user;
+  const user = req.user || {};
 
-  if (!user) {
+  if (!user._id) {
     throw new ApiError(401, "User not found during OTP verification.");
   }
 
@@ -197,24 +179,14 @@ const afterVerify = asyncHandler(async (req, res) => {
   const resetTokenName = await resetTokenNameFunc(user.role);
   const userData = await responseFormat(user);
 
-  const option = {
-    httpOnly: true,
-    secure: NODE_ENV === "production",
-  };
+  const resetCookieOptions = cookieOption(ms(JWT_RESET_EXPIRY));
+  const accessCookieOptions = cookieOption(ms(JWT_ACCESSTOKEN_EXPIRY));
+  const refreshCookieOptions = cookieOption(ms(JWT_REFRESHTOKEN_EXPIRY));
   res
     .status(200)
-    .cookie(accessTokenName, accessToken, {
-      ...option,
-      maxAge: ms(JWT_ACCESSTOKEN_EXPIRY),
-    })
-    .cookie(refreshTokenName, refreshToken, {
-      ...option,
-      maxAge: ms(JWT_REFRESHTOKEN_EXPIRY),
-    })
-    .clearCookie(resetTokenName, {
-      httpOnly: true,
-      secure: NODE_ENV === "production",
-    })
+    .cookie(accessTokenName, accessToken, accessCookieOptions)
+    .cookie(refreshTokenName, refreshToken, refreshCookieOptions)
+    .clearCookie(resetTokenName, resetCookieOptions)
     .json(
       new ApiResponse(
         200,
@@ -248,7 +220,7 @@ const loginUser = asyncHandler(async (req, res) => {
   if (!user) {
     throw new ApiError(
       400,
-      "No account found with the provided credentials. Please register first."
+      "No account found for the provided email or contact number."
     );
   }
 
@@ -259,12 +231,12 @@ const loginUser = asyncHandler(async (req, res) => {
     );
   }
 
-  const isPasswordCorrect = await user.isPasswordCorrect(password);
+  const isPasswordValid = await user.isPasswordCorrect(password);
 
-  if (!isPasswordCorrect) {
+  if (!isPasswordValid) {
     throw new ApiError(
       400,
-      "The password you entered is incorrect. Please try again."
+      "Incorrect password. Please try again or reset it if you've forgotten."
     );
   }
 
@@ -272,21 +244,13 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const { accessToken, refreshToken, accessTokenName, refreshTokenName } =
     await generateAccessRefreshToken(user._id);
-  const option = {
-    httpOnly: true,
-    secure: NODE_ENV === "production",
-  };
+  const accessCookieOptions = cookieOption(ms(JWT_ACCESSTOKEN_EXPIRY));
+  const refreshCookieOptions = cookieOption(ms(JWT_REFRESHTOKEN_EXPIRY));
 
   res
     .status(200)
-    .cookie(accessTokenName, accessToken, {
-      ...option,
-      maxAge: ms(JWT_ACCESSTOKEN_EXPIRY),
-    })
-    .cookie(refreshTokenName, refreshToken, {
-      ...option,
-      maxAge: ms(JWT_REFRESHTOKEN_EXPIRY),
-    })
+    .cookie(accessTokenName, accessToken, accessCookieOptions)
+    .cookie(refreshTokenName, refreshToken, refreshCookieOptions)
     .json(
       new ApiResponse(200, "Welcome back! You’re now logged in.", userData)
     );
@@ -296,7 +260,7 @@ const logoutUser = asyncHandler(async (req, res) => {
   const { _id, role } = req.user;
 
   if (!_id) {
-    throw new ApiError(400, "User ID is missing in the request.");
+    throw new ApiError(400, "Missing user ID in request. Cannot logout.");
   }
 
   const user = await User.findByIdAndUpdate(
@@ -306,19 +270,17 @@ const logoutUser = asyncHandler(async (req, res) => {
   ).select("-password -refreshToken -otp -otpExpiry");
 
   if (!user) {
-    throw new ApiError(400, "User not found or unable to clear access token.");
+    throw new ApiError(400, "User not found or logout failed.");
   }
 
-  const option = {
-    httpOnly: true,
-    secure: NODE_ENV === "production",
-  };
   const { verifyAccessTokenName, verifyRefreshTokenName } =
     await verifyTokenName(role);
+  const accessCookieOptions = cookieOption(ms(JWT_ACCESSTOKEN_EXPIRY));
+  const refreshCookieOptions = cookieOption(ms(JWT_REFRESHTOKEN_EXPIRY));
   res
     .status(200)
-    .clearCookie(verifyAccessTokenName, option)
-    .clearCookie(verifyRefreshTokenName, option)
+    .clearCookie(verifyAccessTokenName, accessCookieOptions)
+    .clearCookie(verifyRefreshTokenName, refreshCookieOptions)
     .json(
       new ApiResponse(200, "Logout successful. You have been signed out.", {})
     );
@@ -328,28 +290,25 @@ const handleForgotOtpSent = asyncHandler(async (req, res) => {
   const { _id, email, purpose, role } = req?.user?.toObject?.() || req.user;
 
   if (!_id || !email) {
-    throw new ApiError(500, "Failed to retrieve user ID or email.");
+    throw new ApiError(
+      500,
+      "Missing user ID or email in request. Cannot send OTP."
+    );
+  }
+  if (!purpose) {
+    throw new ApiError(
+      400,
+      "OTP purpose is missing. Cannot generate reset token."
+    );
   }
 
-  let resetToken;
-  try {
-    resetToken = jwt.sign({ id: _id, email, purpose, role }, JWT_RESET_SECRET, {
-      expiresIn: JWT_RESET_EXPIRY,
-    });
-  } catch (err) {
-    throw new ApiError(500, "Unable to generate reset token.");
-  }
+  const resetToken = await generateResetToken({ _id, email, purpose, role });
 
   const resetTokenName = await resetTokenNameFunc(role);
-
+  const resetCookieOptions = cookieOption(ms(JWT_RESET_EXPIRY));
   res
     .status(200)
-    .cookie(resetTokenName, resetToken, {
-      httpOnly: true,
-      secure: NODE_ENV === "production",
-      sameSite: "Strict",
-      maxAge: ms(JWT_RESET_EXPIRY),
-    })
+    .cookie(resetTokenName, resetToken, resetCookieOptions)
     .json(
       new ApiResponse(
         200,
@@ -363,7 +322,10 @@ const handleForgotOtpVerified = asyncHandler(async (req, res) => {
   const user = req.user;
 
   if (!user) {
-    throw new ApiError(401, "Unauthorized request. User not found.");
+    throw new ApiError(
+      401,
+      "User not found. Please ensure OTP verification was completed properly."
+    );
   }
   const role = user.role;
 
@@ -374,25 +336,13 @@ const handleForgotOtpVerified = asyncHandler(async (req, res) => {
   user.otpExpiry = null;
   await user.save({ validateBeforeSave: false });
 
-  let token;
-  try {
-    token = jwt.sign(
-      { id: user._id, purpose, role: user.role },
-      JWT_RESET_SECRET,
-      { expiresIn: JWT_RESET_EXPIRY }
-    );
-  } catch (err) {
-    throw new ApiError(500, "JWT generation failed.");
-  }
-  const option = {
-    httpOnly: true,
-    secure: NODE_ENV === "production",
-    maxAge: ms(JWT_RESET_EXPIRY),
-  };
+  const resetToken = await generateResetToken({...user.toObject(), purpose });
+
   const resetTokenName = await resetTokenNameFunc(user.toObject().role);
+  const resetCookieOptions = cookieOption(ms(JWT_RESET_EXPIRY));
   res
     .status(200)
-    .cookie(resetTokenName, token, option)
+    .cookie(resetTokenName, resetToken, resetCookieOptions)
     .json(new ApiResponse(200, "OTP verified successfully. Reset token set."));
 });
 
@@ -420,23 +370,18 @@ const handleNewPasswordSet = asyncHandler(async (req, res) => {
   if (!user) {
     throw new ApiError(
       404,
-      "User not found or invalid authentication provider."
+      "Unable to update password. User not found or using external login method."
     );
   }
 
   user.password = newPassword;
   await user.save({ validateBeforeSave: false });
 
-  const option = {
-    httpOnly: true,
-    secure: NODE_ENV === "production",
-  };
-
   const resetTokenName = await resetTokenNameFunc(role);
-
+  const resetCookieOptions = cookieOption(ms(JWT_RESET_EXPIRY), "strict");
   res
     .status(200)
-    .clearCookie(resetTokenName, option)
+    .clearCookie(resetTokenName, resetCookieOptions)
     .json(new ApiResponse(200, "Password has been successfully updated.", {}));
 });
 
@@ -446,31 +391,17 @@ const handleEmailResetSendOtp = asyncHandler(async (req, res) => {
   if (!_id || !email) {
     throw new ApiError(
       500,
-      "Failed to retrieve user ID or email after sending OTP."
+      "Failed to retrieve user ID or email to generate reset token."
     );
   }
-  const resetToken = jwt.sign(
-    { id: _id, purpose: purpose, role: role },
-    JWT_RESET_SECRET,
-    {
-      expiresIn: JWT_RESET_EXPIRY,
-    }
-  );
+  const resetToken = await generateResetToken({ _id, email, purpose, role });
 
-  if (!resetToken) {
-    throw new ApiError(500, "Unable to generate password reset token.");
-  }
-
-  const option = {
-    httpOnly: true,
-    secure: NODE_ENV === "production",
-    maxAge: ms(JWT_RESET_EXPIRY),
-  };
+  const resetCookieOptions = cookieOption(ms(JWT_RESET_EXPIRY));
 
   const resetTokenName = await resetTokenNameFunc(role);
   res
     .status(200)
-    .cookie(resetTokenName, resetToken, option)
+    .cookie(resetTokenName, resetToken, resetCookieOptions)
     .json(
       new ApiResponse(
         200,
@@ -479,11 +410,11 @@ const handleEmailResetSendOtp = asyncHandler(async (req, res) => {
       )
     );
 });
-const hanldeEmailResetVerifyOtp = asyncHandler(async (req, res) => {
+const handleEmailResetVerifyOtp = asyncHandler(async (req, res) => {
   const user = req.user;
 
   if (!user) {
-    throw new ApiError(401, "Unauthorized request. User not found.");
+    throw new ApiError(401, "User not found during email reset verification.");
   }
 
   user.otp = null;
@@ -491,26 +422,14 @@ const hanldeEmailResetVerifyOtp = asyncHandler(async (req, res) => {
   await user.save({ validateBeforeSave: false });
   const purpose =
     user.role === "user" ? "resetEmailVerify" : "resetAdminEmailVerify";
-  const token = await jwt.sign(
-    { id: user._id, email: user.email, purpose, role: user.role },
-    JWT_RESET_SECRET,
-    {
-      expiresIn: JWT_RESET_EXPIRY,
-    }
-  );
 
-  if (!token) {
-    throw new ApiError(500, "Failed to generate password reset token.");
-  }
-  const option = {
-    httpOnly: true,
-    secure: NODE_ENV === "production",
-    maxAge: ms(JWT_RESET_EXPIRY),
-  };
+  const resetToken = await generateResetToken({ ...user.toObject(), purpose });
+
   const resetTokenName = await resetTokenNameFunc(user.role);
+  const resetCookieOptions = cookieOption(ms(JWT_RESET_EXPIRY));
   res
     .status(200)
-    .cookie(resetTokenName, token, option)
+    .cookie(resetTokenName, resetToken, resetCookieOptions)
     .json(new ApiResponse(200, "OTP verified successfully. Reset token set."));
 });
 
@@ -518,37 +437,50 @@ const handleNewEmailSet = asyncHandler(async (req, res) => {
   const { newEmail } = req.body;
 
   if (!newEmail) {
-    throw new ApiError(400, "Enter your new Email");
+    throw new ApiError(400, "Please enter a new email address.");
   }
 
   const user = req.user;
 
   if (!user) {
-    throw new ApiError(400, "Unauthorized Request please try again");
+    throw new ApiError(401, "Unauthorized request. Please try again.");
   }
 
   if (user.email === newEmail) {
-    throw new ApiError(400, "Enter new Email. ");
+    throw new ApiError(
+      400,
+      "New email must be different from the current one."
+    );
+  }
+    const existingEmail = await User.findOne({ email : newEmail });
+
+  if (existingEmail) {
+    throw new ApiError(
+      400,
+      `email already exist for ${existingEmail.role} try again`
+    );
   }
 
-  const userdata = await User.findByIdAndUpdate(
+
+  const updatedUser = await User.findByIdAndUpdate(
     { _id: user._id, role: user.role },
     { email: newEmail },
     { new: true }
   );
-  if (!userdata) {
-    throw new ApiError(500, "User not found. or Unauthorized Request");
+
+  if (!updatedUser) {
+    throw new ApiError(404, "User not found or unauthorized request.");
   }
 
-  const option = {
-    httpOnly: true,
-    secure: NODE_ENV === "production",
-  };
   const resetTokenName = await resetTokenNameFunc(user.role);
+  const resetCookieOptions = cookieOption(ms(JWT_RESET_EXPIRY), "strict");
+
   res
     .status(200)
-    .clearCookie(resetTokenName, option)
-    .json(new ApiResponse(200, "Email Updated SuccessFull", userdata.email));
+    .clearCookie(resetTokenName, resetCookieOptions)
+    .json(
+      new ApiResponse(200, "Email updated successfully.", updatedUser.email)
+    );
 });
 
 const handleContactResetSendOtp = asyncHandler(async (req, res) => {
@@ -557,40 +489,28 @@ const handleContactResetSendOtp = asyncHandler(async (req, res) => {
   if (!_id || !email) {
     throw new ApiError(
       500,
-      "Failed to retrieve user ID or email after sending OTP."
+      "Unable to retrieve user ID or email for contact reset."
     );
   }
-  const resetToken = jwt.sign(
-    { id: _id, email: email, purpose, role },
-    JWT_RESET_SECRET,
-    {
-      expiresIn: JWT_RESET_EXPIRY,
-    }
-  );
 
-  if (!resetToken) {
-    throw new ApiError(500, "Unable to generate password reset token.");
-  }
+  const resetToken = await generateResetToken({ _id, email, purpose, role });
 
-  const option = {
-    httpOnly: true,
-    secure: NODE_ENV === "production",
-    maxAge: ms(JWT_RESET_EXPIRY),
-  };
   const resetTokenName = await resetTokenNameFunc(role);
+  const resetCookieOptions = cookieOption(ms(JWT_RESET_EXPIRY));
+
   res
     .status(200)
-    .cookie(resetTokenName, resetToken, option)
+    .cookie(resetTokenName, resetToken, resetCookieOptions)
     .json(
       new ApiResponse(
         200,
-        "OTP sent successfully. Please check your email or SMS.",
+        "OTP sent successfully. Please check your registered contact method.",
         {}
       )
     );
 });
 
-const hanldeContactResetVerifyOtp = asyncHandler(async (req, res) => {
+const handleContactResetVerifyOtp = asyncHandler(async (req, res) => {
   const user = req.user;
 
   if (!user) {
@@ -604,26 +524,13 @@ const hanldeContactResetVerifyOtp = asyncHandler(async (req, res) => {
   const purpose =
     user.role === "user" ? "resetContactVerify" : "resetAdminContactVerify";
 
-  const token = await jwt.sign(
-    { id: user._id, purpose, role: user.role },
-    JWT_RESET_SECRET,
-    {
-      expiresIn: JWT_RESET_EXPIRY,
-    }
-  );
+  const resetToken = await generateResetToken({ ...user.toObject(), purpose });
 
-  if (!token) {
-    throw new ApiError(500, "Failed to generate password reset token.");
-  }
-  const option = {
-    httpOnly: true,
-    secure: NODE_ENV === "production",
-    maxAge: ms(JWT_RESET_EXPIRY),
-  };
+  const resetCookieOptions = cookieOption(ms(JWT_RESET_EXPIRY));
   const resetTokenName = await resetTokenNameFunc(user.role);
   res
     .status(200)
-    .cookie(resetTokenName, token, option)
+    .cookie(resetTokenName, resetToken, resetCookieOptions)
     .json(new ApiResponse(200, "OTP verified successfully. Reset token set."));
 });
 
@@ -631,37 +538,52 @@ const handleNewContactSet = asyncHandler(async (req, res) => {
   const { newContact } = req.body;
 
   if (!newContact) {
-    throw new ApiError(400, "Enter your new Contact");
+    throw new ApiError(400, "Please enter your new contact number.");
   }
 
   const user = req.user;
 
   if (!user) {
-    throw new ApiError(400, "Unauthorized Request please try again");
+    throw new ApiError(401, "Unauthorized request. Please try again.");
   }
 
-  // if (user.email === newEmail) {
-  //   throw new ApiError(400, "Enter new Email. ");
-  // }
+  // Optional: Prevent setting the same contact again
+  if (user.contact === newContact) {
+    throw new ApiError(400, "This is already your current contact number.");
+  }
 
-  const userdata = await User.findByIdAndUpdate(
+  const exsistingContact = await User.findOne({ contact: newContact });
+
+  if (exsistingContact) {
+    throw new ApiError(
+      400,
+      "Contact already exist for " + exsistingContact.role + " try again"
+    );
+  }
+
+  const updatedUser = await User.findOneAndUpdate(
     { _id: user._id, role: user.role },
     { contact: newContact },
     { new: true }
   );
-  if (!userdata) {
-    throw new ApiError(500, "User not found. or Unauthorized Request");
+
+  if (!updatedUser) {
+    throw new ApiError(404, "User not found or unauthorized request.");
   }
 
-  const option = {
-    httpOnly: true,
-    secure: NODE_ENV === "production",
-  };
   const resetTokenName = await resetTokenNameFunc(user.role);
+  const resetCookieOptions = cookieOption(ms(JWT_RESET_EXPIRY), "strict");
+
   res
     .status(200)
-    .clearCookie(resetTokenName, option)
-    .json(new ApiResponse(200, "Email Updated SuccessFull", userdata.contact));
+    .clearCookie(resetTokenName, resetCookieOptions)
+    .json(
+      new ApiResponse(
+        200,
+        "Contact number updated successfully.",
+        updatedUser.contact
+      )
+    );
 });
 
 export {
@@ -674,9 +596,9 @@ export {
   handleForgotOtpVerified,
   handleNewPasswordSet,
   handleEmailResetSendOtp,
-  hanldeEmailResetVerifyOtp,
+  handleEmailResetVerifyOtp,
   handleNewEmailSet,
   handleContactResetSendOtp,
-  hanldeContactResetVerifyOtp,
+  handleContactResetVerifyOtp,
   handleNewContactSet,
 };
