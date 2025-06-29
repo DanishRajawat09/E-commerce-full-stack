@@ -1,4 +1,5 @@
 import { Address } from "../models/address.models.js";
+import { AdminProfile } from "../models/adminProfile.models.js";
 import ApiError from "../utils/apiError.js";
 import ApiResponse from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
@@ -31,7 +32,10 @@ const addAddress = asyncHandler(async (req, res) => {
   }).select("-createdAt -updatedAt -__v ");
 
   if (existingAddress) {
-    throw new ApiError(400, "This address already exists in your account.");
+    throw new ApiError(
+      400,
+      `This address already exists in ${user.role} account.`
+    );
   }
 
   const userAddress = await Address.create({
@@ -40,8 +44,23 @@ const addAddress = asyncHandler(async (req, res) => {
   });
 
   if (!userAddress) {
-    throw new ApiError(400, "error while adding address");
+    throw new ApiError(400, "Failed to add new address. Please try again.");
   }
+
+  if (user.role === "admin") {
+    const adminAddress = await AdminProfile.findOneAndUpdate(
+      { admin: user._id },
+      { shopAddress: userAddress._id },
+      { new: true }
+    );
+    if (!adminAddress) {
+      throw new ApiError(400, "Unable to update admin profile with address.");
+    }
+    return res
+      .status(200)
+      .json(ApiResponse(200, "Admin Address Added Successfully", adminAddress));
+  }
+
   res
     .status(200)
     .json(new ApiResponse(200, "Address added successfully", userAddress));
@@ -72,7 +91,7 @@ const address = asyncHandler(async (req, res) => {
 
 const updateAddress = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const userId = req.user._id;
+  const user = req.user;
   const { city, state, address, pinCode } = req.body;
 
   if (!id) {
@@ -90,7 +109,7 @@ const updateAddress = asyncHandler(async (req, res) => {
   }
 
   const updatedAddress = await Address.findByIdAndUpdate(
-    { _id: id, user: userId },
+    { _id: id, user: user._id },
     { $set: addressObj },
     { new: true }
   ).select("-createdAt -updatedAt -__v");
@@ -98,7 +117,9 @@ const updateAddress = asyncHandler(async (req, res) => {
   if (!updatedAddress) {
     throw new ApiError(500, "Failed to update address in the database.");
   }
-
+if (user.role === "admin") {
+  const updatedAddress = await AdminProfile()
+}
   res
     .status(200)
     .json(new ApiResponse(200, "Address updated successfully", updatedAddress));
