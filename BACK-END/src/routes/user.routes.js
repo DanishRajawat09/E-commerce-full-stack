@@ -81,4 +81,7 @@ router
 
   // update access token
   router.route("/update/auth-tokens").patch(verifyJwtUser , handleUpdateAccessToken)
+
+
+  // get all products
 export default router;
