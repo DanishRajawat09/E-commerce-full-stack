@@ -19,43 +19,27 @@ import ms from "ms";
 import { generateResetToken } from "../utils/resetToken.utils.js";
 
 import cookieOption from "../utils/cookieOption.utils.js";
+import generateAccessRefreshToken from "../utils/generateAccessRefresh.utils.js";
 
-const generateAccessRefreshToken = async (id) => {
-  try {
-    const user = await User.findById(id);
 
-    if (!user) {
-      throw new ApiError(401, "inValid user id");
-    }
+const getUserAdminInfo = asyncHandler(async (req ,res) => {
+  const userId = req.user._id
 
-    const accessToken = await user.generateAccessToken();
-    const refreshToken = await user.generateRefreshToken();
-    let accessTokenName = "";
-    let refreshTokenName = "";
-    if (user.role === "admin") {
-      accessTokenName = "adminAccessToken";
-      refreshTokenName = "adminRefreshToken";
-    }
-    if (user.role === "user") {
-      accessTokenName = "userAccessToken";
-      refreshTokenName = "userRefreshToken";
-    }
-
-    if (!accessToken || !refreshToken) {
-      throw new ApiError(500, "Failed to generate tokens");
-    }
-
-    user.refreshToken = refreshToken;
-    await user.save({ validateBeforeSave: false });
-
-    return { accessToken, refreshToken, accessTokenName, refreshTokenName };
-  } catch (error) {
-    throw new ApiError(
-      500,
-      "Failed to generate authentication tokens. Please try again."
-    );
+  if (!userId) {
+    throw new ApiError(400 , "Unauthorized Request, login first")
   }
-};
+
+  const user = await User.findById(userId).populate("address").populate("profile").select("-password -otp -otpExpiry -authProvider -role -isVerified -refreshToken -createdAt -updatedAt").lean()
+
+  if (!user) {
+    throw new ApiError(400 , "User not Found, please register and try again")
+  }
+
+  res.status(200).json(
+    new ApiResponse(200 , "get user info successfully" , user)
+  )
+})
+
 const registerUser = asyncHandler(async (req, res) => {
   let { email, contact, password, role } = req.body;
 
@@ -638,6 +622,7 @@ export {
   afterVerify,
   loginUser,
   logoutUser,
+  getUserAdminInfo,
   handleForgotOtpSent,
   handleForgotOtpVerified,
   handleNewPasswordSet,

@@ -61,6 +61,16 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: "user",
     },
+    address : {
+      type : mongoose.Schema.Types.ObjectId,
+      ref : "Address",
+      default : ""
+    },
+    profile : {
+type : mongoose.Schema.Types.ObjectId,
+ ref  :"Profile",
+ default  : ""
+    },
     isVerified: {
       type: Boolean,
       required: true,

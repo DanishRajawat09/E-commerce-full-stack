@@ -15,6 +15,7 @@ import {
   handleContactResetVerifyOtp,
   handleNewContactSet,
   handleUpdateAccessToken,
+  getUserAdminInfo,
 } from "../controllers/adminUser.controller.js";
 import sendOtp from "../middlewares/sendOtp.middleware.js";
 import verifyOtp from "../middlewares/verifyOtp.js";
@@ -25,6 +26,7 @@ const router = Router();
 
 // register and login routes
 // ✅ User Auth
+router.route("/").get(verifyJwtUser , getUserAdminInfo)
 router.route("/register").post(registerUser);
 router.route("/register/send-otp").post(sendOtp("register"), afterSend);
 router

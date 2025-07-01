@@ -3,6 +3,7 @@ import ApiError from "../utils/apiError.js";
 import { deleteFile, uploadImage } from "../utils/cloudinary.js";
 import { Profile } from "../models/profile.models.js";
 import ApiResponse from "../utils/apiResponse.js";
+import { User } from "../models/user.models.js";
 const createProfile = asyncHandler(async (req, res) => {
   const { fullName } = req.body;
   const user = req.user;
@@ -27,8 +28,8 @@ const createProfile = asyncHandler(async (req, res) => {
   const profile = await Profile.create({
     fullName,
     avatar: {
-      url: result.url,
-      publicId: result.public_id,
+      url:avatarUpload.url,
+      publicId: avatarUpload.public_id,
     },
     user: user._id,
   });
@@ -38,6 +39,14 @@ const createProfile = asyncHandler(async (req, res) => {
       500,
       "We could not create the profile. Please try again."
     );
+  }
+  const userData = await User.findByIdAndUpdate(
+    { _id: user._id },
+    { profile: profile._id },
+    { new: true }
+  );
+  if (!userData) {
+    throw new ApiError(400, "Unauthorized Request , please register first");
   }
 
   res
@@ -69,7 +78,10 @@ const updateFullName = asyncHandler(async (req, res) => {
   );
 
   if (!profile) {
-    throw new ApiError(400, "Profile not found. Please create a profile first.");
+    throw new ApiError(
+      400,
+      "Profile not found. Please create a profile first."
+    );
   }
 
   res
@@ -97,7 +109,10 @@ const updateAvatar = asyncHandler(async (req, res) => {
   const deletefile = await deleteFile(profile.toObject().avatar.publicId);
 
   if (!deletefile) {
-    throw new ApiError(500, "Error occurred while deleting the previous avatar.");
+    throw new ApiError(
+      500,
+      "Error occurred while deleting the previous avatar."
+    );
   }
 
   const avatar = await uploadImage(filePath);

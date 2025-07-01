@@ -1,5 +1,6 @@
 import { Address } from "../models/address.models.js";
 import { AdminProfile } from "../models/adminProfile.models.js";
+import { User } from "../models/user.models.js";
 import ApiError from "../utils/apiError.js";
 import ApiResponse from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
@@ -47,7 +48,15 @@ const addAddress = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Failed to add new address. Please try again.");
   }
 
-  if (user.role === "admin") {
+  const userData = await User.findByIdAndUpdate(
+    { _id: user._id },
+    { $set: { address: userAddress._id }},
+     {new : true } 
+  );
+  if (!userData) {
+    throw new ApiError(400, "Unauthorized Request, plz register First");
+  }
+  if (userData.role === "admin") {
     const adminAddress = await AdminProfile.findOneAndUpdate(
       { admin: user._id },
       { shopAddress: userAddress._id },
@@ -117,9 +126,9 @@ const updateAddress = asyncHandler(async (req, res) => {
   if (!updatedAddress) {
     throw new ApiError(500, "Failed to update address in the database.");
   }
-if (user.role === "admin") {
-  const updatedAddress = await AdminProfile()
-}
+  if (user.role === "admin") {
+    const updatedAddress = await AdminProfile();
+  }
   res
     .status(200)
     .json(new ApiResponse(200, "Address updated successfully", updatedAddress));
