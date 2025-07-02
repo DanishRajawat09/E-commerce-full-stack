@@ -2,6 +2,7 @@ import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/apiError.js";
 import { Product } from "../models/products.models.js";
 import ApiResponse from "../utils/apiResponse.js";
+import mongoose from "mongoose";
 const addProducts = asyncHandler(async (req, res) => {
   const {
     title,
@@ -112,23 +113,165 @@ const deleteProduct = asyncHandler(async (req, res) => {
     );
   }
 
-
-  const product = await Product.findOneAndDelete({_id : productId , admin : userId})
+  const product = await Product.findOneAndDelete({
+    _id: productId,
+    admin: userId,
+  });
 
   if (!product) {
-    throw new ApiError(400 , "Error while deleting Product")
+    throw new ApiError(400, "Error while deleting Product");
   }
 
-  res.status(200).json(
-    new ApiResponse(200 , "product is deleted" , product)
-  )
-
+  res.status(200).json(new ApiResponse(200, "product is deleted", product));
 });
 
-const updateProduct = asyncHandler(async (req ,res) => {
-    const {productId} = req.params
-    const userId = req.user._id
-    
-})
+const updateProduct = asyncHandler(async (req, res) => {
+  const { productId } = req.params;
+  const userId = req.user._id;
+  const updatedProduct = req.body;
 
-export { addProducts , deleteProduct};
+  if (!productId) {
+    throw new ApiError(400, "Request Denied Failed to get productId");
+  }
+
+  if (!userId) {
+    throw new ApiError(400, "Unauthorized Request , Login or Register First");
+  }
+
+  const product = await Product.findOne({ admin: userId, _id: productId });
+
+  if (!product) {
+    throw new ApiError(
+      400,
+      "User not Found, Register your Account and Try Again"
+    );
+  }
+  let count = 0;
+  if (updatedProduct.title) {
+    product.title = updatedProduct.title;
+    count++;
+  }
+  if (updatedProduct.description) {
+    product.description = updatedProduct.description;
+    count++;
+  }
+  if (updatedProduct.stock) {
+    product.stock = updatedProduct.stock;
+    count++;
+  }
+  if (updatedProduct.price) {
+    product.price = updatedProduct.price;
+    count++;
+  }
+  if (Array.isArray(updatedProduct.images)) {
+    product.images = updatedProduct.images;
+    count++;
+  }
+  if (product.category === "mobile") {
+    if (updatedProduct.ram) {
+      product.details.ram = updatedProduct.ram;
+      count++;
+    }
+    if (updatedProduct.colorOptions) {
+      product.details.colorOptions = updatedProduct.colorOptions;
+      count++;
+    }
+    if (updatedProduct.storage) {
+      product.details.storage = updatedProduct.storage;
+      count++;
+    }
+    if (updatedProduct.brand) {
+      product.details.brand = updatedProduct.brand;
+      count++;
+    }
+  }
+  if (product.category === "dress") {
+    if (updatedProduct.subCategory) {
+      product.details.subCategory = updatedProduct.subCategory;
+      count++;
+    }
+    if (Array.isArray(updatedProduct.sizes)) {
+      product.details.sizes = updatedProduct.sizes;
+      count++;
+    }
+    if (Array.isArray(updatedProduct.colors)) {
+      product.details.colors = updatedProduct.colors;
+      count++;
+    }
+    if (updatedProduct.fabric) {
+      product.details.fabric = updatedProduct.fabric;
+      count++;
+    }
+  }
+
+  if (count >= 1) {
+    await product.save({ validateBeforeSave: false });
+
+    res
+      .status(200)
+      .json(new ApiResponse(200, "Product updated succssfully", product));
+  } else {
+    res.status(200).json(new ApiResponse(200, "Nothing to update", product));
+  }
+});
+
+ const getAdminProducts = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const { query, page = 1, limit = 20 } = req.query;
+  const pageNum = Number(page);
+  const limitNum = Number(limit);
+  const aggregation = [];
+
+  if (!userId) {
+    throw new ApiError(400, "Unauthorized Request, Please Login First");
+  }
+  aggregation.push({
+     $match: { admin: mongoose.Types.ObjectId(userId) } 
+
+  });
+  if (query) {
+    aggregation.push(
+      {
+        $addFields: {
+          matches: {
+            $regexFindAll: {
+              input: "$title",
+              regex: query,
+              options: "i",
+            },
+          },
+        },
+      },
+
+      {
+        $match: {
+          "matches.0": { $exists: true },
+        },
+      }
+    );
+  }
+  
+
+  
+  
+
+  if (pageNum && limitNum) {
+    aggregation.push({ $skip: (pageNum - 1) * limitNum });
+
+    aggregation.push({ $limit: limitNum });
+  }
+
+  const products = await Product.aggregate(aggregation);
+
+  if (!products || products.length === 0) {
+    throw new ApiError(404, "No products found. Please add a product.");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, "Fetched all admin products successfully", products)
+    );
+});
+
+export { addProducts, deleteProduct, updateProduct, getAdminProducts };

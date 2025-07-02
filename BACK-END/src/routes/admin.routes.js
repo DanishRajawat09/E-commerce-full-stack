@@ -21,7 +21,7 @@ import resetJwt from "../middlewares/resetJwtverify.middleware.js";
 import { verifyJwtAdmin } from "../middlewares/verifyJwt.middleware.js";
 import isAdmin from "../middlewares/isAdmin.middleware.js";
 import verifyOtp from "../middlewares/verifyOtp.js";
-import { addProducts, deleteProduct } from "../controllers/products.controller.js";
+import { addProducts, deleteProduct, updateProduct } from "../controllers/products.controller.js";
 const router = Router();
 // regiter admin
 router.route("/register").post((req, res, next) => {
@@ -118,5 +118,5 @@ router
 router.route("/product/add").post(verifyJwtAdmin , isAdmin , addProducts) 
 router.route("/product/delete/:productId").delete(verifyJwtAdmin , isAdmin , deleteProduct) 
 router.route("/product/update/:productId").put(verifyJwtAdmin , isAdmin , updateProduct)
-
+router.route("/products").get(verifyJwtAdmin , isAdmin , getAdminProducts)
 export default router;
