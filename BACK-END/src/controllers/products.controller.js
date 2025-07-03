@@ -3,6 +3,8 @@ import ApiError from "../utils/apiError.js";
 import { Product } from "../models/products.models.js";
 import ApiResponse from "../utils/apiResponse.js";
 import mongoose from "mongoose";
+
+// products admin part
 const addProducts = asyncHandler(async (req, res) => {
   const {
     title,
@@ -215,7 +217,7 @@ const updateProduct = asyncHandler(async (req, res) => {
   }
 });
 
- const getAdminProducts = asyncHandler(async (req, res) => {
+const getAdminProducts = asyncHandler(async (req, res) => {
   const userId = req.user._id;
   const { query, page = 1, limit = 20 } = req.query;
   const pageNum = Number(page);
@@ -226,8 +228,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Unauthorized Request, Please Login First");
   }
   aggregation.push({
-     $match: { admin: mongoose.Types.ObjectId(userId) } 
-
+    $match: { admin: mongoose.Types.ObjectId(userId) },
   });
   if (query) {
     aggregation.push(
@@ -250,10 +251,6 @@ const updateProduct = asyncHandler(async (req, res) => {
       }
     );
   }
-  
-
-  
-  
 
   if (pageNum && limitNum) {
     aggregation.push({ $skip: (pageNum - 1) * limitNum });
@@ -274,4 +271,53 @@ const updateProduct = asyncHandler(async (req, res) => {
     );
 });
 
+// products user Part
+
+const getProducts = asyncHandler(async (req, res) => {
+  const { page = 1, limit = 20, query, sortedBy, sortedType } = req.query;
+
+  const pageNum = Number(page);
+  const limitNum = Number(limit);
+  const aggregation = [];
+  const allowedSortFields = ["price", "title", "createdAt"];
+  let sortField = allowedSortFields.includes(sortedBy) ? sortedBy : "createdAt";
+  let sortOrder = sortedType === "desc" ? -1 : 1;
+
+  aggregation.push({
+    $sort: { [sortField]: sortOrder },
+  });
+
+  if (query) {
+    aggregation.push(
+      {
+        $addFields: {
+          matches: {
+            $regexFindAll: {
+              input: "$title",
+              regex: query,
+              options: "i",
+            },
+          },
+        },
+      },
+
+      {
+        $match: {
+          "matches.0": { $exists: true },
+        },
+      }
+    );
+  }
+
+  aggregation.push({ $skip: (pageNum - 1) * limitNum }, { $limit: limitNum });
+
+  const product = await Product.aggregate(aggregation);
+
+  if (!product || product.length === 0) {
+    throw new ApiError(404, "product not found");
+  }
+  res
+    .status(200)
+    .json(ApiResponse(200, "Fetched Products Successully", product));
+});
 export { addProducts, deleteProduct, updateProduct, getAdminProducts };

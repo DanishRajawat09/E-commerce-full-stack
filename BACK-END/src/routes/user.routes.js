@@ -84,4 +84,6 @@ router
 
 
   // get all products
+
+  router.route("/products").get(verifyJwtUser , getProducts)
 export default router;
