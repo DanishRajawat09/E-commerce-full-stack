@@ -61,15 +61,20 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: "user",
     },
-    address : {
-      type : mongoose.Schema.Types.ObjectId,
-      ref : "Address",
-      default : ""
+    address: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Address",
+      default: "",
     },
-    profile : {
-type : mongoose.Schema.Types.ObjectId,
- ref  :"Profile",
- default  : ""
+    profile: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Profile",
+      default: "",
+    },
+    adminProfile: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "AdminProfile",
+      default: "",
     },
     isVerified: {
       type: Boolean,

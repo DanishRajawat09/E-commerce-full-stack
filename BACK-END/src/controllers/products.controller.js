@@ -14,8 +14,8 @@ const addProducts = asyncHandler(async (req, res) => {
     price,
     images,
     sizes,
-    subCategory,
-    fabric,
+    gender,
+    febric,
     colors,
     brand,
     ram,
@@ -47,9 +47,9 @@ const addProducts = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Ram and Storage is required");
   }
   if (category === "dress") {
-    if (!subCategory) throw new ApiError(400, "gender is required");
+    if (!gender) throw new ApiError(400, "gender is required");
     if (!sizes) throw new ApiError(400, "Add Atleast one Size");
-    if (!fabric) throw new ApiError(400, "material info is required");
+    if (!febric) throw new ApiError(400, "material info is required");
   }
 
   const productObj = {
@@ -71,9 +71,9 @@ const addProducts = asyncHandler(async (req, res) => {
   }
 
   if (category === "dress") {
-    if (subCategory) productObj.details.subCategory = subCategory;
+    if (gender) productObj.details.gender = gender;
     if (sizes) productObj.details.sizes = sizes;
-    if (fabric) productObj.details.fabric = fabric;
+    if (febric) productObj.details.febric = febric;
     if (colors) productObj.details.colors = colors;
   }
 
@@ -188,8 +188,8 @@ const updateProduct = asyncHandler(async (req, res) => {
     }
   }
   if (product.category === "dress") {
-    if (updatedProduct.subCategory) {
-      product.details.subCategory = updatedProduct.subCategory;
+    if (updatedProduct.gender) {
+      product.details.gender = updatedProduct.gender;
       count++;
     }
     if (Array.isArray(updatedProduct.sizes)) {
@@ -200,8 +200,8 @@ const updateProduct = asyncHandler(async (req, res) => {
       product.details.colors = updatedProduct.colors;
       count++;
     }
-    if (updatedProduct.fabric) {
-      product.details.fabric = updatedProduct.fabric;
+    if (updatedProduct.febric) {
+      product.details.febric = updatedProduct.febric;
       count++;
     }
   }
@@ -274,8 +274,26 @@ const getAdminProducts = asyncHandler(async (req, res) => {
 // products user Part
 
 const getProducts = asyncHandler(async (req, res) => {
-  const { page = 1, limit = 20, query, sortedBy, sortedType } = req.query;
-
+  const {
+    page = 1,
+    limit = 20,
+    query,
+    sortedBy,
+    sortedType,
+    category,
+    size,
+    febric,
+    color,
+    gender,
+    ram,
+    storage,
+    brand,
+    colorOptions,
+    priceUpper,
+    priceLower,
+  } = req.query;
+  const priceUpperNum = Number(priceUpper);
+  const priceLowerNum = Number(priceLower);
   const pageNum = Number(page);
   const limitNum = Number(limit);
   const aggregation = [];
@@ -286,6 +304,90 @@ const getProducts = asyncHandler(async (req, res) => {
   aggregation.push({
     $sort: { [sortField]: sortOrder },
   });
+
+  if (category) {
+    aggregation.push({
+      $match: { category: category },
+    });
+  }
+
+  if (category === "dress" && size) {
+    aggregation.push({
+      $match: {
+        category: category,
+        "details.sizes": size,
+      },
+    });
+  }
+  if (category === "dress" && febric) {
+    aggregation.push({
+      $match: {
+        category: category,
+        "details.fabric": { $regex: new RegExp(febric, "i") },
+      },
+    });
+  }
+
+  if (category === "dress" && color) {
+    aggregation.push({
+      $match: {
+        category: category,
+        "details.colors": color,
+      },
+    });
+  }
+  if (priceUpper && priceLower) {
+    aggregation.push({
+      $match: {
+        price: {
+          $gt: priceLowerNum,
+          $lt: priceUpperNum,
+        },
+      },
+    });
+  }
+
+  if (category === "dress" && gender) {
+    aggregation.push({
+      $match: {
+        category: category,
+        "details.gender": gender,
+      },
+    });
+  }
+
+  if (category === "mobile" && ram) {
+    aggregation.push({
+      $match: {
+        category: category,
+        "details.ram": ram,
+      },
+    });
+  }
+  if (category === "mobile" && storage) {
+    aggregation.push({
+      $match: {
+        category: category,
+        "details.storage": storage,
+      },
+    });
+  }
+  if (category === "mobile" && colorOptions) {
+    aggregation.push({
+      $match: {
+        category: category,
+        "details.colorOptions": colorOptions,
+      },
+    });
+  }
+  if (category === "mobile" && brand) {
+    aggregation.push({
+      $match: {
+        category: category,
+        "details.brand": brand,
+      },
+    });
+  }
 
   if (query) {
     aggregation.push(
@@ -320,4 +422,75 @@ const getProducts = asyncHandler(async (req, res) => {
     .status(200)
     .json(ApiResponse(200, "Fetched Products Successully", product));
 });
-export { addProducts, deleteProduct, updateProduct, getAdminProducts };
+
+const productDetail = asyncHandler(async (req, res) => {
+  const { productId } = req.params;
+  const aggregation = [];
+  if (!productId) {
+    throw new ApiError(400, "could not get product ID, try again");
+  }
+
+  aggregation.push({
+    $match: { _id: mongoose.Types.ObjectId(productId) },
+  });
+  aggregation.push(
+    {
+      $lookup: {
+        from: "users",
+        localField: "admin",
+        foreignField: "_id",
+        as: "adminInfo",
+      },
+    },
+    { $unwind: "$adminInfo" },
+    {
+      $lookup: {
+        from: "adminprofiles",
+        localField: "adminInfo._id",
+        foreignField: "admin",
+        as: "adminprofileInfo",
+      },
+    },
+    { $unwind: "$adminprofileInfo" },
+    {
+      $lookup: {
+        from: "addresses",
+        localField: "adminprofileInfo.shopAddress",
+        foreignField: "_id",
+        as: "shopAddress",
+      },
+    },
+    { $unwind: "$shopAddress" },
+    {
+      $project: {
+        title: 1,
+        description: 1,
+        category: 1,
+        rating: 1,
+        price: 1,
+        images: 1,
+        details: 1,
+        shopName: "$adminprofileInfo.shopName",
+        shopAddress: "$shopAddress",
+      },
+    }
+  );
+  const product = await Product.aggregate(aggregation);
+
+ if (!product || product.length === 0)
+ {
+    throw new ApiError(400, "cannnot find product, invalid product Id");
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, "Product fetched successfully", product));
+});
+export {
+  addProducts,
+  deleteProduct,
+  updateProduct,
+  getAdminProducts,
+  getProducts,
+  productDetail
+};

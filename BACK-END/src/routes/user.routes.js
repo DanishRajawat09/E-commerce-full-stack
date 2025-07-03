@@ -21,6 +21,7 @@ import sendOtp from "../middlewares/sendOtp.middleware.js";
 import verifyOtp from "../middlewares/verifyOtp.js";
 import resetJwt from "../middlewares/resetJwtverify.middleware.js";
 import { verifyJwtUser } from "../middlewares/verifyJwt.middleware.js";
+import { getProducts, productDetail } from "../controllers/products.controller.js";
 
 const router = Router();
 
@@ -86,4 +87,5 @@ router
   // get all products
 
   router.route("/products").get(verifyJwtUser , getProducts)
+  router.route("/product/detail/:productId").get(verifyJwtUser , productDetail)
 export default router;
