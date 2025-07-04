@@ -90,4 +90,54 @@ const deleteCartProduct = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "Product removed from cart successfully", cart));
 });
 
+const getUserCart = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  if (!userId) {
+    throw new ApiError(400, "Unauthorized Request, user must be logged in");
+  }
+
+  const aggregation = [
+    {
+      $match: { cartOwner: userId },
+    },
+    {
+      $unwind: "$products",
+    },
+    {
+      $lookup: {
+        from: "products",
+        localField: "products.product",
+        foreignField: "_id",
+        as: "productDetails",
+      },
+    },
+    {
+      $unwind: "$productDetails",
+    },
+    {
+      $addFields: {
+        "products.product": "$productDetails",
+      },
+    },
+    {
+      $group: {
+        _id: "$_id",
+        cartOwner: { $first: "$cartOwner" },
+        products: { $push: "$products" },
+      },
+    },
+  ];
+
+  const cart = await Cart.aggregate(aggregation);
+
+  if (!cart || cart.length === 0) {
+    throw new ApiError(404, "Cart not found");
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, "Fetched cart successfully", cart[0]));
+});
+
 export { addToCart, deleteCartProduct };

@@ -94,5 +94,5 @@ router
 
   router.route("/cart/add/:productId").post(verifyJwtUser , addToCart)
   router.route("/cart/delete/:productId").delete(verifyJwtUser , deleteCartProduct)
-  
+  router.route("/cart").get(verifyJwtUser , getUserCart)
 export default router;
