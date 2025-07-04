@@ -22,6 +22,7 @@ import verifyOtp from "../middlewares/verifyOtp.js";
 import resetJwt from "../middlewares/resetJwtverify.middleware.js";
 import { verifyJwtUser } from "../middlewares/verifyJwt.middleware.js";
 import { getProducts, productDetail } from "../controllers/products.controller.js";
+import { addToCart, deleteCartProduct } from "../controllers/cart.controller.js";
 
 const router = Router();
 
@@ -91,5 +92,7 @@ router
 
   // cart 
 
-  router.route("/cart/add/:productId").get(verifyJwtUser , addToCart)
+  router.route("/cart/add/:productId").post(verifyJwtUser , addToCart)
+  router.route("/cart/delete/:productId").delete(verifyJwtUser , deleteCartProduct)
+  
 export default router;
