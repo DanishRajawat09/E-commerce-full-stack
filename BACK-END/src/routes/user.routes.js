@@ -88,4 +88,8 @@ router
 
   router.route("/products").get(verifyJwtUser , getProducts)
   router.route("/product/detail/:productId").get(verifyJwtUser , productDetail)
+
+  // cart 
+
+  router.route("/cart/add/:productId").get(verifyJwtUser , addToCart)
 export default router;
