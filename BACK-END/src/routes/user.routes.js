@@ -21,14 +21,22 @@ import sendOtp from "../middlewares/sendOtp.middleware.js";
 import verifyOtp from "../middlewares/verifyOtp.js";
 import resetJwt from "../middlewares/resetJwtverify.middleware.js";
 import { verifyJwtUser } from "../middlewares/verifyJwt.middleware.js";
-import { getProducts, productDetail } from "../controllers/products.controller.js";
-import { addToCart, deleteCartProduct } from "../controllers/cart.controller.js";
+import {
+  getProducts,
+  productDetail,
+} from "../controllers/products.controller.js";
+import {
+  addToCart,
+  deleteCartProduct,
+  getUserCart,
+} from "../controllers/cart.controller.js";
+import { deleteOrder, orderCartProducts, orderSoloProduct } from "../controllers/order.controller.js";
 
 const router = Router();
 
 // register and login routes
 // ✅ User Auth
-router.route("/").get(verifyJwtUser , getUserAdminInfo)
+router.route("/").get(verifyJwtUser, getUserAdminInfo);
 router.route("/register").post(registerUser);
 router.route("/register/send-otp").post(sendOtp("register"), afterSend);
 router
@@ -81,18 +89,24 @@ router
   .route("/contact/reset")
   .patch(verifyJwtUser, resetJwt("resetContactVerify"), handleNewContactSet);
 
-  // update access token
-  router.route("/update/auth-tokens").patch(verifyJwtUser , handleUpdateAccessToken)
+// update access token
+router
+  .route("/update/auth-tokens")
+  .patch(verifyJwtUser, handleUpdateAccessToken);
 
+// get all products
+router.route("/products").get(verifyJwtUser, getProducts);
+router.route("/product/detail/:productId").get(verifyJwtUser, productDetail);
 
-  // get all products
+// cart
+router.route("/cart/add/:productId").post(verifyJwtUser, addToCart);
+router
+  .route("/cart/delete/:productId")
+  .delete(verifyJwtUser, deleteCartProduct);
+router.route("/cart").get(verifyJwtUser, getUserCart);
 
-  router.route("/products").get(verifyJwtUser , getProducts)
-  router.route("/product/detail/:productId").get(verifyJwtUser , productDetail)
-
-  // cart 
-
-  router.route("/cart/add/:productId").post(verifyJwtUser , addToCart)
-  router.route("/cart/delete/:productId").delete(verifyJwtUser , deleteCartProduct)
-  router.route("/cart").get(verifyJwtUser , getUserCart)
+// order
+router.route("/order/add/:productId").post(verifyJwtUser , orderSoloProduct)
+router.route("/order/add/cart").post(verifyJwtUser , orderCartProducts)
+router.route("/order/delete/:productId").delete(verifyJwtUser , deleteOrder)
 export default router;

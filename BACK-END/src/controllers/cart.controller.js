@@ -140,4 +140,4 @@ const getUserCart = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "Fetched cart successfully", cart[0]));
 });
 
-export { addToCart, deleteCartProduct };
+export { addToCart, deleteCartProduct, getUserCart };
