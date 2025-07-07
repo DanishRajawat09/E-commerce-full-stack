@@ -50,8 +50,8 @@ const addAddress = asyncHandler(async (req, res) => {
 
   const userData = await User.findByIdAndUpdate(
     { _id: user._id },
-    { $set: { address: userAddress._id }},
-     {new : true } 
+    { $set: { address: userAddress._id } },
+    { new: true }
   );
   if (!userData) {
     throw new ApiError(400, "Unauthorized Request, plz register First");

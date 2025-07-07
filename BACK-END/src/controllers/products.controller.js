@@ -477,8 +477,7 @@ const productDetail = asyncHandler(async (req, res) => {
   );
   const product = await Product.aggregate(aggregation);
 
- if (!product || product.length === 0)
- {
+  if (!product || product.length === 0) {
     throw new ApiError(400, "cannnot find product, invalid product Id");
   }
 
@@ -492,5 +491,5 @@ export {
   updateProduct,
   getAdminProducts,
   getProducts,
-  productDetail
+  productDetail,
 };

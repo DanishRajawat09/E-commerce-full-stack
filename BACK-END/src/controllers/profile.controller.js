@@ -28,7 +28,7 @@ const createProfile = asyncHandler(async (req, res) => {
   const profile = await Profile.create({
     fullName,
     avatar: {
-      url:avatarUpload.url,
+      url: avatarUpload.url,
       publicId: avatarUpload.public_id,
     },
     user: user._id,

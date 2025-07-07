@@ -30,7 +30,13 @@ import {
   deleteCartProduct,
   getUserCart,
 } from "../controllers/cart.controller.js";
-import { deleteOrder, deleteOrderUser, orderCartProducts, orderSoloProduct } from "../controllers/order.controller.js";
+import {
+  deleteOrder,
+  deleteOrderUser,
+  editOrderDetails,
+  orderCartProducts,
+  orderSoloProduct,
+} from "../controllers/order.controller.js";
 
 const router = Router();
 
@@ -106,7 +112,8 @@ router
 router.route("/cart").get(verifyJwtUser, getUserCart);
 
 // order
-router.route("/order/add/:productId").post(verifyJwtUser , orderSoloProduct)
-router.route("/order/add/cart").post(verifyJwtUser , orderCartProducts)
-router.route("/order/delete/:productId").delete(verifyJwtUser , deleteOrderUser)
+router.route("/order/add/:productId").post(verifyJwtUser, orderSoloProduct);
+router.route("/order/add/cart").post(verifyJwtUser, orderCartProducts);
+router.route("/order/delete/:productId").delete(verifyJwtUser, deleteOrderUser);
+router.route("/order/status/:productId").patch(verifyJwtUser, editOrderDetails);
 export default router;

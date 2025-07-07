@@ -2,7 +2,7 @@ import { User } from "../models/user.models.js";
 import ApiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { generateOtp } from "../utils/basicUtils.js";
-import bcrypt from "bcrypt"
+import bcrypt from "bcrypt";
 const sendOtp = (purpose) =>
   asyncHandler(async (req, res, next) => {
     const userData = {};
@@ -54,8 +54,8 @@ const sendOtp = (purpose) =>
     const { otp, expiry } = generateOtp();
     const isRegisterPurpose = ["register", "adminRegister"].includes(purpose);
 
-const hashedOtp = await bcrypt.hash(otp , 10)
-console.log(hashedOtp);
+    const hashedOtp = await bcrypt.hash(otp, 10);
+    console.log(hashedOtp);
 
     const user = await User.findOneAndUpdate(
       {
@@ -64,7 +64,7 @@ console.log(hashedOtp);
           { isVerified: !isRegisterPurpose },
         ],
       },
-      { $set: { otp : hashedOtp, otpExpiry: expiry } },
+      { $set: { otp: hashedOtp, otpExpiry: expiry } },
       { new: true }
     );
 
@@ -74,7 +74,6 @@ console.log(hashedOtp);
 
     if (userData.email) console.log("OTP sent to email:", otp);
     if (userData.contact) console.log("OTP sent to contact:", otp);
-
 
     req.user = { ...user.toObject(), purpose: purposeOtp };
     next();

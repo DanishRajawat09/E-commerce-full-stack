@@ -21,24 +21,29 @@ import { generateResetToken } from "../utils/resetToken.utils.js";
 import cookieOption from "../utils/cookieOption.utils.js";
 import generateAccessRefreshToken from "../utils/generateAccessRefresh.utils.js";
 
-
-const getUserAdminInfo = asyncHandler(async (req ,res) => {
-  const userId = req.user._id
+const getUserAdminInfo = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
 
   if (!userId) {
-    throw new ApiError(400 , "Unauthorized Request, login first")
+    throw new ApiError(400, "Unauthorized Request, login first");
   }
 
-  const user = await User.findById(userId).populate("address").populate("profile").select("-password -otp -otpExpiry -authProvider -role -isVerified -refreshToken -createdAt -updatedAt").lean()
+  const user = await User.findById(userId)
+    .populate("address")
+    .populate("profile")
+    .select(
+      "-password -otp -otpExpiry -authProvider -role -isVerified -refreshToken -createdAt -updatedAt"
+    )
+    .lean();
 
   if (!user) {
-    throw new ApiError(400 , "User not Found, please register and try again")
+    throw new ApiError(400, "User not Found, please register and try again");
   }
 
-  res.status(200).json(
-    new ApiResponse(200 , "get user info successfully" , user)
-  )
-})
+  res
+    .status(200)
+    .json(new ApiResponse(200, "get user info successfully", user));
+});
 
 const registerUser = asyncHandler(async (req, res) => {
   let { email, contact, password, role } = req.body;
@@ -632,5 +637,5 @@ export {
   handleContactResetSendOtp,
   handleContactResetVerifyOtp,
   handleNewContactSet,
-  handleUpdateAccessToken
+  handleUpdateAccessToken,
 };

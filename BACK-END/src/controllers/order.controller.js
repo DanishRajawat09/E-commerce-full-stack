@@ -286,8 +286,11 @@ const editOrderDetails = asyncHandler(async (req, res) => {
       .json(
         new ApiResponse(200, "Order Status is Updated Successfully", result)
       );
-  }else{
-    throw new ApiError(400 , "Unauthorized Request,User Role should be Admin or User")
+  } else {
+    throw new ApiError(
+      400,
+      "Unauthorized Request,User Role should be Admin or User"
+    );
   }
 });
 

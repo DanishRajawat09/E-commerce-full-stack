@@ -10,26 +10,26 @@ const productSchema = new mongoose.Schema(
     description: {
       type: String,
       trim: true,
-      default : ""
+      default: "",
     },
     category: {
       type: String,
-      enum: ["mobile", "dress"], 
+      enum: ["mobile", "dress"],
       required: true,
     },
-    admin : {
-      type : mongoose.Schema.Types.ObjectId,
-      ref  :"User",
-      required : true
+    admin: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
-    stock : {
-      type : Number,
-      required : true,
-      default : 0,
-      min : 0
+    stock: {
+      type: Number,
+      required: true,
+      default: 0,
+      min: 0,
     },
     rating: {
-      type: Number, 
+      type: Number,
       default: 0,
       min: 0,
       max: 5,
@@ -64,5 +64,4 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-
-export const Product = mongoose.model("Product" , productSchema)
+export const Product = mongoose.model("Product", productSchema);

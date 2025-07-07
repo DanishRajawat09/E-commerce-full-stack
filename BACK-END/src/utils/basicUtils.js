@@ -8,7 +8,6 @@ const generateOtp = () => {
   }
   const expiry = new Date(Date.now() + 5 * 60 * 1000);
 
-  
   return { otp, expiry };
 };
 const responseFormat = async (user) => {

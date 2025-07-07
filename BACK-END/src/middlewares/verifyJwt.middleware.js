@@ -30,12 +30,15 @@ const verifyJwt = (tokenKey = "userAccessToken") =>
     const user = await User.findOne({ _id: decoded._id, role: decoded.role });
 
     if (!user) {
-      throw new ApiError(404, `${decoded.role === "admin" ? "Admin" : "User"} not found or no longer exists. Please register or login again.`);
+      throw new ApiError(
+        404,
+        `${decoded.role === "admin" ? "Admin" : "User"} not found or no longer exists. Please register or login again.`
+      );
     }
 
     req.user = user;
     next();
   });
 
- export const verifyJwtUser = verifyJwt("userAccessToken");
+export const verifyJwtUser = verifyJwt("userAccessToken");
 export const verifyJwtAdmin = verifyJwt("adminAccessToken");

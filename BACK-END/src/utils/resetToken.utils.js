@@ -1,6 +1,6 @@
 import { JWT_RESET_EXPIRY, JWT_RESET_SECRET } from "../../config/env.js";
 import ApiError from "./apiError.js";
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 const generateResetToken = async ({ _id, email, purpose, role }) => {
   const payload = {
     role: "user",
@@ -9,7 +9,6 @@ const generateResetToken = async ({ _id, email, purpose, role }) => {
   if (email) payload.email = email;
   if (purpose) payload.purpose = purpose;
   if (role) payload.role = role;
-
 
   let resetToken;
   try {

@@ -53,8 +53,8 @@ const updateShopName = asyncHandler(async (req, res) => {
     );
   }
   if (!adminProfile.shopAddress) {
-  throw new ApiError(500, "Shop address not found for this admin profile.");
-}
+    throw new ApiError(500, "Shop address not found for this admin profile.");
+  }
 
   if (shopName && shopName.trim() === adminProfile.shopName) {
     throw new ApiError(
@@ -64,23 +64,23 @@ const updateShopName = asyncHandler(async (req, res) => {
   }
 
   if (!shopName && !pinCode && !address && !city && !state) {
-  throw new ApiError(400, "No data provided to update.");
-}
+    throw new ApiError(400, "No data provided to update.");
+  }
 
-if (shopName) adminProfile.shopName = shopName.trim();
+  if (shopName) adminProfile.shopName = shopName.trim();
 
-if (pinCode) adminProfile.shopAddress.pinCode = pinCode.trim();
-if (address) adminProfile.shopAddress.address = address.trim().toLowerCase()
-if (city) adminProfile.shopAddress.city = city.trim().toLowerCase();
-if (state) adminProfile.shopAddress.state = state.trim().toLowerCase();
-
+  if (pinCode) adminProfile.shopAddress.pinCode = pinCode.trim();
+  if (address) adminProfile.shopAddress.address = address.trim().toLowerCase();
+  if (city) adminProfile.shopAddress.city = city.trim().toLowerCase();
+  if (state) adminProfile.shopAddress.state = state.trim().toLowerCase();
 
   await adminProfile.save({ validateBeforeSave: false });
 
   res
     .status(200)
-    .json(new ApiResponse(200, "Shop profile updated successfully", adminProfile)
-);
+    .json(
+      new ApiResponse(200, "Shop profile updated successfully", adminProfile)
+    );
 });
 
 export { createProfile, updateShopName };

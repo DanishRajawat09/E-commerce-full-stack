@@ -1,3 +1,5 @@
+import { User } from "../models/user.models.js";
+
 const generateAccessRefreshToken = async (id) => {
   try {
     const user = await User.findById(id);
@@ -35,4 +37,4 @@ const generateAccessRefreshToken = async (id) => {
   }
 };
 
-export default generateAccessRefreshToken
+export default generateAccessRefreshToken;

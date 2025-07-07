@@ -49,5 +49,5 @@ export {
   getOtpPurpose,
   isValidPurpose,
   getPurposeCategory,
-  allPurposes
+  allPurposes,
 };

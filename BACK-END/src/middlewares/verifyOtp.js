@@ -20,7 +20,7 @@ const verifyOtp = asyncHandler(async (req, res, next) => {
     throw new ApiError(401, "OTP has expired. Please request a new one.");
   }
 
-  const isOtpValid = await bcrypt.compare(otp , user.otp);
+  const isOtpValid = await bcrypt.compare(otp, user.otp);
 
   if (!isOtpValid) {
     throw new ApiError(401, "The OTP you entered is incorrect.");
