@@ -21,7 +21,8 @@ import resetJwt from "../middlewares/resetJwtverify.middleware.js";
 import { verifyJwtAdmin } from "../middlewares/verifyJwt.middleware.js";
 import isAdmin from "../middlewares/isAdmin.middleware.js";
 import verifyOtp from "../middlewares/verifyOtp.js";
-import { addProducts, deleteProduct, updateProduct } from "../controllers/products.controller.js";
+import { addProducts, deleteProduct, getAdminProducts, updateProduct } from "../controllers/products.controller.js";
+import { editOrderDetails, orderDetailsAdmin } from "../controllers/order.controller.js";
 const router = Router();
 // regiter admin
 router.route("/register").post((req, res, next) => {
@@ -112,11 +113,17 @@ router
     handleNewContactSet
   );
 
-  router.route("/update/auth-tokens").patch(verifyJwtAdmin , handleUpdateAccessToken)
+  router.route("/update/auth-token").patch(verifyJwtAdmin , handleUpdateAccessToken)
 
   // admin products contol
 router.route("/product/add").post(verifyJwtAdmin , isAdmin , addProducts) 
 router.route("/product/delete/:productId").delete(verifyJwtAdmin , isAdmin , deleteProduct) 
 router.route("/product/update/:productId").put(verifyJwtAdmin , isAdmin , updateProduct)
-router.route("/products").get(verifyJwtAdmin , isAdmin , getAdminProducts)
+router.route("/product").get(verifyJwtAdmin , isAdmin , getAdminProducts)
+
+// order
+
+router.route("/order").get(verifyJwtAdmin ,isAdmin, orderDetailsAdmin)
+router.route("/order/status/update/:productId").patch(verifyJwtAdmin , isAdmin , editOrderDetails)
+
 export default router;
