@@ -63,17 +63,17 @@ const userSchema = new mongoose.Schema(
     address: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Address",
-      default: "",
+      default: null,
     },
     profile: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Profile",
-      default: "",
+      default: null,
     },
     adminProfile: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "AdminProfile",
-      default: "",
+      default: null,
     },
     isVerified: {
       type: Boolean,

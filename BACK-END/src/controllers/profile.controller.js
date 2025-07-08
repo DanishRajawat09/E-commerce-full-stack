@@ -57,7 +57,6 @@ const createProfile = asyncHandler(async (req, res) => {
 const updateFullName = asyncHandler(async (req, res) => {
   const { fullName } = req.body;
   const user = req.user;
-
   if (!fullName) {
     throw new ApiError(400, "full name is required");
   }

@@ -16,7 +16,12 @@ const sendOtp = (purpose) =>
       "resetPassword",
       "resetAdminPassword",
     ];
-
+    const adminPurpose = [
+      "resetAdminEmail",
+      "resetAdminContact",
+      "resetAdminPassword",
+    ];
+    let checkRole = "user";
     if (publicPurposes.includes(purpose)) {
       userData.email = req.body.email;
       userData.contact = req.body.contact;
@@ -54,6 +59,10 @@ const sendOtp = (purpose) =>
     const { otp, expiry } = generateOtp();
     const isRegisterPurpose = ["register", "adminRegister"].includes(purpose);
 
+    if (adminPurpose.includes(purpose)) {
+      checkRole = "admin"
+    }
+
     const hashedOtp = await bcrypt.hash(otp, 10);
     console.log(hashedOtp);
 
@@ -61,7 +70,7 @@ const sendOtp = (purpose) =>
       {
         $and: [
           { $or: [{ email: userData.email }, { contact: userData.contact }] },
-          { isVerified: !isRegisterPurpose },
+          { isVerified: !isRegisterPurpose },{role : checkRole}
         ],
       },
       { $set: { otp: hashedOtp, otpExpiry: expiry } },
