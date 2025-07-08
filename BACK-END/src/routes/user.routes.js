@@ -31,7 +31,6 @@ import {
   getUserCart,
 } from "../controllers/cart.controller.js";
 import {
-  deleteOrder,
   deleteOrderUser,
   editOrderDetails,
   orderCartProducts,

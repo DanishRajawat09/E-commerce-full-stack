@@ -2,7 +2,7 @@ import { Product } from "../models/products.models.js";
 import ApiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { Order } from "../models/order.models.js";
-import ApiResponse from "../utils/apiResponse";
+import ApiResponse from "../utils/apiResponse.js";
 import { Cart } from "../models/cart.models.js";
 const orderSoloProduct = asyncHandler(async (req, res) => {
   const { productId } = req.params;
