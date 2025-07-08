@@ -8,6 +8,16 @@ const adminProfileSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    adminAvatar: {
+      url: {
+        type: String,
+        default: "",
+      },
+      publicId: {
+        type: String,
+        default: "",
+      },
+    },
     shopAddress: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Address",

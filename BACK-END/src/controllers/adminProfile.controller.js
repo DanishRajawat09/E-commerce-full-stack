@@ -2,11 +2,12 @@ import { AdminProfile } from "../models/adminProfile.models.js";
 import ApiError from "../utils/apiError.js";
 import ApiResponse from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import { deleteFile, uploadImage } from "../utils/cloudinary.js";
 
 const createProfile = asyncHandler(async (req, res) => {
   const userId = req.user._id;
   const role = req.user.role;
-
+  const avatarPath = req.file?.path;
   if (!userId || role !== "admin") {
     throw new ApiError(403, "Only admins are allowed to create a profile.");
   }
@@ -21,11 +22,23 @@ const createProfile = asyncHandler(async (req, res) => {
   if (existingProfile) {
     throw new ApiError(400, "Admin profile already exists.");
   }
-
-  const adminProfile = await AdminProfile.create({
+  const adminObj = {
     admin: userId,
     shopName: shopName.trim(),
-  });
+  };
+
+  if (avatarPath) {
+    const avatarCloudinaryPath = await uploadImage(avatarPath);
+
+    if (!avatarCloudinaryPath) {
+      throw new ApiError(500, "Failed to Upload Avatar, try Again");
+    }
+    adminObj.adminAvatar = {
+      url: avatarCloudinaryPath.url,
+      publicId: avatarCloudinaryPath.public_id,
+    };
+  }
+  const adminProfile = await AdminProfile.create(adminObj);
 
   if (!adminProfile) {
     throw new ApiError(500, "Error while creating admin profile.");
@@ -35,10 +48,10 @@ const createProfile = asyncHandler(async (req, res) => {
     .status(201)
     .json(new ApiResponse(201, "Shop name added successfully", adminProfile));
 });
-const updateShopName = asyncHandler(async (req, res) => {
+const updateShopDetails = asyncHandler(async (req, res) => {
   const { shopName, pinCode, city, state, address } = req.body;
   const userId = req.user._id;
-
+  const avatarPath = req.file?.path;
   if (!userId) {
     throw new ApiError(400, "Unauthorized Request, Login please");
   }
@@ -67,6 +80,22 @@ const updateShopName = asyncHandler(async (req, res) => {
     throw new ApiError(400, "No data provided to update.");
   }
 
+  if (avatarPath) {
+    if (adminProfile.adminAvatar.url && adminProfile.adminAvatar.publicId) {
+      const deleteAvatarCouldinary = await deleteFile(
+        adminProfile.adminAvatar.publicId
+      );
+      if (!deleteAvatarCouldinary) {
+        throw new ApiError(500, "Failed to delete avatar from cloudinary");
+      }
+    }
+    const avatarCloudinaryPath = await uploadImage(avatarPath);
+    if (!avatarCloudinaryPath) {
+      throw new ApiError(400, "Failed to upload Avatar");
+    }
+    adminProfile.adminAvatar.url = avatarCloudinaryPath.url;
+    adminProfile.adminAvatar.publicId = avatarCloudinaryPath.public_id;
+  }
   if (shopName) adminProfile.shopName = shopName.trim();
 
   if (pinCode) adminProfile.shopAddress.pinCode = pinCode.trim();
@@ -83,4 +112,4 @@ const updateShopName = asyncHandler(async (req, res) => {
     );
 });
 
-export { createProfile, updateShopName };
+export { createProfile, updateShopDetails };
