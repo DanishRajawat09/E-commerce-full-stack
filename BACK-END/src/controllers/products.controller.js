@@ -51,17 +51,19 @@ const addProducts = asyncHandler(async (req, res) => {
     if (!sizes) throw new ApiError(400, "Add Atleast one Size");
     if (!febric) throw new ApiError(400, "material info is required");
   }
-
+const numStock = Number(stock)
+const numPrice = Number(price)
   const productObj = {
     title,
     description,
     category,
-    stock,
+    stock : numStock,
     admin: _id,
-    price,
+    price : numPrice,
     images,
     details: {},
   };
+  
 
   if (category === "mobile") {
     if (brand) productObj.details.brand = brand;
