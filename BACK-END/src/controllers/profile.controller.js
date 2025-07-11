@@ -4,6 +4,7 @@ import { deleteFile, uploadImage } from "../utils/cloudinary.js";
 import { Profile } from "../models/profile.models.js";
 import ApiResponse from "../utils/apiResponse.js";
 import { User } from "../models/user.models.js";
+import { responseFormat } from "../utils/basicUtils.js";
 const createProfile = asyncHandler(async (req, res) => {
   const { fullName } = req.body;
   const user = req.user;
@@ -40,6 +41,8 @@ const createProfile = asyncHandler(async (req, res) => {
       "We could not create the profile. Please try again."
     );
   }
+  let excludedKeys = ["_id", "__v", "createdAt", "updatedAt", "user"];
+  const formatedResponse = await responseFormat(profile, excludedKeys);
   const userData = await User.findByIdAndUpdate(
     { _id: user._id },
     { profile: profile._id },
@@ -51,7 +54,9 @@ const createProfile = asyncHandler(async (req, res) => {
 
   res
     .status(200)
-    .json(new ApiResponse(200, "profile created succssfully", profile));
+    .json(
+      new ApiResponse(200, "profile created succssfully", formatedResponse)
+    );
 });
 
 const updateFullName = asyncHandler(async (req, res) => {
@@ -71,7 +76,7 @@ const updateFullName = asyncHandler(async (req, res) => {
   }
 
   const profile = await Profile.findOneAndUpdate(
-    { user: user._id },
+    { _id: exsistingProfile._id },
     { fullName },
     { new: true }
   );
@@ -82,10 +87,13 @@ const updateFullName = asyncHandler(async (req, res) => {
       "Profile not found. Please create a profile first."
     );
   }
-
+  let excludedKeys = ["_id", "__v", "createdAt", "updatedAt", "user", "avatar"];
+  const formatedResponse = await responseFormat(profile, excludedKeys);
   res
     .status(200)
-    .json(new ApiResponse(200, "fullname updated successfully", profile));
+    .json(
+      new ApiResponse(200, "fullname updated successfully", formatedResponse)
+    );
 });
 
 const updateAvatar = asyncHandler(async (req, res) => {
@@ -123,9 +131,19 @@ const updateAvatar = asyncHandler(async (req, res) => {
   profile.avatar.url = avatar.url;
   profile.avatar.publicId = avatar.public_id;
   await profile.save({ validateBeforeSave: false });
-
+  let excludedKeys = [
+    "_id",
+    "__v",
+    "createdAt",
+    "updatedAt",
+    "user",
+    "fullName",
+  ];
+  const formatedResponse = await responseFormat(profile, excludedKeys);
   res
     .status(200)
-    .json(new ApiResponse(200, "avatar updated successfully", profile));
+    .json(
+      new ApiResponse(200, "avatar updated successfully", formatedResponse)
+    );
 });
 export { createProfile, updateFullName, updateAvatar };

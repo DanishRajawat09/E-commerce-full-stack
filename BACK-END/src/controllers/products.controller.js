@@ -3,6 +3,7 @@ import ApiError from "../utils/apiError.js";
 import { Product } from "../models/products.models.js";
 import ApiResponse from "../utils/apiResponse.js";
 import mongoose from "mongoose";
+import { responseFormat } from "../utils/basicUtils.js";
 
 // products admin part
 const addProducts = asyncHandler(async (req, res) => {
@@ -51,19 +52,18 @@ const addProducts = asyncHandler(async (req, res) => {
     if (!sizes) throw new ApiError(400, "Add Atleast one Size");
     if (!febric) throw new ApiError(400, "material info is required");
   }
-const numStock = Number(stock)
-const numPrice = Number(price)
+  const numStock = Number(stock);
+  const numPrice = Number(price);
   const productObj = {
     title,
     description,
     category,
-    stock : numStock,
+    stock: numStock,
     admin: _id,
-    price : numPrice,
+    price: numPrice,
     images,
     details: {},
   };
-  
 
   if (category === "mobile") {
     if (brand) productObj.details.brand = brand;
@@ -98,10 +98,11 @@ const numPrice = Number(price)
   if (!product) {
     throw new ApiError(400, "Product is not Added properly, please try again");
   }
-
+  const excludedKeys = ["_id", "__v", "createdAt", "updatedAt", "admin"];
+  const formatedResponse = await responseFormat(product, excludedKeys);
   res
     .status(200)
-    .json(new ApiResponse(200, "Product Added Successfully", product));
+    .json(new ApiResponse(200, "Product Added Successfully", formatedResponse));
 });
 
 const deleteProduct = asyncHandler(async (req, res) => {
@@ -126,7 +127,9 @@ const deleteProduct = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Error while deleting Product");
   }
 
-  res.status(200).json(new ApiResponse(200, "product is deleted", product));
+  res
+    .status(200)
+    .json(new ApiResponse(200, "product is deleted", product.title));
 });
 
 const updateProduct = asyncHandler(async (req, res) => {
@@ -207,15 +210,20 @@ const updateProduct = asyncHandler(async (req, res) => {
       count++;
     }
   }
-
+  const excludedKeys = ["_id", "admin", "createdAt", "updatedAt", "__v"];
+  const formatedResponse = await responseFormat(product, excludedKeys);
   if (count >= 1) {
     await product.save({ validateBeforeSave: false });
 
     res
       .status(200)
-      .json(new ApiResponse(200, "Product updated succssfully", product));
+      .json(
+        new ApiResponse(200, "Product updated succssfully", formatedResponse)
+      );
   } else {
-    res.status(200).json(new ApiResponse(200, "Nothing to update", product));
+    res
+      .status(200)
+      .json(new ApiResponse(200, "Nothing to update", formatedResponse));
   }
 });
 
@@ -420,9 +428,11 @@ const getProducts = asyncHandler(async (req, res) => {
   if (!product || product.length === 0) {
     throw new ApiError(404, "product not found");
   }
+  const excludedKeys = ["_id", "__v", "createdAt", "updatedAt", "admin"];
+  const formatedResponse = await responseFormat(product , excludedKeys);
   res
     .status(200)
-    .json(ApiResponse(200, "Fetched Products Successully", product));
+    .json(ApiResponse(200, "Fetched Products Successully", formatedResponse));
 });
 
 const productDetail = asyncHandler(async (req, res) => {

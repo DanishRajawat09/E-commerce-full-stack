@@ -10,9 +10,10 @@ const generateOtp = () => {
 
   return { otp, expiry };
 };
-const responseFormat = async (user) => {
+const responseFormat = async (user , excludedKeys) => {
   const userdata = user.toObject();
-  const excludedKeys = ["password", "refreshToken", "otp", "otpExpiry", "__v"];
+
+
   const newdata = {};
 
   Object.keys(userdata).forEach((key) => {
@@ -20,7 +21,8 @@ const responseFormat = async (user) => {
       newdata[key] = userdata[key];
     }
   });
-
+  if (newdata.avatar) {
+  delete newdata.avatar.publicId }
   return newdata;
 };
 

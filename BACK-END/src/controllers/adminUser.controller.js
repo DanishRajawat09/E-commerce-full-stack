@@ -158,7 +158,6 @@ const afterVerify = asyncHandler(async (req, res) => {
     throw new ApiError(401, "User not found during OTP verification.");
   }
 
-  user.isVerified = true;
   user.otp = null;
   user.otpExpiry = null;
   await user.save({ validateBeforeSave: false });
@@ -173,7 +172,20 @@ const afterVerify = asyncHandler(async (req, res) => {
     );
   }
   const resetTokenName = await resetTokenNameFunc(user.role);
-  const userData = await responseFormat(user);
+  let excludedKeys = [
+    "_id",
+    "__v",
+    "createdAt",
+    "updatedAt",
+    "address",
+    "profile",
+    "adminProfile",
+    "otp",
+    "otpExpiry",
+    "refreshToken",
+    "password",
+  ];
+  const formatedResponse = await responseFormat(user, excludedKeys);
 
   const resetCookieOptions = cookieOption(ms(JWT_RESET_EXPIRY));
   const accessCookieOptions = cookieOption(ms(JWT_ACCESSTOKEN_EXPIRY));
@@ -187,7 +199,7 @@ const afterVerify = asyncHandler(async (req, res) => {
       new ApiResponse(
         200,
         "OTP verified. Account created and signed in successfully.",
-        userData
+        formatedResponse
       )
     );
 });
@@ -236,7 +248,20 @@ const loginUser = asyncHandler(async (req, res) => {
     );
   }
 
-  const userData = await responseFormat(user);
+  let excludedKeys = [
+    "_id",
+    "__v",
+    "createdAt",
+    "updatedAt",
+    "address",
+    "profile",
+    "adminProfile",
+    "otp",
+    "otpExpiry",
+    "refreshToken",
+    "password",
+  ];
+  const formatedResponse = await responseFormat(user, excludedKeys);
 
   const { accessToken, refreshToken, accessTokenName, refreshTokenName } =
     await generateAccessRefreshToken(user._id);
@@ -248,7 +273,11 @@ const loginUser = asyncHandler(async (req, res) => {
     .cookie(accessTokenName, accessToken, accessCookieOptions)
     .cookie(refreshTokenName, refreshToken, refreshCookieOptions)
     .json(
-      new ApiResponse(200, "Welcome back! You’re now logged in.", userData)
+      new ApiResponse(
+        200,
+        "Welcome back! You’re now logged in.",
+        formatedResponse
+      )
     );
 });
 

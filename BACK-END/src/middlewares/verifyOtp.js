@@ -25,7 +25,9 @@ const verifyOtp = asyncHandler(async (req, res, next) => {
   if (!isOtpValid) {
     throw new ApiError(401, "The OTP you entered is incorrect.");
   }
-
+if (user.isVerified === false) {
+    user.isVerified = true;
+}
   req.user = user;
 
   next();
