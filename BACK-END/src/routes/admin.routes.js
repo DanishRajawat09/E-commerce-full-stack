@@ -31,6 +31,7 @@ import {
   editOrderDetails,
   orderDetailsAdmin,
 } from "../controllers/order.controller.js";
+import { upload } from "../middlewares/multer.middleware.js";
 const router = Router();
 // regiter admin
 router.route("/register").post((req, res, next) => {
@@ -126,7 +127,7 @@ router
   .patch(verifyJwtAdmin, handleUpdateAccessToken);
 
 // admin products contol
-router.route("/product/add").post(verifyJwtAdmin, isAdmin, addProducts);
+router.route("/product/add").post(verifyJwtAdmin, isAdmin,upload.array("images" , 3) ,addProducts);
 router
   .route("/product/delete/:productId")
   .delete(verifyJwtAdmin, isAdmin, deleteProduct);

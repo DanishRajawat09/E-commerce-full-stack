@@ -4,6 +4,7 @@ import { Product } from "../models/products.models.js";
 import ApiResponse from "../utils/apiResponse.js";
 import mongoose from "mongoose";
 import { responseFormat } from "../utils/basicUtils.js";
+import { uploadImage } from "../utils/cloudinary.js";
 
 // products admin part
 const addProducts = asyncHandler(async (req, res) => {
@@ -13,7 +14,6 @@ const addProducts = asyncHandler(async (req, res) => {
     category,
     stock,
     price,
-    images,
     sizes,
     gender,
     febric,
@@ -24,6 +24,9 @@ const addProducts = asyncHandler(async (req, res) => {
     colorOptions,
   } = req.body;
   const { _id } = req.user;
+  const filePaths = req.files;
+  console.log(filePaths);
+
   if (!title)
     throw new ApiError(
       400,
@@ -40,8 +43,6 @@ const addProducts = asyncHandler(async (req, res) => {
   if (!stock) throw new ApiError(400, "Mention Stock of product");
 
   if (!price) throw new ApiError(400, "Price is Required ");
-  if (!Array.isArray(images))
-    throw new ApiError(400, "images are in Array format");
   if (category === "mobile") {
     if (!brand) throw new ApiError(400, "Brand Name is required");
     if (!ram && !storage)
@@ -52,6 +53,7 @@ const addProducts = asyncHandler(async (req, res) => {
     if (!sizes) throw new ApiError(400, "Add Atleast one Size");
     if (!febric) throw new ApiError(400, "material info is required");
   }
+
   const numStock = Number(stock);
   const numPrice = Number(price);
   const productObj = {
@@ -61,15 +63,30 @@ const addProducts = asyncHandler(async (req, res) => {
     stock: numStock,
     admin: _id,
     price: numPrice,
-    images,
+    images: [],
     details: {},
   };
 
+  for (const file of filePaths) {
+    const uploadProductsImages = await uploadImage(file.path);
+
+    if (!uploadProductsImages) {
+      throw new ApiError(400, "Product image is not uploaded");
+    }
+
+    productObj.images.push({
+      url: uploadProductsImages.url,
+      publicId: uploadProductsImages.public_id,
+    });
+  }
   if (category === "mobile") {
     if (brand) productObj.details.brand = brand;
     if (ram) productObj.details.ram = ram;
     if (storage) productObj.details.storage = storage;
-    if (colorOptions) productObj.details.colorOptions = colorOptions;
+    if (colorOptions) {
+      const val = colorOptions.split(",");
+      productObj.details.colorOptions = val;
+    }
   }
 
   if (category === "dress") {
@@ -98,6 +115,7 @@ const addProducts = asyncHandler(async (req, res) => {
   if (!product) {
     throw new ApiError(400, "Product is not Added properly, please try again");
   }
+
   const excludedKeys = ["_id", "__v", "createdAt", "updatedAt", "admin"];
   const formatedResponse = await responseFormat(product, excludedKeys);
   res
@@ -429,7 +447,7 @@ const getProducts = asyncHandler(async (req, res) => {
     throw new ApiError(404, "product not found");
   }
   const excludedKeys = ["_id", "__v", "createdAt", "updatedAt", "admin"];
-  const formatedResponse = await responseFormat(product , excludedKeys);
+  const formatedResponse = await responseFormat(product, excludedKeys);
   res
     .status(200)
     .json(ApiResponse(200, "Fetched Products Successully", formatedResponse));

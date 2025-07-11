@@ -4,6 +4,7 @@ import { User } from "../models/user.models.js";
 import ApiError from "../utils/apiError.js";
 import ApiResponse from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import { responseFormat } from "../utils/basicUtils.js";
 
 const addAddress = asyncHandler(async (req, res) => {
   const { pinCode, city, state, address } = req.body;
@@ -56,6 +57,13 @@ const addAddress = asyncHandler(async (req, res) => {
   if (!userData) {
     throw new ApiError(400, "Unauthorized Request, plz register First");
   }
+  const excludedKeys = [
+    "_id",
+    "__v",
+    "createdAt",
+    "updatedAt",
+  ]
+  const formatedResponse = await responseFormat(userAddress , excludedKeys)
   if (userData.role === "admin") {
     const adminAddress = await AdminProfile.findOneAndUpdate(
       { admin: user._id },
@@ -67,12 +75,12 @@ const addAddress = asyncHandler(async (req, res) => {
     }
     return res
       .status(200)
-      .json(ApiResponse(200, "Admin Address Added Successfully", adminAddress));
+      .json(ApiResponse(200, "Admin Address Added Successfully", formatedResponse));
   }
 
   res
     .status(200)
-    .json(new ApiResponse(200, "Address added successfully", userAddress));
+    .json(new ApiResponse(200, "Address added successfully", formatedResponse));
 });
 
 const address = asyncHandler(async (req, res) => {
@@ -86,7 +94,7 @@ const address = asyncHandler(async (req, res) => {
   }
 
   const addresses = await Address.find({ user: userId }).select(
-    "-createdAt -updatedAt -__v"
+    "-createdAt -updatedAt -__v -_id"
   );
 
   if (!addresses) {
@@ -121,13 +129,10 @@ const updateAddress = asyncHandler(async (req, res) => {
     { _id: id, user: user._id },
     { $set: addressObj },
     { new: true }
-  ).select("-createdAt -updatedAt -__v");
+  ).select("-createdAt -updatedAt -__v -_id");
 
   if (!updatedAddress) {
     throw new ApiError(500, "Failed to update address in the database.");
-  }
-  if (user.role === "admin") {
-    const updatedAddress = await AdminProfile();
   }
   res
     .status(200)
@@ -152,6 +157,6 @@ const deleteAddress = asyncHandler(async (req, res) => {
 
   res
     .status(200)
-    .json(new ApiResponse(200, "address deleted successfully", deletedAddress));
+    .json(new ApiResponse(200, "address deleted successfully", deletedAddress.address));
 });
 export { addAddress, updateAddress, address, deleteAddress };

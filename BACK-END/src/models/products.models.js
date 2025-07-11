@@ -38,24 +38,18 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    images: {
-      type: [String],
-      required: true,
-      validate: [
-        {
-          validator: function (val) {
-            return Array.isArray(val) && val.length > 0;
-          },
-          message: "At least one image is required.",
+    images: [
+      {
+        url: {
+          type: String,
+          required: true,
         },
-        {
-          validator: function (val) {
-            return val.length <= 3;
-          },
-          message: "You can upload a maximum of 3 images.",
+        publicId: {
+          type: String,
+          required: true,
         },
-      ],
-    },
+      },
+    ],
     details: {
       type: mongoose.Schema.Types.Mixed,
       default: {},

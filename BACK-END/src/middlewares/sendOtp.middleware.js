@@ -18,6 +18,7 @@ const sendOtp = (purpose) =>
     ];
     const adminPurpose = [
       "resetAdminEmail",
+      "adminRegister",
       "resetAdminContact",
       "resetAdminPassword",
     ];
