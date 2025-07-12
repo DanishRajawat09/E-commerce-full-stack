@@ -4,7 +4,7 @@ import { Product } from "../models/products.models.js";
 import ApiResponse from "../utils/apiResponse.js";
 import mongoose from "mongoose";
 import { responseFormat } from "../utils/basicUtils.js";
-import { uploadImage } from "../utils/cloudinary.js";
+import { deleteFile, uploadImage } from "../utils/cloudinary.js";
 
 // products admin part
 const addProducts = asyncHandler(async (req, res) => {
@@ -91,9 +91,15 @@ const addProducts = asyncHandler(async (req, res) => {
 
   if (category === "dress") {
     if (gender) productObj.details.gender = gender;
-    if (sizes) productObj.details.sizes = sizes;
+    if (sizes) {
+      const val = sizes.split(",");
+      productObj.details.sizes = val;
+    }
     if (febric) productObj.details.febric = febric;
-    if (colors) productObj.details.colors = colors;
+    if (colors) {
+      const val = colors.split(",");
+      productObj.details.colors = val;
+    }
   }
 
   const existingProduct = await Product.findOne({
@@ -154,7 +160,41 @@ const updateProduct = asyncHandler(async (req, res) => {
   const { productId } = req.params;
   const userId = req.user._id;
   const updatedProduct = req.body;
-
+  const filePaths = req?.files;
+  const images =
+    typeof updateProduct.images === "string" && updateProduct.images.length > 0
+      ? updateProduct.images.split(",")
+      : [];
+  const OldcolorOptions =
+    typeof updateProduct.colorOptions === "string" &&
+    updateProduct.colorOptions.length > 0
+      ? updateProduct.colorOptions.split(",")
+      : [];
+  const newColorOptions =
+    typeof updateProduct.newColorOptions === "string" &&
+    updateProduct.newColorOptions.length > 0
+      ? updateProduct.newColorOptions.split(",")
+      : [];
+  const oldSizes =
+    typeof updateProduct.oldSizes === "string" &&
+    updateProduct.oldSizes.length > 0
+      ? updateProduct.oldSizes.split(",")
+      : [];
+  const newSizes =
+    typeof updateProduct.newSizes === "string" &&
+    updateProduct.newSizes.length > 0
+      ? updateProduct.newSizes.split(",")
+      : [];
+  const oldColors =
+    typeof updateProduct.oldColors === "string" &&
+    updateProduct.oldColors.length > 0
+      ? updateProduct.oldColors.split(",")
+      : [];
+  const newColors =
+    typeof updateProduct.newColors === "string" &&
+    updateProduct.newColors.length > 0
+      ? updateProduct.newColors.split(",")
+      : [];
   if (!productId) {
     throw new ApiError(400, "Request Denied Failed to get productId");
   }
@@ -188,19 +228,71 @@ const updateProduct = asyncHandler(async (req, res) => {
     product.price = updatedProduct.price;
     count++;
   }
-  if (Array.isArray(updatedProduct.images)) {
-    product.images = updatedProduct.images;
+  if (filePaths && filePaths.length > 0) {
+    if (images.length === 0) {
+      throw new ApiError(
+        400,
+        "for adding new image, delete privious images first"
+      );
+    }
+
+    const deleteImages = [];
+
+    product.images = product.images.filter((img) => {
+      if (images.includes(img._id.toString())) {
+        deleteImages.push(img);
+        return false;
+      }
+      return true;
+    });
+
+    for (const val of deleteImages) {
+      await deleteFile(val.publicId);
+    }
+    for (const images of filePaths) {
+      const uploadCloudinary = await uploadImage(images.path);
+      if (!uploadCloudinary) {
+        throw new ApiError(400, "error while updating new pictures");
+      }
+      product.images.push({
+        url: uploadCloudinary.url,
+        publicId: uploadCloudinary.public_id,
+      });
+    }
     count++;
   }
+
   if (product.category === "mobile") {
     if (updatedProduct.ram) {
       product.details.ram = updatedProduct.ram;
       count++;
     }
-    if (updatedProduct.colorOptions) {
-      product.details.colorOptions = updatedProduct.colorOptions;
+    if (OldcolorOptions.length > 0 && newColorOptions.length > 0) {
+      product.details.colorOptions = product.details.colorOptions.filter(
+        (color) => !OldcolorOptions.includes(color)
+      );
+
+      for (const newColor of newColorOptions) {
+        if (!product.details.colorOptions.includes(newColor)) {
+          product.details.colorOptions.push(newColor);
+        }
+      }
+
+      count++;
+    } else if (OldcolorOptions.length > 0) {
+      product.details.colorOptions = product.details.colorOptions.filter(
+        (color) => !OldcolorOptions.includes(color)
+      );
+      count++;
+    } else if (newColorOptions.length > 0) {
+      for (const newColor of newColorOptions) {
+        if (!product.details.colorOptions.includes(newColor)) {
+          product.details.colorOptions.push(newColor);
+        }
+      }
       count++;
     }
+
     if (updatedProduct.storage) {
       product.details.storage = updatedProduct.storage;
       count++;
@@ -215,13 +307,49 @@ const updateProduct = asyncHandler(async (req, res) => {
       product.details.gender = updatedProduct.gender;
       count++;
     }
-    if (Array.isArray(updatedProduct.sizes)) {
-      product.details.sizes = updatedProduct.sizes;
+    if (oldSizes.length > 0 && newSizes.length > 0) {
+      product.details?.sizes = product.details?.sizes.filter(
+        (val) => !oldSizes.includes(val)
+      );
+
+      for (const newSize of newSizes) {
+        if (!product.details.sizes.includes(newSize)) {
+          product.details.sizes.push(newSize);
+        }
+      }
+      count++;
+    } else if (oldSizes.length > 0) {
+      product.details?.sizes = product.details?.sizes.filter(
+        (val) => !oldSizes.includes(val)
+      );
+      count++;
+    } else if (newSizes.length > 0) {
+      for (const newSize of newSizes) {
+        if (!product.details.sizes.includes(newSize)) {
+          product.details.sizes.push(newSize);
+        }
+      }
       count++;
     }
-    if (Array.isArray(updatedProduct.colors)) {
-      product.details.colors = updatedProduct.colors;
-      count++;
+    if (oldColors.length > 0 && newColors.length > 0) {
+      product.details?.colors = product.details?.colors.filter(
+        (val) => !oldColors.includes(val)
+      );
+      for (const newColor of newColors) {
+        if (!product.details.colors.includes(newColor)) {
+          product.details.colors.push(newColor);
+        }
+      }
+    } else if (oldColors.length > 0) {
+      product.details?.colors = product.details?.colors.filter(
+        (val) => !oldColors.includes(val)
+      );
+    } else if (newColors.length > 0) {
+      for (const newColor of newColors) {
+        if (!product.details.colors.includes(newColor)) {
+          product.details.colors.push(newColor);
+        }
+      }
     }
     if (updatedProduct.febric) {
       product.details.febric = updatedProduct.febric;

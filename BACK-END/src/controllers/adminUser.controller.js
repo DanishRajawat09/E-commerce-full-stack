@@ -78,7 +78,6 @@ const registerUser = asyncHandler(async (req, res) => {
     );
   }
 
-  // Check if an unverified account exists with same credentials
   const unverifiedUser = await User.findOne({
     $and: [{ $or: [{ email }, { contact }] }, { isVerified: false }, { role }],
   });

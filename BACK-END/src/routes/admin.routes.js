@@ -127,13 +127,15 @@ router
   .patch(verifyJwtAdmin, handleUpdateAccessToken);
 
 // admin products contol
-router.route("/product/add").post(verifyJwtAdmin, isAdmin,upload.array("images" , 3) ,addProducts);
+router
+  .route("/product/add")
+  .post(verifyJwtAdmin, isAdmin, upload.array("images", 3), addProducts);
 router
   .route("/product/delete/:productId")
   .delete(verifyJwtAdmin, isAdmin, deleteProduct);
 router
-  .route("/product/update/:productId")
-  .put(verifyJwtAdmin, isAdmin, updateProduct);
+  .route("/product/update/:productId/:imageId1/:imageId2/imageId3")
+  .put(verifyJwtAdmin, isAdmin, upload.array("images", 3), updateProduct);
 router.route("/product").get(verifyJwtAdmin, isAdmin, getAdminProducts);
 
 // order
