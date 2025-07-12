@@ -1,0 +1,14 @@
+
+.mainBody{
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--searchBar);
+
+}
+header{
+    padding-inline: 30px;
+    padding-block: 20px;
+}
+.goBack{
+    font-size: 20px;
+}

@@ -1,4 +1,4 @@
-import React from 'react'
+
 import "./arrivals.css"
 import Button from "../../../../components/button/Button"
 import Products from '../products/Products'

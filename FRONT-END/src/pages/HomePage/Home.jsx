@@ -1,5 +1,3 @@
-import React from 'react'
-
 import Hero from "./HomeComp/Hero/Hero"
 import BrandBelt from "./HomeComp/BrandBelt/BrandBelt"
 import Arrivals from "./HomeComp/new arrivlas/Arrivals"

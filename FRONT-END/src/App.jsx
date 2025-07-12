@@ -7,6 +7,8 @@ import Layout from './pages/Layout/Layout'
 import ProductDetails from "./pages/ProductDetailsPage/ProductDetails"
 import CasualPage from "./pages/shop/casualPage/CasualPage"
 import Cart from './pages/CartPage/Cart'
+import UserLogin from './pages/login/UserLogin/UserLogin'
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<Layout/>}>
@@ -19,7 +21,8 @@ const router = createBrowserRouter(
 )
 function App() {
   return (
-   <RouterProvider router={router}/>
+  //  <RouterProvider router={router}/>
+  <UserLogin/>
   )
 }
 
