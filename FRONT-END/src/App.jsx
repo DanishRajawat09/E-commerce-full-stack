@@ -11,18 +11,23 @@ import UserLogin from './pages/login/UserLogin/UserLogin'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
+    <>
     <Route path='/' element={<Layout/>}>
       <Route path='' element={<Home/>}></Route>
       <Route path='/productDetails' element={<ProductDetails/>}></Route>
       <Route path='/shop' element={<CasualPage/>}></Route>
       <Route path='/cart' element={<Cart/>}></Route>
     </Route>
+    <Route path='/userlogin' element={<UserLogin/>}>
+
+    </Route>
+    </>
   )
 )
 function App() {
   return (
-  //  <RouterProvider router={router}/>
-  <UserLogin/>
+   <RouterProvider router={router}/>
+
   )
 }
 
