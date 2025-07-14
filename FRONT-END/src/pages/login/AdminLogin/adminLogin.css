@@ -1,133 +1,138 @@
-.mainBody {
+.adminLoginPage {
   width: 100vw;
   height: 100vh;
   background-color: var(--searchBar);
 }
-.loginHeader {
-  padding-inline: 30px;
-  padding-block: 20px;
+
+.adminHeader {
+  padding: 20px 30px;
 }
-.goBack {
+
+.backIcon {
   font-size: 20px;
 }
-.main {
 
-  height: calc(80%);
+.adminMain {
+  height: 80%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-inline: 10px;
-}
-.formSection {
-   
-  padding-top: 30px;
-  padding-inline: 30px;
-  padding-bottom: 20px;
-  background-color: white;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  border-radius: 10px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  -ms-border-radius: 10px;
-  -o-border-radius: 10px;
-}
-.loginHeading {
-  text-align: center;
-  font-weight: 700;
-  padding-bottom: 30px;
-  padding-inline: 40px;
-}
-.adminText {
-    color: var(--AdminTheme);
+  padding: 0 10px;
 }
 
-.emailNumberLoginInput {
+.adminFormWrapper {
+  width: 100%;
+  max-width: 400px;
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2), 0 6px 20px rgba(0,0,0,0.19);
+}
+
+.adminTitle {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  padding: 0 20px;
+}
+
+.adminSubtitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--AdminTheme);
+}
+
+.formGroup {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 6px;
   margin-bottom: 20px;
 }
-.emailContactLabel {
+
+.formLabel {
   font-size: 14px;
   font-weight: 500;
-
 }
-.emailContactInput {
-    
-  height: 30px;
-  padding-inline: 3px;
+
+.formInput {
+  height: 34px;
+  padding: 0 6px;
+  font-size: 14px;
   border-radius: 7px;
-  -webkit-border-radius: 7px;
-  -moz-border-radius: 7px;
-  -ms-border-radius: 7px;
-  -o-border-radius: 7px;
   border: none;
   outline: 2px solid rgb(179, 179, 179);
 }
-.emailContactInput:focus {
+
+.formInput:focus {
   outline: 2px solid black;
 }
-.forgetPassContainer{
-    display: flex;
-    justify-content: end;
-    align-items: center;
+
+.formDivider {
+  width: 100%;
+  border-top: 0.5px solid rgb(139, 139, 139);
+  margin: 12px 0;
 }
-.forgotPassword{
-    font-size: 12px;
-    margin-top: 4px;
-  
-   color:var(--AdminTheme);
+
+.forgotWrapper {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
-.LoginBtn {
-    width: 100%;
-     background-color: var(--AdminTheme);
-     border: none;
+
+.forgotLink {
+  font-size: 12px;
+  margin-top: 4px;
+  color: var(--AdminTheme);
+  text-decoration: none;
+}
+
+.submitButton {
+  width: 100%;
+  background-color: black;
   color: white;
-  margin-top: 10px;
-  padding: 4px 0px;
+  padding: 10px 0;
   font-size: 16px;
   font-weight: 600;
   border-radius: 10px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  -ms-border-radius: 10px;
-  -o-border-radius: 10px;
+  margin-top: 10px;
+  cursor: pointer;
+  border: none;
 }
-.loginLines{
-    width: 100%;
-    border: .5px solid rgb(139, 139, 139);
+
+.adminButton {
+  background-color: var(--AdminTheme);
 }
-.googleAuth{
-    
-    width: 100%;
-    background-color: black;
+
+.googleButton {
+  width: 100%;
+  background-color: black;
   color: white;
   border: none;
-  margin-top: 20px;
-  margin-bottom: 10px;
-  padding: 4px 0px;
+  margin: 20px 0 10px;
+  padding: 10px 0;
   font-size: 16px;
   font-weight: 600;
   border-radius: 10px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  -ms-border-radius: 10px;
-  -o-border-radius: 10px;
+  cursor: pointer;
 }
-.newTO{
-    font-size: 12px;
-    font-weight: 600;
-    color: #626262;
 
+.signupWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
 }
-.createAccount{
-    
-    font-size: 14px;
-    margin-left: 5px;
-    color:var(--AdminTheme);
+
+.signupText {
+  font-size: 12px;
+  font-weight: 600;
+  color: #626262;
 }
-.createAcContainer{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+
+.signupLink {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--AdminTheme);
+  text-decoration: none;
 }

@@ -6,50 +6,64 @@ const AdminLogin = () => {
 
 
   return (
-    <div className="mainBody">
-      <header className="loginHeader">
-        <FontAwesomeIcon icon={faArrowLeft} className="goBack" />
-      </header>
-      <main className="main">
-        <div className="formSection">
-          <h2 className="loginHeading">Welcome Back <br /> <span className="adminText"> To Admin</span></h2>
-          <form action="">
-            <div className="emailNumberLoginInput">
-              <label htmlFor="emailAndNumber" className="emailContactLabel">
-                Email or Contact
-              </label>
-              <input
-              
-                type="text"
-                id="emailAndNumber"
-                name="email"
-                className="emailContactInput"
-              />
-            </div>
-            <div className="emailNumberLoginInput">
-              <label htmlFor="password" className="emailContactLabel">
-                Password
-              </label>
-              <input
-                type="text"
-                id="password"
-                name="password"
-                className="emailContactInput"
-              />
-            </div>
-            <div className="loginLines"/>
-          <div className="forgetPassContainer">
-            <a href="#" className="forgotPassword">forgot password?</a>
-          </div>
-            <button type="submit" className="LoginBtn LoginAdmin">Log In</button>
-          </form>
-          <button className="googleAuth"><FontAwesomeIcon icon={faGoogle} color="white" /></button>
-       <div className="createAcContainer">
-         <span className="newTO">New on Shop.co?</span><a href="#" className="createAccount">Sign Up</a>
-       </div>
+<div className="adminLoginPage">
+  <header className="adminHeader">
+    <FontAwesomeIcon icon={faArrowLeft} className="backIcon" />
+  </header>
+
+  <main className="adminMain">
+    <div className="adminFormWrapper">
+      <h2 className="adminTitle">
+        Welcome Back <br />
+        <span className="adminSubtitle">Manage Everything Seamlessly</span>
+      </h2>
+
+      <form>
+        <div className="formGroup">
+          <label htmlFor="emailAndNumber" className="formLabel">
+            Email or Contact
+          </label>
+          <input
+            type="text"
+            id="emailAndNumber"
+            name="email"
+            className="formInput"
+          />
         </div>
-      </main>
+
+        <div className="formGroup">
+          <label htmlFor="password" className="formLabel">
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            className="formInput"
+          />
+        </div>
+
+        <div className="formDivider" />
+
+        <div className="forgotWrapper">
+          <a href="#" className="forgotLink">Forgot password?</a>
+        </div>
+
+        <button type="submit" className="submitButton adminButton">Log In</button>
+      </form>
+
+      <button className="googleButton">
+        <FontAwesomeIcon icon={faGoogle} color="white" />
+      </button>
+
+      <div className="signupWrapper">
+        <span className="signupText">New on Shop.co?</span>
+        <a href="#" className="signupLink">Sign Up</a>
+      </div>
     </div>
+  </main>
+</div>
+
   );
 };
 

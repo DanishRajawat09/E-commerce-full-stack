@@ -9,104 +9,92 @@ import {
 import { useState } from "react";
 
 const UserRegister = () => {
-  const [otpOptions, setOtpOptions] = useState(true);
+  const [otpOptions, setOtpOptions] = useState(false);
   const [selectOption, setSelectOption] = useState(null);
 
   return (
-    <div className="mainBody">
-      <header className="loginHeader">
-        <FontAwesomeIcon icon={faArrowLeft} className="goBack" />
+    <div className="registerPage">
+      <header className="registerHeader">
+        <FontAwesomeIcon icon={faArrowLeft} className="backIcon" />
       </header>
-      <main className="main">
-        <div className="formSection">
-          <h2 className="loginHeading">Registration Form </h2>
-          <form action="">
-            <div className="emailNumberLoginInput">
-              <label htmlFor="emailAndNumber" className="emailContactLabel">
-                Email
-              </label>
-              <input
-                type="text"
-                id="emailAndNumber"
-                name="email"
-                className="emailContactInput"
-              />
-            </div>
-            <div className="emailNumberLoginInput">
-              <label htmlFor="contact" className="emailContactLabel">
-                Contact
-              </label>
-              <input
-                type="text"
-                id="emailAndNumber"
-                name="contact"
-                className="emailContactInput"
-              />
-            </div>
-            <div className="emailNumberLoginInput">
-              <label htmlFor="password" className="emailContactLabel">
-                Password
-              </label>
-              <input
-                type="text"
-                id="password"
-                name="password"
-                className="emailContactInput"
-              />
-            </div>
-            <div className="loginLines" />
 
-            <button type="submit" className="LoginBtn">
-              Register
-            </button>
+      <main className="registerMain">
+        <div className="registerForm">
+          <h2 className="registerTitle">Create Your Account</h2>
+
+          <form>
+            <div className="formGroup">
+              <label htmlFor="email" className="formLabel">Email</label>
+              <input type="text" id="email" name="email" className="formInput" />
+            </div>
+
+            <div className="formGroup">
+              <label htmlFor="contact" className="formLabel">Contact</label>
+              <input type="text" id="contact" name="contact" className="formInput" />
+            </div>
+
+            <div className="formGroup">
+              <label htmlFor="password" className="formLabel">Password</label>
+              <input type="password" id="password" name="password" className="formInput" />
+            </div>
+
+            <div className="formDivider" />
+
+            <button type="submit" className="submitButton">Register</button>
           </form>
 
-          <div className="createAcContainer">
-            <span className="newTO">Have an Account?</span>
-            <a href="#" className="createAccount">
-              Log In
-            </a>
+          <div className="switchAccount">
+            <span className="switchText">Have an account?</span>
+            <a href="#" className="switchLink">Log In</a>
           </div>
         </div>
       </main>
+
       {otpOptions && (
-        <div className="otpMainBody">
-          <div className="otpOptionscontainer">
-  <div className="headerpart">
-              <h2 className="OtpOptionsHeading">Select Verification Method</h2>
-            <div className="sendOtpcancleBtn" onClick={() => setOtpOptions(false)}>
-                <FontAwesomeIcon icon={faXmark} className="sendOtpCancle"/>
-            </div>
-  </div>
-            <div className="loginLines" />
-            <div className="emailSelect" onClick={() => setSelectOption("email")}>
-              <div >
-                <FontAwesomeIcon
-                className="emailIcon"
-                  icon={faEnvelope}
-                  style={{ marginRight: "10px" }}
-                />{" "}
-                <span className="emailText">ibnfarooq070@gmail.com</span>
+        <div className="otpOverlay">
+          <div className="otpModal">
+            <div className="otpHeader">
+              <h2 className="otpTitle">Select Verification Method</h2>
+              <div className="closeOtpBtn" onClick={() => setOtpOptions(false)}>
+                <FontAwesomeIcon icon={faXmark} className="closeOtpIcon" />
               </div>
-              <div className="checkBoxEmail" style={{backgroundColor : selectOption === "email" ? "yellowgreen" : "white"}}></div>
             </div>
-            <div className="loginLines" />
-            <div className="emailSelect" onClick={() => setSelectOption("contact")}>
-              <div>
-                
-                <FontAwesomeIcon
-                  icon={faPhone}
-                   className="contactIcon"
-                  style={{ marginRight: "10px" }}
-                />
-                <span className="emailText">7976755425</span>
+
+            <div className="formDivider" />
+
+            <div
+              className="otpOption"
+              onClick={() => setSelectOption("email")}
+            >
+              <div className="otpLabel">
+                <FontAwesomeIcon icon={faEnvelope} className="otpIcon" />
+                <span className="otpText">ibnfarooq070@gmail.com</span>
               </div>
-                <div className="checkBoxContact" style={{backgroundColor : selectOption === "contact" ? "yellowgreen" : "white"}}></div>
+              <div
+                className={`otpCheck ${selectOption === "email" ? "active" : ""}`}
+              ></div>
             </div>
-              <div className="loginLines" />
-           <div className="sendOtpBtnContainer">
-             <button className="sendOtp" onClick={()=>setOtpOptions(false)}>Send Otp</button>
-           </div>
+
+            <div className="formDivider" />
+
+            <div
+              className="otpOption"
+              onClick={() => setSelectOption("contact")}
+            >
+              <div className="otpLabel">
+                <FontAwesomeIcon icon={faPhone} className="otpIcon" />
+                <span className="otpText">7976755425</span>
+              </div>
+              <div
+                className={`otpCheck ${selectOption === "contact" ? "active" : ""}`}
+              ></div>
+            </div>
+
+            <div className="formDivider" />
+
+            <div className="otpSendContainer">
+              <button className="otpSendButton" onClick={() => setOtpOptions(false)}>Send OTP</button>
+            </div>
           </div>
         </div>
       )}
@@ -115,3 +103,4 @@ const UserRegister = () => {
 };
 
 export default UserRegister;
+

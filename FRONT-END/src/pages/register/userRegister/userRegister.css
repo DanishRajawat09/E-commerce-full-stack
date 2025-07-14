@@ -1,266 +1,217 @@
-.mainBody {
+.registerPage {
   height: 100vh;
   background-color: var(--searchBar);
   position: relative;
 }
-.loginHeader {
-  padding-inline: 30px;
-  padding-block: 20px;
+
+.registerHeader {
+  padding: 20px 30px;
 }
-.goBack {
+
+.backIcon {
   font-size: 20px;
 }
-.main {
-  height: calc(80%);
+
+.registerMain {
+  height: 80%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-inline: 10px;
+  padding: 0 10px;
 }
-.formSection {
-  padding-top: 30px;
-  padding-inline: 30px;
-  padding-bottom: 20px;
+
+.registerForm {
+  width: 100%;
+  max-width: 400px;
   background-color: white;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  padding: 30px;
   border-radius: 10px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  -ms-border-radius: 10px;
-  -o-border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2), 0 6px 20px rgba(0,0,0,0.19);
 }
-.loginHeading {
+
+.registerTitle {
   text-align: center;
-  font-weight: 700;
-  padding-bottom: 30px;
-  padding-inline: 40px;
   font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 30px;
 }
-.emailNumberLoginInput {
+
+.formGroup {
   display: flex;
   flex-direction: column;
   gap: 7px;
   margin-bottom: 20px;
 }
-.emailContactLabel {
+
+.formLabel {
   font-size: 14px;
   font-weight: 500;
   color: #626262;
 }
 
-.emailContactInput {
+.formInput {
   height: 30px;
-  padding-inline: 3px;
+  padding: 0 8px;
   border-radius: 7px;
-  -webkit-border-radius: 7px;
-  -moz-border-radius: 7px;
-  -ms-border-radius: 7px;
-  -o-border-radius: 7px;
   border: none;
-  outline: 2px solid rgb(179, 179, 179);
+  outline: 2px solid #b3b3b3;
+  font-size: 14px;
 }
-.emailContactInput:focus {
+
+.formInput:focus {
   outline: 2px solid black;
 }
-.forgetPassContainer {
+
+.formDivider {
+  border-top: 0.5px solid #8b8b8b;
+  margin: 15px 0;
+}
+
+.submitButton {
+  width: 100%;
+  background-color: black;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 8px 0;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.switchAccount {
   display: flex;
-  justify-content: end;
+  justify-content: center;
   align-items: center;
 }
-.forgotPassword {
-  font-size: 12px;
-  margin-top: 4px;
 
-  color: black;
-}
-.LoginBtn {
-  width: 100%;
-  background-color: black;
-  color: white;
-  margin-top: 10px;
-  padding: 8px 0px;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 10px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  -ms-border-radius: 10px;
-  -o-border-radius: 10px;
-  margin-bottom: 10px;
-}
-.loginLines {
-  width: 100%;
-  border: 0.5px solid rgb(139, 139, 139);
-}
-.googleAuth {
-  width: 100%;
-  background-color: black;
-  color: white;
-  margin-top: 20px;
-  margin-bottom: 10px;
-  padding: 4px 0px;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 10px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  -ms-border-radius: 10px;
-  -o-border-radius: 10px;
-}
-.newTO {
+.switchText {
   font-size: 12px;
   font-weight: 600;
   color: #626262;
 }
-.createAccount {
+
+.switchLink {
   font-size: 14px;
   margin-left: 5px;
   color: black;
 }
-.createAcContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-@media screen and (width < 380px) {
-  .loginHeading {
-    font-size: 18px;
-  }
-}
-/* Otp css */
 
-.otpMainBody {
+/* OTP Modal */
+
+.otpOverlay {
   position: absolute;
-  top: 0;
-  background-color: rgba(0, 0, 0, 0.314);
-  width: 100%;
-  height: 100%;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.3);
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-inline: 15px;
+  padding: 0 15px;
 }
-.otpOptionscontainer {
+
+.otpModal {
   background-color: var(--searchBar);
-  padding-inline: 15px;
-  padding-block: 20px;
+  padding: 20px 15px;
   border-radius: 7px;
-  -webkit-border-radius: 7px;
-  -moz-border-radius: 7px;
-  -ms-border-radius: 7px;
-  -o-border-radius: 7px;
+  width: 100%;
+  max-width: 360px;
 }
-.OtpOptionsHeading {
-  font-size: 22px;
+
+.otpHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.otpTitle {
+  font-size: 20px;
   font-weight: 600;
 }
-.emailSelect {
-  padding-block: 20px;
-  padding-inline: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.headerpart {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.sendOtpCancle {
-  font-size: 16px;
-  color: white;
-  text-align: center;
-}
-.sendOtpcancleBtn {
-  position: relative;
-  top: -33px;
-  left: 28px;
-  text-align: center;
-  padding: 2px 6px;
+
+.closeOtpBtn {
   background: black;
+  color: white;
+  padding: 2px 6px;
   border-radius: 50%;
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  -ms-border-radius: 50%;
-  -o-border-radius: 50%;
+  cursor: pointer;
 }
-.checkBoxEmail,
-.checkBoxContact {
-  width: 20px;
-  height: 20px;
-  margin-left: 30px;
-  border: 3px solid white;
-  background-color: white;
-  border-radius: 50%;
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  -ms-border-radius: 50%;
-  -o-border-radius: 50%;
+
+.closeOtpIcon {
+  font-size: 16px;
 }
-.emailText {
-  font-size: 18px;
+
+.otpOption {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 10px;
+  cursor: pointer;
+}
+
+.otpLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.otpIcon {
+  font-size: 16px;
+}
+
+.otpText {
+  font-size: 16px;
   font-weight: 500;
 }
-.sendOtpBtnContainer {
+
+.otpCheck {
+  width: 18px;
+  height: 18px;
+  border: 2px solid white;
+  background-color: white;
+  border-radius: 50%;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.otpCheck.active {
+  background-color: yellowgreen;
+}
+
+.otpSendContainer {
   display: flex;
   justify-content: center;
-  align-items: center;
   margin-top: 20px;
 }
-.sendOtp {
+
+.otpSendButton {
   background-color: black;
   color: white;
   font-weight: 700;
-  padding: 10px 17px;
+  padding: 10px 20px;
   border-radius: 10px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  -ms-border-radius: 10px;
-  -o-border-radius: 10px;
+  cursor: pointer;
 }
 
+/* Responsive */
 @media screen and (width < 410px) {
-  .emailIcon,
-  .contactIcon {
+  .otpIcon {
     display: none;
   }
-  .OtpOptionsHeading {
-    font-size: 18px;
-    font-weight: 600;
+
+  .otpText {
+    font-size: 14px;
   }
-  .emailText {
-    font-size: 16px;
-    font-weight: 500;
-  }
-  .checkBoxEmail,
-  .checkBoxContact {
+
+  .otpCheck {
     width: 16px;
     height: 16px;
     margin-left: 10px;
-    border: 3px solid white;
-    background-color: white;
-    border-radius: 50%;
-    -webkit-border-radius: 50%;
-    -moz-border-radius: 50%;
-    -ms-border-radius: 50%;
-    -o-border-radius: 50%;
   }
-  .sendOtp {
-    background-color: black;
-    color: white;
-    font-weight: 700;
-    padding: 7px 14px;
-    border-radius: 10px;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    -ms-border-radius: 10px;
-    -o-border-radius: 10px;
+
+  .otpSendButton {
+    padding: 8px 16px;
   }
-  .emailSelect {
-    padding-block: 20px;
-    padding-inline: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+
+  .otpOption {
+    padding: 12px 8px;
   }
 }

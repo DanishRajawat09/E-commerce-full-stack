@@ -1,126 +1,122 @@
-.mainBody {
+.loginPage {
   width: 100vw;
   height: 100vh;
   background-color: var(--searchBar);
 }
+
 .loginHeader {
-  padding-inline: 30px;
-  padding-block: 20px;
+  padding: 20px 30px;
 }
-.goBack {
+
+.backIcon {
   font-size: 20px;
 }
-.main {
 
-  height: calc(80%);
+.loginMain {
+  height: 80%;
   display: flex;
   align-items: center;
   justify-content: center;
   padding-inline: 10px;
 }
-.formSection {
-   
-  padding-top: 30px;
-  padding-inline: 30px;
-  padding-bottom: 20px;
+
+.loginForm {
+  width: 100%;
+  max-width: 400px;
   background-color: white;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  padding: 30px;
   border-radius: 10px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  -ms-border-radius: 10px;
-  -o-border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2), 0 6px 20px rgba(0,0,0,0.19);
 }
-.loginHeading {
+
+.loginTitle {
   text-align: center;
+  font-size: 24px;
   font-weight: 700;
-  padding-bottom: 30px;
-  padding-inline: 40px;
+  margin-bottom: 30px;
 }
-.emailNumberLoginInput {
+
+.formGroup {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 6px;
   margin-bottom: 20px;
 }
-.emailContactLabel {
+
+.formLabel {
   font-size: 14px;
   font-weight: 500;
-  color:#626262;
+  color: #626262;
 }
-.emailContactInput {
- 
-  height: 30px;
-  padding-inline: 3px;
-  border-radius: 7px;
-  -webkit-border-radius: 7px;
-  -moz-border-radius: 7px;
-  -ms-border-radius: 7px;
-  -o-border-radius: 7px;
+
+.formInput {
+  height: 36px;
+  padding: 0 8px;
+  border-radius: 6px;
   border: none;
-  outline: 2px solid rgb(179, 179, 179);
+  outline: 2px solid #b3b3b3;
+  font-size: 14px;
 }
-.emailContactInput:focus {
+
+.formInput:focus {
   outline: 2px solid black;
 }
-.forgetPassContainer{
-    display: flex;
-    justify-content: end;
-    align-items: center;
-}
-.forgotPassword{
-    font-size: 12px;
-    margin-top: 4px;
-  
-    color: black;
-}
-.LoginBtn {
-    width: 100%;
-     background-color: black;
-  color: white;
-  margin-top: 10px;
-  padding: 4px 0px;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 10px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  -ms-border-radius: 10px;
-  -o-border-radius: 10px;
-}
-.loginLines{
-    width: 100%;
-    border: .5px solid rgb(139, 139, 139);
-}
-.googleAuth{
-    width: 100%;
-     background-color: black;
-  color: white;
-  margin-top: 20px;
-  margin-bottom: 10px;
-  padding: 4px 0px;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 10px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  -ms-border-radius: 10px;
-  -o-border-radius: 10px;
-}
-.newTO{
-    font-size: 12px;
-    font-weight: 600;
-    color: #626262;
 
+.formDivider {
+  border-top: 1px solid #8b8b8b;
+  margin: 15px 0;
 }
-.createAccount{
-    
-    font-size: 14px;
-    margin-left: 5px;
-    color: black;
+
+.forgotContainer {
+  display: flex;
+  justify-content: flex-end;
 }
-.createAcContainer{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+
+.forgotLink {
+  font-size: 13px;
+  color: black;
+  text-decoration: none;
+}
+
+.submitButton {
+  width: 100%;
+  background-color: black;
+  color: white;
+  padding: 10px 0;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.googleButton {
+  width: 100%;
+  background-color: black;
+  color: white;
+  padding: 10px 0;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  margin: 20px 0 10px;
+  cursor: pointer;
+}
+
+.signupContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.signupText {
+  font-size: 13px;
+  color: #626262;
+}
+
+.signupLink {
+  font-size: 14px;
+  font-weight: 600;
+  color: black;
+  text-decoration: none;
 }
