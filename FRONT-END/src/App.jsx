@@ -8,6 +8,8 @@ import ProductDetails from "./pages/ProductDetailsPage/ProductDetails"
 import CasualPage from "./pages/shop/casualPage/CasualPage"
 import Cart from './pages/CartPage/Cart'
 import UserLogin from './pages/login/UserLogin/UserLogin'
+import AdminLogin from './pages/login/AdminLogin/AdminLogin'
+import UserRegister from './pages/register/userRegister/UserRegister.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -26,8 +28,9 @@ const router = createBrowserRouter(
 )
 function App() {
   return (
-   <RouterProvider router={router}/>
-
+  //  <RouterProvider router={router}/>
+// {/* <AdminLogin/> */}
+<UserRegister/>
   )
 }
 
