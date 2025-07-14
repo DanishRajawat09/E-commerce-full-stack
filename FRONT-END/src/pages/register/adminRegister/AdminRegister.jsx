@@ -1,52 +1,82 @@
-import "./userRegister.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowLeft,
   faEnvelope,
   faPhone,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
+import "./adminRegister.css";
 import { Link, useNavigate } from "react-router-dom";
-
-const UserRegister = () => {
+const AdminRegister = () => {
   const [otpOptions, setOtpOptions] = useState(false);
   const [selectOption, setSelectOption] = useState(null);
-const navigate = useNavigate()
+  const navigate = useNavigate();
   return (
     <div className="registerPage">
       <header className="registerHeader">
-        <FontAwesomeIcon icon={faArrowLeft} className="backIcon" onClick={() => navigate(-1)}/>
+        <FontAwesomeIcon
+          icon={faArrowLeft}
+          className="backIcon"
+          onClick={() => navigate(-1)}
+        />
       </header>
 
       <main className="registerMain">
         <div className="registerForm">
-          <h2 className="registerTitle">Create Your Account</h2>
+          <h2 className="registerTitle">
+            Create Your Account as <span className="adminText">Admin</span>
+          </h2>
 
           <form>
             <div className="formGroup">
-              <label htmlFor="email" className="formLabel">Email</label>
-              <input type="text" id="email" name="email" className="formInput" />
+              <label htmlFor="email" className="formLabel">
+                Email
+              </label>
+              <input
+                type="text"
+                id="email"
+                name="email"
+                className="formInput"
+              />
             </div>
 
             <div className="formGroup">
-              <label htmlFor="contact" className="formLabel">Contact</label>
-              <input type="text" id="contact" name="contact" className="formInput" />
+              <label htmlFor="contact" className="formLabel">
+                Contact
+              </label>
+              <input
+                type="text"
+                id="contact"
+                name="contact"
+                className="formInput"
+              />
             </div>
 
             <div className="formGroup">
-              <label htmlFor="password" className="formLabel">Password</label>
-              <input type="password" id="password" name="password" className="formInput" />
+              <label htmlFor="password" className="formLabel">
+                Password
+              </label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                className="formInput"
+              />
             </div>
 
             <div className="formDivider" />
 
-            <button type="submit" className="submitButtonUserRegister">Register</button>
+            <button type="submit" className="submitButton">
+              Become Admin
+            </button>
           </form>
 
           <div className="switchAccount">
-            <span className="switchText">Have an account?</span>
-            <Link to={"/userlogin"} className="switchLinkUserRegister">Log In</Link>
+            <span className="switchText">Have an account as Admin?</span>
+            <Link to={"/adminlogin"} className="switchLink">
+              Log In
+            </Link>
           </div>
         </div>
       </main>
@@ -63,16 +93,15 @@ const navigate = useNavigate()
 
             <div className="formDivider" />
 
-            <div
-              className="otpOption"
-              onClick={() => setSelectOption("email")}
-            >
+            <div className="otpOption" onClick={() => setSelectOption("email")}>
               <div className="otpLabel">
                 <FontAwesomeIcon icon={faEnvelope} className="otpIcon" />
                 <span className="otpText">ibnfarooq070@gmail.com</span>
               </div>
               <div
-                className={`otpCheck ${selectOption === "email" ? "active" : ""}`}
+                className={`otpCheck ${
+                  selectOption === "email" ? "active" : ""
+                }`}
               ></div>
             </div>
 
@@ -87,14 +116,21 @@ const navigate = useNavigate()
                 <span className="otpText">7976755425</span>
               </div>
               <div
-                className={`otpCheck ${selectOption === "contact" ? "active" : ""}`}
+                className={`otpCheck ${
+                  selectOption === "contact" ? "active" : ""
+                }`}
               ></div>
             </div>
 
             <div className="formDivider" />
 
             <div className="otpSendContainer">
-              <button className="otpSendButton" onClick={() => setOtpOptions(false)}>Send OTP</button>
+              <button
+                className="otpSendButton"
+                onClick={() => setOtpOptions(false)}
+              >
+                Send OTP
+              </button>
             </div>
           </div>
         </div>
@@ -103,5 +139,4 @@ const navigate = useNavigate()
   );
 };
 
-export default UserRegister;
-
+export default AdminRegister;

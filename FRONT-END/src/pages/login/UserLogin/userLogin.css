@@ -72,13 +72,13 @@
   justify-content: flex-end;
 }
 
-.forgotLink {
+.forgotLinkUserLogin {
   font-size: 13px;
   color: black;
   text-decoration: none;
 }
 
-.submitButton {
+.submitButtonUserLogin {
   width: 100%;
   background-color: black;
   color: white;
@@ -114,7 +114,7 @@
   color: #626262;
 }
 
-.signupLink {
+.signupLinkUserLogin {
   font-size: 14px;
   font-weight: 600;
   color: black;

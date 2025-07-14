@@ -67,7 +67,7 @@
   margin: 15px 0;
 }
 
-.submitButton {
+.submitButtonUserRegister {
   width: 100%;
   background-color: black;
   color: white;
@@ -91,7 +91,7 @@
   color: #626262;
 }
 
-.switchLink {
+.switchLinkUserRegister {
   font-size: 14px;
   margin-left: 5px;
   color: black;

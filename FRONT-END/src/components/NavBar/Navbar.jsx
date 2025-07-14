@@ -64,9 +64,17 @@ const Navbar = () => {
             <NavLink to={"/cart"}>
               <img src="cart.png" alt="CartIcon" />
             </NavLink>
-            <Link to={"/userlogin"}>
+            <div className="loginZone">
               <img src="id.png" alt="IdIcon" />
-            </Link>
+              <div className="loginRoutes">
+                <Link to={"/userlogin"} className="logInUserLink">
+                  Log In
+                </Link>
+                <Link to={"/adminlogin"} className="logInAdminLink">
+                  Admin Zone
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>
