@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+
 import "./navbar.css";
-import Headline from "./Headline";
-import SideNavBar from "./SideNavBar";
+
 import { isOpen } from "../../features/stateSlice";
 import { useDispatch } from "react-redux";
 import { Link, NavLink } from "react-router-dom";
@@ -67,7 +66,7 @@ const Navbar = () => {
             <div className="loginZone">
               <img src="id.png" alt="IdIcon" />
               <div className="loginRoutes">
-                <Link to={"/userlogin"} className="logInUserLink">
+                <Link to={"/otppage"} className="logInUserLink">
                   Log In
                 </Link>
                 <Link to={"/adminlogin"} className="logInAdminLink">

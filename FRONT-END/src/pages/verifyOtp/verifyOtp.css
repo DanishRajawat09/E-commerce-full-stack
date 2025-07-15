@@ -1,0 +1,165 @@
+
+.otpOverlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 15px;
+}
+
+.otpModal {
+  background-color: var(--searchBar);
+  padding: 20px 15px;
+  border-radius: 7px;
+  width: 100%;
+  max-width: 460px;
+}
+
+.otpHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.otpTitle {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+
+.closeOtpBtn {
+  background: black;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+
+
+.textArea{
+    margin-top: 20px;
+}
+.otpOption {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 10px;
+  cursor: pointer;
+}
+
+.otpLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.otpIcon {
+  font-size: 16px;
+}
+
+.otpText {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.otpCheck {
+  width: 18px;
+  height: 18px;
+  border: 2px solid white;
+  background-color: white;
+  border-radius: 50%;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.otpCheck.active {
+  background-color: yellowgreen;
+}
+
+.otpSendContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.otpSendButton {
+  background-color: black;
+  color: white;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.otpContainer {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.otpBox {
+  width: 40px;
+  height: 45px;
+  font-size: 20px;
+  text-align: center;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  transition: border 0.2s ease;
+}
+
+.otpBox:focus {
+  border: 2px solid black;
+}
+
+.resendOtpOption{
+    margin-block: 10px;
+}
+.resendOtp{
+    font-size: 12px;
+}
+.resend{
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+/* Responsive */
+@media screen and (width < 410px) {
+  .otpIcon {
+    display: none;
+  }
+
+  .otpText {
+    font-size: 14px;
+  }
+
+  .otpCheck {
+    width: 16px;
+    height: 16px;
+    margin-left: 10px;
+  }
+
+  .otpSendButton {
+    padding: 8px 16px;
+  }
+
+  .otpOption {
+    padding: 12px 8px;
+  }
+  .otpContainer {
+  display: flex;
+  gap: 7px;
+  justify-content: center;
+  margin: 20px 0;
+}
+.resendOtp{
+    font-size: 10px;
+}
+.resend{
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+}
+}

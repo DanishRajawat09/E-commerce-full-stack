@@ -17,6 +17,7 @@ import AdminLogin from "./pages/login/AdminLogin/AdminLogin";
 import UserRegister from "./pages/register/userRegister/UserRegister.jsx";
 import AdminRegister from "./pages/register/adminRegister/adminRegister.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
+import OtpInput from "./pages/verifyOtp/VerifyOtp.jsx";
 
 // const router = createBrowserRouter(
 //   createRoutesFromElements(
@@ -53,6 +54,7 @@ function App() {
         <Route path="/adminLlogin" element={<AdminLogin />} />
         <Route path="/adminsignup" element={<AdminRegister />} />
         <Route path="/usersignup" element={<UserRegister />} />
+        <Route path="/otppage" element={<OtpInput />} />
       </Routes>
     </BrowserRouter>
   );
