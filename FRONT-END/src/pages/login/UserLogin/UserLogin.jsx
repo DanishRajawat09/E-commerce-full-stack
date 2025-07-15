@@ -3,52 +3,75 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
-const UserLogin = () => {
-  const navigate = useNavigate()
-  
+import Input from "../../../components/input/Input";
+
+const UserLogin = ({ role }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="loginPage">
       <header className="loginHeader">
-        <FontAwesomeIcon icon={faArrowLeft} className="backIcon" onClick={() => navigate(-1)} />
+        <FontAwesomeIcon
+          icon={faArrowLeft}
+          className="backIcon"
+          onClick={() => navigate(-1)}
+        />
       </header>
 
       <main className="loginMain">
         <div className="loginForm">
-          <h2 className="loginTitle">Welcome Back</h2>
+          <h2 className="loginTitle">
+            Welcome Back{" "}
+            {role === "admin" && <span className="extendedTitle">Admin</span>}
+          </h2>
+
+          <p className="loginSubtitle">
+            {role === "admin"
+              ? "Enter your credentials to securely access the admin dashboard."
+              : "We’re glad to have you back — let’s continue where you left off."}
+          </p>
           <form>
-            <div className="formGroup">
-              <label htmlFor="emailAndNumber" className="formLabel">
-                Email or Contact
-              </label>
-              <input
-                type="text"
+            <div className="inputGroup">
+              <Input
+                label="Email or Contact"
+                htmlFor="emailAndNumber"
                 id="emailAndNumber"
-                name="email"
-                className="formInput"
+                name="emailAndNumber"
+                className="inputField"
+                placeholder="Enter Your Email or Contact"
               />
             </div>
 
             <div className="formGroup">
-              <label htmlFor="password" className="formLabel">
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                className="formInput"
+                 <Input
+              label={"Password"}
+              htmlFor={"password"} name={"password"}password={true} placeHolder={"Enter your Password"}
               />
             </div>
 
             <div className="formDivider" />
 
             <div className="forgotContainer">
-              <a href="#" className="forgotLinkUserLogin">
+              <Link
+                to={"/forgetpassword"}
+                className={
+                  role === "admin"
+                    ? "forgotLinkAdminLogin"
+                    : "forgotLinkUserLogin"
+                }
+              >
                 Forgot password?
-              </a>
+              </Link>
             </div>
 
-            <button type="submit" className="submitButtonUserLogin">
+            <button
+              type="submit"
+              className={
+                role === "admin"
+                  ? "submitButtonAdminLogin"
+                  : "submitButtonUserLogin"
+              }
+            >
               Log In
             </button>
           </form>
@@ -59,7 +82,14 @@ const UserLogin = () => {
 
           <div className="signupContainer">
             <span className="signupText">New on Shop.co?</span>
-            <Link to={"/usersignup"} className="signupLinkUserLogin">
+            <Link
+              to={role === "admin" ? "/adminsignup" : "/usersignup"}
+              className={
+                role === "admin"
+                  ? "signupLinkAdminLogin"
+                  : "signupLinkUserLogin"
+              }
+            >
               Sign Up
             </Link>
           </div>

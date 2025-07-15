@@ -13,11 +13,10 @@ import ProductDetails from "./pages/ProductDetailsPage/ProductDetails";
 import CasualPage from "./pages/shop/casualPage/CasualPage";
 import Cart from "./pages/CartPage/Cart";
 import UserLogin from "./pages/login/UserLogin/UserLogin";
-import AdminLogin from "./pages/login/AdminLogin/AdminLogin";
 import UserRegister from "./pages/register/userRegister/UserRegister.jsx";
-import AdminRegister from "./pages/register/adminRegister/adminRegister.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
-import OtpInput from "./pages/verifyOtp/VerifyOtp.jsx";
+
+import ForgetPassword from "./pages/forgetPassword/ForgetPassword.jsx";
 
 // const router = createBrowserRouter(
 //   createRoutesFromElements(
@@ -50,11 +49,12 @@ function App() {
           <Route path="cart" element={<Cart />} />
         </Route>
 
-        <Route path="/userlogin" element={<UserLogin />} />
-        <Route path="/adminlogin" element={<AdminLogin />} />
-        <Route path="/adminsignup" element={<AdminRegister />} />
-        <Route path="/usersignup" element={<UserRegister />} />
-        <Route path="/otppage" element={<OtpInput />} />
+        <Route path="/userlogin" element={<UserLogin role="user"/>} />
+        <Route path="/adminlogin" element={<UserLogin role="admin" />} />
+        <Route path="/adminsignup" element={<UserRegister role="admin" />} />
+        <Route path="/usersignup" element={<UserRegister role="user" />} />
+        <Route path="/forgetpassword" element={<ForgetPassword />} />
+
       </Routes>
     </BrowserRouter>
   );

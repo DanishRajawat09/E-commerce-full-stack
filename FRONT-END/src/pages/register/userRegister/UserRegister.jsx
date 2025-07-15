@@ -8,20 +8,22 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import VerifyOtp from "../../verifyOtp/VerifyOtp";
-
-const UserRegister = () => {
-  const [otpOptions, setOtpOptions] = useState("userRegister");
+import VerifyOtp from "../../../components/verifyOtp/VerifyOtp";
+import Input from "../../../components/input/Input";
+// import '@coreui/coreui-pro/dist/css/coreui.min.css'
+const UserRegister = ({ role }) => {
+  const [otpOptions, setOtpOptions] = useState(false);
+  const [showVerifyOTP, setShowVerifyOTP] = useState(false);
   const [selectOption, setSelectOption] = useState(null);
   const navigate = useNavigate();
   const handleRegisterForm = (e) => {
     e.preventDefault();
-    setOtpOptions("sendotp");
+    setOtpOptions(true);
   };
 
   return (
-    <div className="registerPage">
-      <header className="registerHeader">
+    <div className="authPage">
+      <header className="authHeader">
         <FontAwesomeIcon
           icon={faArrowLeft}
           className="backIcon"
@@ -29,64 +31,64 @@ const UserRegister = () => {
         />
       </header>
 
-      <main className="registerMain">
-        <div className="registerForm">
-          <h2 className="registerTitle">Create Your Account</h2>
-
+      <main className="authMain">
+        <div className="authForm">
+          <h2 className="authTitle">Create Your Account</h2>
+          <p className="authSubTitle">
+            {role === "admin"
+              ? "Start your business today — create your admin account and launch your online store."
+              : "Join us and enjoy a smooth shopping experience from day one."}
+          </p>
           <form onSubmit={handleRegisterForm}>
-            <div className="formGroup">
-              <label htmlFor="email" className="formLabel">
-                Email
-              </label>
-              <input
-                type="text"
+            <div className="inputGroup">
+              <Input
+                label="Email"
+                htmlFor="email"
                 id="email"
                 name="email"
-                className="formInput"
+                className="inputField"
+                placeholder="Enter Your Email"
               />
             </div>
 
-            <div className="formGroup">
-              <label htmlFor="contact" className="formLabel">
-                Contact
-              </label>
-              <input
-                type="text"
+            <div className="inputGroup">
+              <Input
+                label="Contact"
+                htmlFor="contact"
                 id="contact"
                 name="contact"
-                className="formInput"
+                className="inputField"
+                placeholder="Enter Your Contact"
               />
             </div>
 
-            <div className="formGroup">
-              <label htmlFor="password" className="formLabel">
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                className="formInput"
+            <div className="inputGroup">
+              <Input
+                label={"Password"}
+                htmlFor={"password"}
+                name={"password"}
+                password={true}
+                placeHolder={"Enter your Password"}
               />
             </div>
 
             <div className="formDivider" />
 
-            <button type="submit" className="submitButtonUserRegister">
+            <button type="submit" className="authSubmitButton">
               Register
             </button>
           </form>
 
-          <div className="switchAccount">
-            <span className="switchText">Have an account?</span>
-            <Link to={"/userlogin"} className="switchLinkUserRegister">
+          <div className="authSwitch">
+            <span className="authSwitchText">Have an account?</span>
+            <Link to={"/userlogin"} className="authSwitchLink">
               Log In
             </Link>
           </div>
         </div>
       </main>
 
-      {otpOptions === "sendotp" && (
+      {otpOptions && (
         <div className="otpOverlay">
           <div className="otpModal">
             <div className="otpHeader">
@@ -132,7 +134,10 @@ const UserRegister = () => {
             <div className="otpSendContainer">
               <button
                 className="otpSendButton"
-                onClick={() => setOtpOptions("verifyotp")}
+                onClick={() => {
+                  setOtpOptions(false);
+                  setShowVerifyOTP(true);
+                }}
               >
                 Send OTP
               </button>
@@ -140,7 +145,8 @@ const UserRegister = () => {
           </div>
         </div>
       )}
-      {otpOptions === "verifyotp" && <VerifyOtp />}
+
+      {showVerifyOTP && <VerifyOtp func={setShowVerifyOTP} />}
     </div>
   );
 };

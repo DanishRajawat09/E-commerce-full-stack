@@ -1,10 +1,10 @@
-.registerPage {
+.authPage {
   height: 100vh;
   background-color: var(--searchBar);
   position: relative;
 }
 
-.registerHeader {
+.authHeader {
   padding: 20px 30px;
 }
 
@@ -12,7 +12,7 @@
   font-size: 20px;
 }
 
-.registerMain {
+.authMain {
   height: 80%;
   display: flex;
   align-items: center;
@@ -20,7 +20,7 @@
   padding: 0 10px;
 }
 
-.registerForm {
+.authForm {
   width: 100%;
   max-width: 400px;
   background-color: white;
@@ -29,45 +29,24 @@
   box-shadow: 0 4px 8px rgba(0,0,0,0.2), 0 6px 20px rgba(0,0,0,0.19);
 }
 
-.registerTitle {
+.authTitle {
   text-align: center;
   font-size: 22px;
   font-weight: 700;
   margin-bottom: 30px;
 }
-
-.formGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  margin-bottom: 20px;
+.authSubTitle{
+  text-align: center;
 }
 
-.formLabel {
-  font-size: 14px;
-  font-weight: 500;
-  color: #626262;
-}
 
-.formInput {
-  height: 30px;
-  padding: 0 8px;
-  border-radius: 7px;
-  border: none;
-  outline: 2px solid #b3b3b3;
-  font-size: 14px;
-}
-
-.formInput:focus {
-  outline: 2px solid black;
-}
 
 .formDivider {
   border-top: 0.5px solid #8b8b8b;
   margin: 15px 0;
 }
 
-.submitButtonUserRegister {
+.authSubmitButton {
   width: 100%;
   background-color: black;
   color: white;
@@ -79,139 +58,20 @@
   cursor: pointer;
 }
 
-.switchAccount {
+.authSwitch {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.switchText {
+.authSwitchText {
   font-size: 12px;
   font-weight: 600;
   color: #626262;
 }
 
-.switchLinkUserRegister {
+.authSwitchLink {
   font-size: 14px;
   margin-left: 5px;
   color: black;
-}
-
-/* OTP Modal */
-
-.otpOverlay {
-  position: absolute;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.3);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0 15px;
-}
-
-.otpModal {
-  background-color: var(--searchBar);
-  padding: 20px 15px;
-  border-radius: 7px;
-  width: 100%;
-  max-width: 360px;
-}
-
-.otpHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.otpTitle {
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.closeOtpBtn {
-  background: black;
-  color: white;
-  padding: 2px 6px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-.closeOtpIcon {
-  font-size: 16px;
-}
-
-.otpOption {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 10px;
-  cursor: pointer;
-}
-
-.otpLabel {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.otpIcon {
-  font-size: 16px;
-}
-
-.otpText {
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.otpCheck {
-  width: 18px;
-  height: 18px;
-  border: 2px solid white;
-  background-color: white;
-  border-radius: 50%;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.otpCheck.active {
-  background-color: yellowgreen;
-}
-
-.otpSendContainer {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.otpSendButton {
-  background-color: black;
-  color: white;
-  font-weight: 700;
-  padding: 10px 20px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-/* Responsive */
-@media screen and (width < 410px) {
-  .otpIcon {
-    display: none;
-  }
-
-  .otpText {
-    font-size: 14px;
-  }
-
-  .otpCheck {
-    width: 16px;
-    height: 16px;
-    margin-left: 10px;
-  }
-
-  .otpSendButton {
-    padding: 8px 16px;
-  }
-
-  .otpOption {
-    padding: 12px 8px;
-  }
 }
