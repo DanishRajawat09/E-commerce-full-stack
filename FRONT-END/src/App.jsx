@@ -51,7 +51,7 @@ function App() {
         </Route>
 
         <Route path="/userlogin" element={<UserLogin />} />
-        <Route path="/adminLlogin" element={<AdminLogin />} />
+        <Route path="/adminlogin" element={<AdminLogin />} />
         <Route path="/adminsignup" element={<AdminRegister />} />
         <Route path="/usersignup" element={<UserRegister />} />
         <Route path="/otppage" element={<OtpInput />} />

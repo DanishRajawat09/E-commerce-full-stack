@@ -8,10 +8,18 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import "./adminRegister.css";
 import { Link, useNavigate } from "react-router-dom";
+import VerifyOtp from "../../verifyOtp/VerifyOtp";
 const AdminRegister = () => {
-  const [otpOptions, setOtpOptions] = useState(false);
+  const [otpOptions, setOtpOptions] = useState("adminRegister");
   const [selectOption, setSelectOption] = useState(null);
   const navigate = useNavigate();
+
+
+  const handleRegisterForm = (e) => {
+    e.preventDefault()
+  setOtpOptions("sendotp")
+  }
+  
   return (
     <div className="registerPage">
       <header className="registerHeader">
@@ -28,7 +36,7 @@ const AdminRegister = () => {
             Create Your Account as <span className="adminText">Admin</span>
           </h2>
 
-          <form>
+          <form onSubmit={handleRegisterForm}>
             <div className="formGroup">
               <label htmlFor="email" className="formLabel">
                 Email
@@ -67,7 +75,7 @@ const AdminRegister = () => {
 
             <div className="formDivider" />
 
-            <button type="submit" className="submitButton">
+            <button type="submit" className="submitButton" >
               Become Admin
             </button>
           </form>
@@ -81,12 +89,12 @@ const AdminRegister = () => {
         </div>
       </main>
 
-      {otpOptions && (
+      {otpOptions === "sendotp" && (
         <div className="otpOverlay">
           <div className="otpModal">
             <div className="otpHeader">
               <h2 className="otpTitle">Select Verification Method</h2>
-              <div className="closeOtpBtn" onClick={() => setOtpOptions(false)}>
+              <div className="closeOtpBtn" onClick={() => setOtpOptions("adminRegister")}>
                 <FontAwesomeIcon icon={faXmark} className="closeOtpIcon" />
               </div>
             </div>
@@ -127,7 +135,7 @@ const AdminRegister = () => {
             <div className="otpSendContainer">
               <button
                 className="otpSendButton"
-                onClick={() => setOtpOptions(false)}
+                onClick={() => setOtpOptions("verifyotp")}
               >
                 Send OTP
               </button>
@@ -135,6 +143,8 @@ const AdminRegister = () => {
           </div>
         </div>
       )}
+
+      {otpOptions === "verifyotp" && <VerifyOtp/>}
     </div>
   );
 };

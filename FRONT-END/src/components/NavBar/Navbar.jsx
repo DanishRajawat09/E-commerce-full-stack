@@ -66,7 +66,7 @@ const Navbar = () => {
             <div className="loginZone">
               <img src="id.png" alt="IdIcon" />
               <div className="loginRoutes">
-                <Link to={"/otppage"} className="logInUserLink">
+                <Link to={"/userlogin"} className="logInUserLink">
                   Log In
                 </Link>
                 <Link to={"/adminlogin"} className="logInAdminLink">
