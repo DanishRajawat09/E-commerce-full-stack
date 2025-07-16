@@ -33,7 +33,7 @@
   text-align: center;
   font-size: 22px;
   font-weight: 700;
-  margin-bottom: 30px;
+  margin-bottom: 15px;
 }
 .authSubTitle{
   text-align: center;
@@ -49,6 +49,18 @@
 .authSubmitButton {
   width: 100%;
   background-color: black;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 8px 0;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.authSubmitButtonAdmin {
+  width: 100%;
+  background-color: var(--AdminTheme);
+  border: none;
   color: white;
   font-size: 16px;
   font-weight: 600;
@@ -74,4 +86,117 @@
   font-size: 14px;
   margin-left: 5px;
   color: black;
+}
+.authSwitchLinkAdmin {
+  font-size: 14px;
+  margin-left: 5px;
+  color: var(--AdminTheme);
+}
+
+
+
+.otpOverlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 15px;
+}
+
+.otpModal {
+  background-color: white;
+  padding: 20px 15px;
+  border-radius: 7px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.otpHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.otpTitle {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+
+
+
+.otpOption {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 10px;
+  cursor: pointer;
+}
+
+.otpLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+.otpText {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.otpCheck {
+  width: 18px;
+  height: 18px;
+  border: 2px solid white;
+  background-color: white;
+  border-radius: 50%;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.otpCheck.active {
+  background-color: yellowgreen;
+}
+
+.otpSendContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.otpSendButton {
+  width: 100%;
+  background-color: black;
+  color: white;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* Responsive */
+@media screen and (width < 410px) {
+  .otpIcon {
+    display: none;
+  }
+
+  .otpText {
+    font-size: 14px;
+  }
+
+  .otpCheck {
+    width: 16px;
+    height: 16px;
+    margin-left: 10px;
+  }
+
+  .otpSendButton {
+    padding: 8px 16px;
+  }
+
+  .otpOption {
+    padding: 12px 8px;
+  }
 }

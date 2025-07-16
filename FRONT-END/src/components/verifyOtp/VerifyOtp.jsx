@@ -4,7 +4,7 @@ import "./verifyOtp.css";
 import { useRef } from "react";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
-const VerifyOtp = ({func}) => {
+const VerifyOtp = ({func , openNewPass , role}) => {
   const inputs = useRef([]);
 
   const handleChange = (e, index) => {
@@ -44,6 +44,12 @@ const VerifyOtp = ({func}) => {
       inputs.current[nextIndex].focus();
     }
   };
+
+  const handleVerifyClick = (e) => {
+openNewPass && openNewPass(true)    
+func && func(false)
+  }
+  
  
   return (
     <div className="otpOverlay">
@@ -54,7 +60,7 @@ const VerifyOtp = ({func}) => {
 
     <div className="otpMessageArea">
       <p className="otpInstructionText">
-        Please enter the 6-digit code sent to your email or phone to continue.
+        {role === "admin" ? "We’ve sent a 6-digit verification code to your registered contact. Enter it below to continue as Admin." : "Please enter the 6-digit code sent to your email or phone to continue."}
       </p>
     </div>
 
@@ -78,12 +84,12 @@ const VerifyOtp = ({func}) => {
 
     <div className="otpResendSection">
       <p className="otpResendText">
-        Didn’t receive the code? <span className="otpResendLink">Resend</span>
+        Didn’t receive the code? <span className={role === "admin" ? "otpResendLinkAdmin" : "otpResendLink"}>Resend</span>
       </p>
     </div>
 
     <div className="otpButtonContainer">
-      <button className="otpSubmitButton">Verify</button>
+      <button className={role === "admin" ? "otpSubmitButtonAdmin" :"otpSubmitButton"} onClick={(e) => handleVerifyClick(e)}>Verify</button>
     </div>
 
     <div className="otpBackContainer">

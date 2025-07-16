@@ -6,9 +6,12 @@ import "./forgetPass.css";
 import { useState } from "react";
 import VerifyOtp from "../../components/verifyOtp/VerifyOtp";
 import Input from "../../components/input/Input";
+import NewPassword from "../../components/newPassword/NewPassword";
 
-const ForgetPassword = () => {
+const ForgetPassword = ({role}) => {
   const [showVerifyOTP, setShowVerifyOTP] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+
   const navigate = useNavigate();
 
   const handleForgetPass = (e) => {
@@ -20,10 +23,9 @@ const ForgetPassword = () => {
     <div className="forgetWrapper">
       <main className="forgetMain">
         <div className="forgetFormBox">
-          <h2 className="forgetTitle">Forgot your password?</h2>
+          <h2 className="forgetTitle">Forgot your {role === "admin" ? <span className="extendedTitle">Password?</span>: "Password?"}</h2>
           <p className="forgetSubtitle">
-            Don’t worry — we’ll send you a verification code to reset your
-            password securely.
+           {role === "admin" ? "Enter your email or phone number linked to your admin account.We’ll send you a verification code to reset your password and secure your access.":" Don’t worry — we’ll send you a verification code to reset your password securely."}
           </p>
 
           <form onSubmit={handleForgetPass}>
@@ -40,7 +42,7 @@ const ForgetPassword = () => {
 
             <div className="forgetDivider" />
 
-            <button type="submit" className="forgetSubmitButton">
+            <button type="submit" className={role === "admin" ?  "forgetSubmitButtonAdmin":"forgetSubmitButton"}>
               Find and Send OTP
             </button>
           </form>
@@ -54,7 +56,8 @@ const ForgetPassword = () => {
         </div>
       </main>
 
-      {showVerifyOTP && <VerifyOtp func={setShowVerifyOTP} />}
+      {showVerifyOTP && <VerifyOtp func={setShowVerifyOTP} role={role} openNewPass={setShowNewPassword} />}
+      {showNewPassword && <NewPassword openNewPass={setShowNewPassword} role={role}/>}
     </div>
   );
 };

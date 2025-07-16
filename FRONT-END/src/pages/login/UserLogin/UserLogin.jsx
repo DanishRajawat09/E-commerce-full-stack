@@ -53,7 +53,7 @@ const UserLogin = ({ role }) => {
 
             <div className="forgotContainer">
               <Link
-                to={"/forgetpassword"}
+                to={role === "admin" ?  "/forgetpasswordadmin":"/forgetpassword"}
                 className={
                   role === "admin"
                     ? "forgotLinkAdminLogin"

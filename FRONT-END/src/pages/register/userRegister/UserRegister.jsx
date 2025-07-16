@@ -33,10 +33,10 @@ const UserRegister = ({ role }) => {
 
       <main className="authMain">
         <div className="authForm">
-          <h2 className="authTitle">Create Your Account</h2>
+          <h2 className="authTitle">Create Your {role === "admin" ?<span className="extendedTitle">Admin Account</span> : "Account"}</h2>
           <p className="authSubTitle">
             {role === "admin"
-              ? "Start your business today — create your admin account and launch your online store."
+              ? "Start your business today  create your admin account and launch your online store."
               : "Join us and enjoy a smooth shopping experience from day one."}
           </p>
           <form onSubmit={handleRegisterForm}>
@@ -74,14 +74,14 @@ const UserRegister = ({ role }) => {
 
             <div className="formDivider" />
 
-            <button type="submit" className="authSubmitButton">
+            <button type="submit" className={role === "admin"  ? "authSubmitButtonAdmin" : "authSubmitButton"}>
               Register
             </button>
           </form>
 
           <div className="authSwitch">
             <span className="authSwitchText">Have an account?</span>
-            <Link to={"/userlogin"} className="authSwitchLink">
+            <Link to={role === "admin" ? "/adminlogin": "/userlogin"} className={role === "admin" ? "authSwitchLinkAdmin":"authSwitchLink"}>
               Log In
             </Link>
           </div>
@@ -92,10 +92,10 @@ const UserRegister = ({ role }) => {
         <div className="otpOverlay">
           <div className="otpModal">
             <div className="otpHeader">
-              <h2 className="otpTitle">Select Verification Method</h2>
-              <div className="closeOtpBtn" onClick={() => setOtpOptions(false)}>
+              <h2 className="otpTitle">Select Verification Method </h2>
+              {/* <div className="closeOtpBtn" onClick={() => setOtpOptions(false)}>
                 <FontAwesomeIcon icon={faXmark} className="closeOtpIcon" />
-              </div>
+              </div> */}
             </div>
 
             <div className="formDivider" />
@@ -142,6 +142,12 @@ const UserRegister = ({ role }) => {
                 Send OTP
               </button>
             </div>
+             <div className="otpBackContainer">
+      <button className="otpBackButton" onClick={() => setOtpOptions(false)}>
+        <FontAwesomeIcon icon={faArrowLeft} />
+        <span className="otpBackText">Go Back</span>
+      </button>
+    </div>
           </div>
         </div>
       )}

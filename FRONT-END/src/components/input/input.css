@@ -25,7 +25,9 @@
 .inputField:focus {
   outline: 2px solid black;
 }
-#password{
+
+
+#passwordInput .inputField{
 padding-right: 40px;
 }
 #passwordInput{
@@ -43,4 +45,5 @@ padding-right: 40px;
   align-items: center;
   position: absolute;
 right: 0px;
+color: #b3b3b3;
 }
