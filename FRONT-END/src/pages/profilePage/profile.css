@@ -1,0 +1,84 @@
+.profilePage {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--searchBar);
+  
+}
+
+.profileHeader {
+  padding: 20px 30px;
+}
+
+.profileMain {
+  height: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 10px;
+}
+
+.profileForm {
+  width: 100%;
+  max-width: 400px;
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2), 0 6px 20px rgba(0,0,0,0.19);
+}
+
+.profileTitle {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+
+
+.inputField:focus {
+  outline: 2px solid black;
+}
+
+
+
+.formDivider {
+  border-top: 1px solid #8b8b8b;
+  margin: 15px 0;
+}
+
+
+
+
+
+
+.submitButtonUserLogin {
+  width: 100%;
+  background-color: black;
+  color: white;
+  padding: 10px 0;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+.submitButtonAdminLogin{
+  width: 100%;
+  border: none;
+  background-color: var(--AdminTheme);
+  color: white;
+  padding: 10px 0;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+
+
+.extendedTitle{
+  color: var(--AdminTheme);
+}
+
+

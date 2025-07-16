@@ -1,4 +1,3 @@
-
 import "./navbar.css";
 
 import { isOpen } from "../../features/stateSlice";
@@ -66,10 +65,10 @@ const Navbar = () => {
             <div className="loginZone">
               <img src="id.png" alt="IdIcon" />
               <div className="loginRoutes">
-                <Link to={"/userlogin"} className="logInUserLink">
+                <Link to={"/userprofile"} className="logInUserLink">
                   Log In
                 </Link>
-                <Link to={"/adminlogin"} className="logInAdminLink">
+                <Link to={"/adminprofile"} className="logInAdminLink">
                   Admin Zone
                 </Link>
               </div>

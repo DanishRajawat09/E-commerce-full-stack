@@ -11,6 +11,7 @@ const Input = ({
   className,
   password,
   placeHolder,
+  required = false,
   ...props
 }) => {
   const [eye, setEye] = useState(false);
@@ -40,8 +41,9 @@ const Input = ({
           type={type}
           id={id}
           name={htmlFor}
-          className={className}
+          className="inputField"
           placeholder={placeHolder}
+          required={required}
           {...props}
         />
       )}
