@@ -12,9 +12,12 @@ const createProfile = asyncHandler(async (req, res) => {
     throw new ApiError(403, "Only admins are allowed to create a profile.");
   }
 
-  const { shopName } = req.body;
+  const { shopName , fullName } = req.body;
 
   if (!shopName || typeof shopName !== "string" || shopName.trim() === "") {
+    throw new ApiError(400, "Shop name is required.");
+  }
+  if (!fullName || typeof fullName !== "string" || fullName.trim() === "") {
     throw new ApiError(400, "Shop name is required.");
   }
 
@@ -25,6 +28,7 @@ const createProfile = asyncHandler(async (req, res) => {
   const adminObj = {
     admin: userId,
     shopName: shopName.trim(),
+    fullName : fullName.trim()
   };
 
   if (avatarPath) {
@@ -49,7 +53,7 @@ const createProfile = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, "Shop name added successfully", adminProfile));
 });
 const updateShopDetails = asyncHandler(async (req, res) => {
-  const { shopName, pinCode, city, state, address } = req.body;
+  const { shopName, pinCode, city, state, address  , fullName} = req.body;
   const userId = req.user._id;
   const avatarPath = req.file?.path;
   if (!userId) {
@@ -75,8 +79,17 @@ const updateShopDetails = asyncHandler(async (req, res) => {
       "The provided shop name is already set. Please use a different name."
     );
   }
+  if (fullName && fullName.trim() === adminProfile.fullName) {
+    throw new ApiError(
+      400,
+      "The provided shop name is already set. Please use a different name."
+    );
+  }
 
   if (!shopName && !pinCode && !address && !city && !state) {
+    throw new ApiError(400, "No data provided to update.");
+  }
+  if (!shopName && !pinCode && !address && !city && !state && !fullName) {
     throw new ApiError(400, "No data provided to update.");
   }
 
@@ -97,6 +110,7 @@ const updateShopDetails = asyncHandler(async (req, res) => {
     adminProfile.adminAvatar.publicId = avatarCloudinaryPath.public_id;
   }
   if (shopName) adminProfile.shopName = shopName.trim();
+  if (fullName) adminProfile.fullName = fullName.trim();
 
   if (pinCode) adminProfile.shopAddress.pinCode = pinCode.trim();
   if (address) adminProfile.shopAddress.address = address.trim().toLowerCase();

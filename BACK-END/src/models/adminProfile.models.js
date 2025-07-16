@@ -8,6 +8,11 @@ const adminProfileSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    fullName : {
+type : String,
+required : true,
+trim : true
+    },
     adminAvatar: {
       url: {
         type: String,
