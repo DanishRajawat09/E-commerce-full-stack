@@ -32,6 +32,7 @@ import {
   orderDetailsAdmin,
 } from "../controllers/order.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
+import { CheckAdminProfile } from "../middlewares/checkAdminProfile.middleware.js";
 const router = Router();
 // regiter admin
 router.route("/register").post((req, res, next) => {
@@ -70,6 +71,7 @@ router
   .post(
     verifyJwtAdmin,
     isAdmin,
+    CheckAdminProfile,
     sendOtp("resetAdminEmail"),
     handleEmailResetSendOtp
   );
@@ -78,6 +80,7 @@ router
   .post(
     verifyJwtAdmin,
     isAdmin,
+    CheckAdminProfile,
     resetJwt("resetAdminEmail"),
     verifyOtp,
     handleEmailResetVerifyOtp
@@ -88,6 +91,7 @@ router
   .patch(
     verifyJwtAdmin,
     isAdmin,
+    CheckAdminProfile,
     resetJwt("resetAdminEmailVerify"),
     handleNewEmailSet
   );
@@ -99,6 +103,7 @@ router
   .post(
     verifyJwtAdmin,
     isAdmin,
+    CheckAdminProfile,
     sendOtp("resetAdminContact"),
     handleContactResetSendOtp
   );
@@ -108,6 +113,7 @@ router
   .post(
     verifyJwtAdmin,
     isAdmin,
+    CheckAdminProfile,
     resetJwt("resetAdminContact"),
     verifyOtp,
     handleContactResetVerifyOtp
@@ -118,6 +124,7 @@ router
   .patch(
     verifyJwtAdmin,
     isAdmin,
+    CheckAdminProfile,
     resetJwt("resetAdminContactVerify"),
     handleNewContactSet
   );
@@ -129,20 +136,20 @@ router
 // admin products contol
 router
   .route("/product/add")
-  .post(verifyJwtAdmin, isAdmin, upload.array("images", 3), addProducts);
+  .post(verifyJwtAdmin, isAdmin,CheckAdminProfile, upload.array("images", 3), addProducts);
 router
   .route("/product/delete/:productId")
-  .delete(verifyJwtAdmin, isAdmin, deleteProduct);
+  .delete(verifyJwtAdmin, isAdmin,CheckAdminProfile, deleteProduct);
 router
-  .route("/product/update/:productId/:imageId1/:imageId2/imageId3")
-  .put(verifyJwtAdmin, isAdmin, upload.array("images", 3), updateProduct);
-router.route("/product").get(verifyJwtAdmin, isAdmin, getAdminProducts);
+  .route("/product/update/:productId")
+  .put(verifyJwtAdmin, isAdmin,CheckAdminProfile, upload.array("images", 3), updateProduct);
+router.route("/product").get(verifyJwtAdmin, isAdmin,CheckAdminProfile, getAdminProducts);
 
 // order
 
-router.route("/order").get(verifyJwtAdmin, isAdmin, orderDetailsAdmin);
+router.route("/order").get(verifyJwtAdmin, isAdmin,CheckAdminProfile, orderDetailsAdmin);
 router
   .route("/order/status/:productId")
-  .patch(verifyJwtAdmin, isAdmin, editOrderDetails);
+  .patch(verifyJwtAdmin, isAdmin,CheckAdminProfile, editOrderDetails);
 
 export default router;

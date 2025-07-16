@@ -18,15 +18,24 @@ const Profile = ({ role }) => {
           <form>
             <ProfilePicture role={role} />
 
-            <div className="initialGroup">
+            <div className="inputGroup">
               <Input
                 label={"Full Name"}
                 htmlFor={"fullname"}
                 name={"fullName"}
-                placeHolder={"Enter your Fullname"}
-                // required={true}
+                placeHolder={"Enter your Full name"}
+                required={true}
               />
             </div>
+           {role === "admin" && ( <div className="inputGroup">
+              <Input
+                label={"Shop Name"}
+                htmlFor={"shopname"}
+                name={"shopName"}
+                placeHolder={"Enter your shop Name"}
+                required={true}
+              />
+            </div>)}
 
             <div className="formDivider" />
 

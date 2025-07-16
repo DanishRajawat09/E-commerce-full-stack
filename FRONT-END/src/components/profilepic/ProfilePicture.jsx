@@ -5,7 +5,7 @@ import "./profilepic.css";
 const ProfilePicture = ({ role }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [imageURL, setImageURL] = useState(null);
-  const [croppedImageURL, setCroppedImageURL] = useState(null);
+  const [croppedImageURL, setCroppedImageURL] = useState("istockphoto2.jpg");
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
