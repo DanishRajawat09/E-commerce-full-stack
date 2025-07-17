@@ -18,7 +18,7 @@ const Input = ({
   return (
     <>
       {label && (
-        <label htmlFor={htmlFor} className="formLabel">
+        <label htmlFor={htmlFor} className="inputLabel">
           {label}
         </label>
       )}

@@ -47,3 +47,21 @@ padding-right: 40px;
 right: 0px;
 color: #b3b3b3;
 }
+
+@media screen and (width < 400px) {
+  .inputLabel {
+  font-size: 12px;
+  font-weight: 600;
+
+}
+.inputField {
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 6px;
+  border: none;
+  outline: 2px solid #b3b3b3;
+  font-size: 13px;
+  width: 100%;
+}
+
+}

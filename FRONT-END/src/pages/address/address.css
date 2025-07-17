@@ -78,7 +78,7 @@
   margin: 15px 0;
 }
 
-.authSubmitButton {
+.addressSubmitButton {
   width: 100%;
   background-color: black;
   color: white;
@@ -89,7 +89,7 @@
   margin-bottom: 10px;
   cursor: pointer;
 }
-.authSubmitButtonAdmin {
+.addressSubmitButtonAdmin {
   width: 100%;
   background-color: var(--AdminTheme);
   border: none;
@@ -102,28 +102,8 @@
   cursor: pointer;
 }
 
-.authSwitch {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
-.authSwitchText {
-  font-size: 12px;
-  font-weight: 600;
-  color: #626262;
-}
 
-.authSwitchLink {
-  font-size: 14px;
-  margin-left: 5px;
-  color: black;
-}
-.authSwitchLinkAdmin {
-  font-size: 14px;
-  margin-left: 5px;
-  color: var(--AdminTheme);
-}
 
 
 

@@ -43,8 +43,8 @@ const Profile = ({ role }) => {
               type="submit"
               className={
                 role === "admin"
-                  ? "submitButtonAdminLogin"
-                  : "submitButtonUserLogin"
+                  ? "submitButtonAdminLoginProfile"
+                  : "submitButtonUserLoginProfile"
               }
             >
               Create Profile

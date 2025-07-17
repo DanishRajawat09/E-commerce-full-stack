@@ -163,4 +163,27 @@
   .otpSubmitButton {
     padding: 8px 16px;
   }
+  .otpBackContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.otpBackButton {
+  background: transparent;
+  color: black;
+  padding: 10px 0;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  margin: 10px 0 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.otpBackText {
+  margin-left: 10px;
+}
 }

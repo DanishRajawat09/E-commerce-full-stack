@@ -51,7 +51,7 @@
 
 
 
-.submitButtonUserLogin {
+.submitButtonUserLoginProfile {
   width: 100%;
   background-color: black;
   color: white;
@@ -62,7 +62,7 @@
   margin-top: 10px;
   cursor: pointer;
 }
-.submitButtonAdminLogin{
+.submitButtonAdminLoginProfile{
   width: 100%;
   border: none;
   background-color: var(--AdminTheme);

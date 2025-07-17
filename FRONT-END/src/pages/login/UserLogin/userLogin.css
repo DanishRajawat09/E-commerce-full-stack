@@ -26,7 +26,7 @@
   background-color: white;
   padding: 30px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2), 0 6px 20px rgba(0,0,0,0.19);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
 }
 
 .loginTitle {
@@ -35,7 +35,7 @@
   font-weight: 700;
   margin-bottom: 15px;
 }
-.loginSubtitle{
+.loginSubtitle {
   text-align: center;
   margin-bottom: 30px;
 }
@@ -53,26 +53,23 @@
   color: #626262;
 }
 
-
-
 .inputField:focus {
   outline: 2px solid black;
 }
 
-#formPassword{
+#formPassword {
   width: 100%;
-    height: 36px;
+  height: 36px;
   padding: 0 8px;
   border-radius: 6px;
   border: none;
   outline: 2px solid #b3b3b3;
   font-size: 14px;
 }
-#formPassword:focus{
- outline: 2px solid black;
- border: none;
- box-shadow: none;
-
+#formPassword:focus {
+  outline: 2px solid black;
+  border: none;
+  box-shadow: none;
 }
 .formInput:focus {
   outline: 2px solid black;
@@ -96,7 +93,7 @@
 }
 .forgotLinkAdminLogin {
   font-size: 13px;
-  color: var(--AdminTheme );
+  color: var(--AdminTheme);
   text-decoration: none;
 }
 
@@ -111,7 +108,7 @@
   margin-top: 10px;
   cursor: pointer;
 }
-.submitButtonAdminLogin{
+.submitButtonAdminLogin {
   width: 100%;
   border: none;
   background-color: var(--AdminTheme);
@@ -154,12 +151,51 @@
   color: black;
   text-decoration: none;
 }
-.signupLinkAdminLogin{
+.signupLinkAdminLogin {
   font-size: 14px;
   font-weight: 600;
   color: var(--AdminTheme);
   text-decoration: none;
 }
-.extendedTitle{
+.extendedTitle {
   color: var(--AdminTheme);
+}
+
+@media screen and (width < 600px) {
+  .loginHeader {
+    margin-bottom: 20px;
+  }
+  .loginTitle {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+  .loginSubtitle {
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+  .submitButtonUserLogin {
+    padding: 7px 0;
+    font-size: 14px;
+  }
+  .submitButtonAdminLogin {
+    padding: 7px 0;
+    font-size: 14px;
+  }
+  .signupText {
+    font-size: 12px;
+    color: #626262;
+  }
+
+  .signupLinkUserLogin {
+    font-size: 13px;
+    font-weight: 600;
+    color: black;
+    text-decoration: none;
+  }
+  .signupLinkAdminLogin {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--AdminTheme);
+    text-decoration: none;
+  }
 }
