@@ -19,6 +19,7 @@ import ScrollToTop from "./components/ScrollToTop.jsx";
 import ForgetPassword from "./pages/forgetPassword/ForgetPassword.jsx";
 import NewPassword from "./components/newPassword/NewPassword.jsx";
 import Profile from "./pages/profilePage/Profile.jsx";
+import Address from "./pages/address/Address.jsx";
 
 // const router = createBrowserRouter(
 //   createRoutesFromElements(
@@ -61,6 +62,8 @@ function App() {
         <Route path="/newpasswordadmin" element={<NewPassword role="admin"/>} />
         <Route path="/adminprofile" element={<Profile role="admin"/>} />
         <Route path="/userprofile" element={<Profile role="user"/>} />
+        <Route path="/useraddress" element={<Address role="user"/>} />
+        <Route path="/adminaddress" element={<Address role="admin"/>} />
 
       </Routes>
     </BrowserRouter>
