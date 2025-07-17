@@ -20,6 +20,7 @@ import ForgetPassword from "./pages/forgetPassword/ForgetPassword.jsx";
 import NewPassword from "./components/newPassword/NewPassword.jsx";
 import Profile from "./pages/profilePage/Profile.jsx";
 import Address from "./pages/address/Address.jsx";
+import VerifyOtp from "./components/verifyOtp/VerifyOtp.jsx";
 
 // const router = createBrowserRouter(
 //   createRoutesFromElements(
@@ -52,18 +53,22 @@ function App() {
           <Route path="cart" element={<Cart />} />
         </Route>
 
-        <Route path="/userlogin" element={<UserLogin role="user"/>} />
-        <Route path="/adminlogin" element={<UserLogin role="admin" />} />
-        <Route path="/adminsignup" element={<UserRegister role="admin" />} />
-        <Route path="/usersignup" element={<UserRegister role="user" />} />
-        <Route path="/forgetpassword" element={<ForgetPassword role="user" />} />
-        <Route path="/forgetpasswordAdmin" element={<ForgetPassword role="admin"/>} />
-        <Route path="/newpassword" element={<NewPassword role="user"/>} />
-        <Route path="/newpasswordadmin" element={<NewPassword role="admin"/>} />
-        <Route path="/adminprofile" element={<Profile role="admin"/>} />
-        <Route path="/userprofile" element={<Profile role="user"/>} />
-        <Route path="/useraddress" element={<Address role="user"/>} />
-        <Route path="/adminaddress" element={<Address role="admin"/>} />
+        <Route path="/user/login" element={<UserLogin role="user"/>} />
+        <Route path="/admin/login" element={<UserLogin role="admin" />} />
+        <Route path="/admin/signup" element={<UserRegister role="admin" />} />
+        <Route path="/user/signup" element={<UserRegister role="user" />} />
+        <Route path="/user/forgetpassword" element={<ForgetPassword role="user" />} />
+        <Route path="/admin/forgetpassword" element={<ForgetPassword role="admin"/>} />
+
+
+        <Route path="/user/verifyotp" element={<VerifyOtp role="user"/>} />
+        <Route path="/admin/verifyotp" element={<VerifyOtp role="admin"/>} />
+        <Route path="/user/newpassword" element={<NewPassword role="user"/>} />
+        <Route path="/admin/newpassword" element={<NewPassword role="admin"/>} />
+        <Route path="/admin/profile" element={<Profile role="admin"/>} />
+        <Route path="/user/profile" element={<Profile role="user"/>} />
+        <Route path="/user/address" element={<Address role="user"/>} />
+        <Route path="/admin/address" element={<Address role="admin"/>} />
 
       </Routes>
     </BrowserRouter>

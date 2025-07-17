@@ -18,7 +18,7 @@ import {
 } from "../controllers/adminUser.controller.js";
 import sendOtp from "../middlewares/sendOtp.middleware.js";
 import resetJwt from "../middlewares/resetJwtverify.middleware.js";
-import { verifyJwtAdmin } from "../middlewares/verifyJwt.middleware.js";
+import { verifyJwtAdmin, verifyJwtAdminRefresh } from "../middlewares/verifyJwt.middleware.js";
 import isAdmin from "../middlewares/isAdmin.middleware.js";
 import verifyOtp from "../middlewares/verifyOtp.js";
 import {
@@ -131,7 +131,7 @@ router
 
 router
   .route("/update/auth-token")
-  .patch(verifyJwtAdmin, handleUpdateAccessToken);
+  .patch(verifyJwtAdminRefresh, handleUpdateAccessToken);
 
 // admin products contol
 router

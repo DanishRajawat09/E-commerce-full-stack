@@ -20,7 +20,7 @@ import {
 import sendOtp from "../middlewares/sendOtp.middleware.js";
 import verifyOtp from "../middlewares/verifyOtp.js";
 import resetJwt from "../middlewares/resetJwtverify.middleware.js";
-import { verifyJwtUser } from "../middlewares/verifyJwt.middleware.js";
+import { verifyJwtUser, verifyJwtUserRefresh } from "../middlewares/verifyJwt.middleware.js";
 import {
   getProducts,
   productDetail,
@@ -97,7 +97,7 @@ router
 // update access token
 router
   .route("/update/auth-tokens")
-  .patch(verifyJwtUser, handleUpdateAccessToken);
+  .patch(verifyJwtUserRefresh, handleUpdateAccessToken);
 
 // get all products
 router.route("/products").get(verifyJwtUser, getProducts);
