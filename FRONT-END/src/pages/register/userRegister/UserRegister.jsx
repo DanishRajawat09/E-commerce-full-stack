@@ -43,7 +43,6 @@ const UserRegister = ({ role }) => {
             <div className="inputGroup">
               <Input
                 label="Email"
-                htmlFor="email"
                 id="email"
                 name="email"
                 className="inputField"
@@ -54,7 +53,7 @@ const UserRegister = ({ role }) => {
             <div className="inputGroup">
               <Input
                 label="Contact"
-                htmlFor="contact"
+                
                 id="contact"
                 name="contact"
                 className="inputField"
@@ -65,7 +64,7 @@ const UserRegister = ({ role }) => {
             <div className="inputGroup">
               <Input
                 label={"Password"}
-                htmlFor={"password"}
+              
                 name={"password"}
                 password={true}
                 placeHolder={"Enter your Password"}
