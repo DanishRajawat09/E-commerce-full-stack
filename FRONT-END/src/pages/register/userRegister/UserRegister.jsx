@@ -81,7 +81,7 @@ const UserRegister = ({ role }) => {
 
           <div className="authSwitch">
             <span className="authSwitchText">Have an account?</span>
-            <Link to={role === "admin" ? "/adminlogin": "/userlogin"} className={role === "admin" ? "authSwitchLinkAdmin":"authSwitchLink"}>
+            <Link to={role === "admin" ? "/admin/login": "/user/login"} className={role === "admin" ? "authSwitchLinkAdmin":"authSwitchLink"}>
               Log In
             </Link>
           </div>

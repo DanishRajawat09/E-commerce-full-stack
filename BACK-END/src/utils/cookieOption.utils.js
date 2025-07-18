@@ -5,7 +5,7 @@ const cookieOption = (maxAge, sameSite = "none") => {
     httpOnly: true,
     secure: NODE_ENV === "production",
     maxAge: maxAge,
-    sameSite,
+    SameSite : sameSite,
   };
   return options;
 };

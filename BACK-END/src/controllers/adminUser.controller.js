@@ -204,9 +204,9 @@ const afterVerify = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-  const { email, contact, password, role } = req.body;
+  const { emailContact ,password, role } = req.body;
 
-  if (!email && !contact) {
+  if ( !emailContact) {
     throw new ApiError(
       400,
       "Please provide either an email or contact number to log in."
@@ -219,7 +219,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const user = await User.findOne({
     $and: [
-      { $or: [{ email: email }, { contact: contact }] },
+      { $or: [{ email: emailContact }, { contact: emailContact }] },
       { role: role || "user" },
     ],
   });

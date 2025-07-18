@@ -15,7 +15,7 @@ import Cart from "./pages/CartPage/Cart";
 import UserLogin from "./pages/login/UserLogin/UserLogin";
 import UserRegister from "./pages/register/userRegister/UserRegister.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
-
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import ForgetPassword from "./pages/forgetPassword/ForgetPassword.jsx";
 import NewPassword from "./components/newPassword/NewPassword.jsx";
 import Profile from "./pages/profilePage/Profile.jsx";
@@ -40,7 +40,9 @@ import VerifyOtp from "./components/verifyOtp/VerifyOtp.jsx";
 //   )
 // );
 function App() {
+  const client = new QueryClient()
   return (
+    <QueryClientProvider client={client}>
     <BrowserRouter>
      
       <ScrollToTop />
@@ -72,6 +74,7 @@ function App() {
 
       </Routes>
     </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 

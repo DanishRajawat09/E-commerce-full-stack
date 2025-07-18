@@ -308,7 +308,7 @@ const updateProduct = asyncHandler(async (req, res) => {
       count++;
     }
     if (oldSizes.length > 0 && newSizes.length > 0) {
-      product.details?.sizes = product.details?.sizes.filter(
+      product.details.sizes = product.details?.sizes.filter(
         (val) => !oldSizes.includes(val)
       );
 
@@ -319,7 +319,7 @@ const updateProduct = asyncHandler(async (req, res) => {
       }
       count++;
     } else if (oldSizes.length > 0) {
-      product.details?.sizes = product.details?.sizes.filter(
+      product.details.sizes = product.details?.sizes.filter(
         (val) => !oldSizes.includes(val)
       );
       count++;
@@ -332,7 +332,7 @@ const updateProduct = asyncHandler(async (req, res) => {
       count++;
     }
     if (oldColors.length > 0 && newColors.length > 0) {
-      product.details?.colors = product.details?.colors.filter(
+      product.details.colors = product.details?.colors.filter(
         (val) => !oldColors.includes(val)
       );
       for (const newColor of newColors) {
@@ -341,7 +341,7 @@ const updateProduct = asyncHandler(async (req, res) => {
         }
       }
     } else if (oldColors.length > 0) {
-      product.details?.colors = product.details?.colors.filter(
+      product.details.colors = product.details?.colors.filter(
         (val) => !oldColors.includes(val)
       );
     } else if (newColors.length > 0) {
