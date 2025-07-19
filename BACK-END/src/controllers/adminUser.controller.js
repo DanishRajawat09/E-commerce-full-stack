@@ -21,6 +21,39 @@ import { generateResetToken } from "../utils/resetToken.utils.js";
 import cookieOption from "../utils/cookieOption.utils.js";
 import generateAccessRefreshToken from "../utils/generateAccessRefresh.utils.js";
 
+const checkResetToken = asyncHandler(async (req, res) => {
+  const { purpose } = req.query;
+  const token =
+    req.cookies?.adminResetToken ||
+    req.cookies?.userResetToken ||
+    req.header("Authorization")?.replace("Bearer ", "");
+
+  if (!token) {
+    throw new ApiError(401, "Reset token is missing or unauthorized access.");
+  }
+  if (!purpose) {
+    throw new ApiError(400, "purpose is reuired");
+  }
+  let decoded;
+  try {
+    decoded = jwt.verify(token, JWT_RESET_SECRET);
+  } catch (error) {
+    throw new ApiError(401, "Invalid or expired reset token.");
+  }
+
+  if (!decoded || !decoded.id || !decoded.role) {
+    throw new ApiError(401, "Invalid token payload.");
+  }
+
+  if (decoded.purpose !== purpose) {
+    throw new ApiError(
+      403,
+      `Invalid token purpose. Expected '${purpose}', got '${decoded.purpose}'.`
+    );
+  }
+  res.status(200).json(new ApiResponse(200, "reset token is valid you can access" , {}))
+});
+
 const getUserAdminInfo = asyncHandler(async (req, res) => {
   const userId = req.user._id;
 
@@ -667,4 +700,5 @@ export {
   handleContactResetVerifyOtp,
   handleNewContactSet,
   handleUpdateAccessToken,
+  checkResetToken
 };

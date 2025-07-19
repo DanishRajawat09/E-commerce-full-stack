@@ -1,50 +1,35 @@
 import { useState, useEffect } from "react";
-import Cookies from "js-cookie";
-import { Outlet, Navigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 
-const ResetRouteProtect = ({ cookieName, expectedPurpose, redirectPath }) => {
-  const [isValid, setIsValid] = useState(null); 
+import { Outlet, Navigate } from "react-router-dom";
+
+import { checkResetToken } from "../../api/handleAPi";
+
+const ResetRouteProtect = ({ role, expectedPurpose, redirectPath }) => {
+  const [isValid, setIsValid] = useState(null);
 
   useEffect(() => {
     validateToken();
   }, []);
 
   const validateToken = async () => {
-    const token = Cookies.get(cookieName);
-
-    console.log(token);
-    console.log(cookieName);
-    console.log(expectedPurpose);
-    console.log(redirectPath);
-    
-    
-    
-    
-    if (!token) {
-      setIsValid(false);
-      return;
-    }
-
     try {
-      const decoded = jwtDecode(token);
-      const now = Date.now() / 1000;
+      const tokenAccess = await checkResetToken(
+        role === "admin"
+          ? `/api/v1/admin/resettoken?purpose=${expectedPurpose}`
+          : `/api/v1/user/resettoken?purpose=${expectedPurpose}`
+      );
+      console.log(tokenAccess);
 
-    
-      if (decoded.exp < now || decoded.purpose !== expectedPurpose) {
-        Cookies.remove(cookieName);
+      if (tokenAccess?.data?.statusCode === 200) {
+        setIsValid(true);
+      } else {
         setIsValid(false);
-        return;
       }
-
-     
-      setIsValid(true);
     } catch (error) {
-      Cookies.remove(cookieName);
-      setIsValid(false);
+      console.log("Token check failed:", error.message);
+      setIsValid(false); // Important: fallback on error
     }
   };
-
 
   if (isValid === null) {
     return (
@@ -54,12 +39,10 @@ const ResetRouteProtect = ({ cookieName, expectedPurpose, redirectPath }) => {
     );
   }
 
-
-  if (!isValid) {
+  if (isValid === false) {
     return <Navigate to={redirectPath} replace />;
   }
 
-  
   return <Outlet />;
 };
 

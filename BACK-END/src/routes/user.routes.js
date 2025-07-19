@@ -16,6 +16,7 @@ import {
   handleNewContactSet,
   handleUpdateAccessToken,
   getUserAdminInfo,
+  checkResetToken,
 } from "../controllers/adminUser.controller.js";
 import sendOtp from "../middlewares/sendOtp.middleware.js";
 import verifyOtp from "../middlewares/verifyOtp.js";
@@ -99,6 +100,9 @@ router
   .route("/update/auth-tokens")
   .patch(verifyJwtUserRefresh, handleUpdateAccessToken);
 
+
+//check resetToken
+router.route("/resettoken").get(checkResetToken)
 // get all products
 router.route("/products").get(verifyJwtUser, getProducts);
 router.route("/product/detail/:productId").get(verifyJwtUser, productDetail);
