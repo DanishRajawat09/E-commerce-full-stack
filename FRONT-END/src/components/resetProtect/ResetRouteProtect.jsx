@@ -10,9 +10,16 @@ const ResetRouteProtect = ({ cookieName, expectedPurpose, redirectPath }) => {
     validateToken();
   }, []);
 
-  const validateToken = () => {
+  const validateToken = async () => {
     const token = Cookies.get(cookieName);
 
+    console.log(token);
+    console.log(cookieName);
+    console.log(expectedPurpose);
+    console.log(redirectPath);
+    
+    
+    
     
     if (!token) {
       setIsValid(false);

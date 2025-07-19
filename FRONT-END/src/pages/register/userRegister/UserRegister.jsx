@@ -135,19 +135,18 @@ const UserRegister = ({ role }) => {
         data: data.data.data,
         message: data.data.message,
       });
-setOtpOptions(false);
+      setOtpOptions(false);
       navigate(role === "admin" ? "/admin/verifyotp" : "/user/verifyotp");
     },
     onError: (error) => {
       console.log(error);
-      
+
       setErrorM({
         ...errorM,
         open: true,
         errorCode: error.response?.status || 500,
         errorMessage: error.response?.data?.message || "Something went wrong",
       });
-
     },
   });
 
@@ -388,8 +387,6 @@ setOtpOptions(false);
               <button
                 className="otpSendButton"
                 onClick={() => {
-                  
-
                   handleSendOtp();
                 }}
               >

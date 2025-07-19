@@ -1,13 +1,18 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./verifyOtp.css";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-
-const VerifyOtp = ({ func, openNewPass, role }) => {
+import { useNavigate } from "react-router-dom";
+const VerifyOtp = ({ role }) => {
   const inputs = useRef([]);
+const navigate = useNavigate()
+
+const [OTP , setOTP] = useState("")
 
   const handleChange = (e, index) => {
     const value = e.target.value;
+setOTP(prev => prev += value)
+
 
     if (/^\d$/.test(value)) {
       if (index < 5) {
@@ -43,10 +48,7 @@ const VerifyOtp = ({ func, openNewPass, role }) => {
     }
   };
 
-  const handleVerifyClick = (e) => {
-    openNewPass && openNewPass(true);
-    func && func(false);
-  };
+
 
   return (
     <div className="otpOverlay">
@@ -99,14 +101,14 @@ const VerifyOtp = ({ func, openNewPass, role }) => {
             className={
               role === "admin" ? "otpSubmitButtonAdmin" : "otpSubmitButton"
             }
-            onClick={(e) => handleVerifyClick(e)}
+           onClick={() => { console.log(OTP);}}
           >
             Verify
           </button>
         </div>
 
         <div className="otpBackContainer">
-          <button className="otpBackButton" onClick={() => func(false)}>
+          <button className="otpBackButton" onClick={() => navigate(-1)}>
             <FontAwesomeIcon icon={faArrowLeft} />
             <span className="otpBackText">Go Back</span>
           </button>

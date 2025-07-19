@@ -21,7 +21,7 @@ import NewPassword from "./components/newPassword/NewPassword.jsx";
 import Profile from "./pages/profilePage/Profile.jsx";
 import Address from "./pages/address/Address.jsx";
 import VerifyOtp from "./components/verifyOtp/VerifyOtp.jsx";
-
+import  ResetRouteProtect from "./components/resetProtect/ResetRouteProtect.jsx"
 // const router = createBrowserRouter(
 //   createRoutesFromElements(
 //     <>
@@ -63,7 +63,9 @@ function App() {
         <Route path="/admin/forgetpassword" element={<ForgetPassword role="admin"/>} />
 
 
-        <Route path="/user/verifyotp" element={<VerifyOtp role="user"/>} />
+       <Route path="/user/verifyotp" element={<ResetRouteProtect cookieName={"userResetToken"} expectedPurpose={"register"} redirectPath={"/user/signup"}/>}>
+       <Route index element={<VerifyOtp role={"user"}/>}></Route>
+       </Route>
         <Route path="/admin/verifyotp" element={<VerifyOtp role="admin"/>} />
         <Route path="/user/newpassword" element={<NewPassword role="user"/>} />
         <Route path="/admin/newpassword" element={<NewPassword role="admin"/>} />
