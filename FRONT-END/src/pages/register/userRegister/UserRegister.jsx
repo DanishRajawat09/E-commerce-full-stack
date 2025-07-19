@@ -5,9 +5,9 @@ import {
   faEnvelope,
   faPhone,
 } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import VerifyOtp from "../../../components/verifyOtp/VerifyOtp";
+
 import InputLabel from "@mui/material/InputLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -17,24 +17,32 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import FormControl from "@mui/material/FormControl";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
-import { registerUser } from "../../../api/handleAPi";
+import { registerUser, sendOTP } from "../../../api/handleAPi";
 import Alert from "@mui/material/Alert";
 // import AlertTitle from "@mui/material/AlertTitle";
 import Snackbar from "@mui/material/Snackbar";
 // import '@coreui/coreui-pro/dist/css/coreui.min.css'
 const UserRegister = ({ role }) => {
   const [otpOptions, setOtpOptions] = useState(false);
-  const [showVerifyOTP, setShowVerifyOTP] = useState(false);
-  const [selectOption, setSelectOption] = useState(null);
+
+  const [selectOption, setSelectOption] = useState({
+    select: "",
+    selectData: "",
+  });
+
   const [showSuccess, setShowSuccess] = useState({
     open: false,
     vertical: "top",
-    horizontal: "center",
+    horizontal: "right",
   });
   const [errorM, setErrorM] = useState({
     open: false,
     errorCode: null,
     errorMessage: null,
+  });
+  const [apiData, setApiData] = useState({
+    data: {},
+    message: "",
   });
 
   const navigate = useNavigate();
@@ -48,6 +56,17 @@ const UserRegister = ({ role }) => {
       errorMessage: null,
     });
 
+  useEffect(() => {
+    if (showSuccess.open === true) {
+      const successInterval = setInterval(() => {
+        setShowSuccess({ ...showSuccess, open: false });
+      }, 5000);
+
+      return () => {
+        clearInterval(successInterval);
+      };
+    }
+  });
   const { vertical, horizontal } = showSuccess;
 
   const [showPassword, setShowPassword] = useState(false);
@@ -65,13 +84,25 @@ const UserRegister = ({ role }) => {
   const { register, handleSubmit } = useForm();
 
   const registerMutation = useMutation({
-    mutationFn: (data) => registerUser("/api/v1/user/register", data),
+    mutationFn: (data) =>
+      registerUser(
+        role === "admin" ? "/api/v1/admin/register" : "/api/v1/user/register",
+        data
+      ),
     onSuccess: (data) => {
       console.log(data);
 
       setShowSuccess({ ...showSuccess, open: true });
+      setApiData({
+        ...apiData,
+        data: data.data.data,
+        message: data.data.message,
+      });
+      setOtpOptions(true);
     },
     onError: (error) => {
+      console.log(error);
+
       setErrorM({
         open: true,
         errorCode: error.response?.status || 500,
@@ -79,12 +110,62 @@ const UserRegister = ({ role }) => {
       });
       if (error.response?.status === 409) {
         setOtpOptions(true);
+        setApiData({
+          ...apiData,
+          data: error.response?.data?.data,
+          message: error.response.data.message,
+        });
       }
     },
   });
 
-  console.log(errorM);
+  const sendOTPMutation = useMutation({
+    mutationFn: (data) =>
+      sendOTP(
+        role === "admin"
+          ? "/api/v1/admin/register/send-otp"
+          : "/api/v1/user/register/send-otp",
+        data
+      ),
+    onSuccess: (data) => {
+      console.log(data);
 
+      setApiData({
+        ...apiData,
+        data: data.data.data,
+        message: data.data.message,
+      });
+setOtpOptions(false);
+      navigate(role === "admin" ? "/admin/verifyotp" : "/user/verifyotp");
+    },
+    onError: (error) => {
+      console.log(error);
+      
+      setErrorM({
+        ...errorM,
+        open: true,
+        errorCode: error.response?.status || 500,
+        errorMessage: error.response?.data?.message || "Something went wrong",
+      });
+
+    },
+  });
+
+  const handleSendOtp = () => {
+    if (selectOption.select === "" && selectOption.selectData === "") {
+      setErrorM({
+        ...errorM,
+        errorMessage: "Please Select Atleast Option for Send OTP",
+        open: true,
+      });
+    }
+    console.log(selectOption);
+
+    sendOTPMutation.mutate({
+      contact: selectOption.select === "contact" ? selectOption.selectData : "",
+      email: selectOption.select === "email" ? selectOption.selectData : "",
+    });
+  };
   return (
     <div className="authPage">
       <header className="authHeader">
@@ -107,7 +188,7 @@ const UserRegister = ({ role }) => {
               variant="filled"
               sx={{ width: "100%" }}
             >
-              Account Created Successfully
+              {apiData.message}
             </Alert>
           </Snackbar>
         )}
@@ -176,7 +257,9 @@ const UserRegister = ({ role }) => {
                 <OutlinedInput
                   {...register("contact", {
                     required: "Enter your contact",
-                    // validate : (value) => /^[6-9]\d{9}$/.test(value) || "Enter Legit 10-digit Number",
+                    validate: (value) =>
+                      /^[6-9]\d{9}$/.test(value) ||
+                      "Enter Legit 10-digit Number",
                   })}
                   id="component-outlined-contact"
                   label="Contact"
@@ -255,14 +338,23 @@ const UserRegister = ({ role }) => {
 
             <div className="formDivider" />
 
-            <div className="otpOption" onClick={() => setSelectOption("email")}>
+            <div
+              className="otpOption"
+              onClick={() =>
+                setSelectOption({
+                  ...selectOption,
+                  select: "email",
+                  selectData: apiData.data.email,
+                })
+              }
+            >
               <div className="otpLabel">
                 <FontAwesomeIcon icon={faEnvelope} className="otpIcon" />
-                <span className="otpText">ibnfarooq070@gmail.com</span>
+                <span className="otpText">{apiData.data.email}</span>
               </div>
               <div
                 className={`otpCheck ${
-                  selectOption === "email" ? "active" : ""
+                  selectOption.select === "email" ? "active" : ""
                 }`}
               ></div>
             </div>
@@ -271,15 +363,21 @@ const UserRegister = ({ role }) => {
 
             <div
               className="otpOption"
-              onClick={() => setSelectOption("contact")}
+              onClick={() =>
+                setSelectOption({
+                  ...selectOption,
+                  select: "contact",
+                  selectData: apiData.data.contact,
+                })
+              }
             >
               <div className="otpLabel">
                 <FontAwesomeIcon icon={faPhone} className="otpIcon" />
-                <span className="otpText">7976755425</span>
+                <span className="otpText">{apiData.data.contact}</span>
               </div>
               <div
                 className={`otpCheck ${
-                  selectOption === "contact" ? "active" : ""
+                  selectOption.select === "contact" ? "active" : ""
                 }`}
               ></div>
             </div>
@@ -290,8 +388,9 @@ const UserRegister = ({ role }) => {
               <button
                 className="otpSendButton"
                 onClick={() => {
-                  setOtpOptions(false);
-                  setShowVerifyOTP(true);
+                  
+
+                  handleSendOtp();
                 }}
               >
                 Send OTP
@@ -309,8 +408,6 @@ const UserRegister = ({ role }) => {
           </div>
         </div>
       )}
-
-      {showVerifyOTP && <VerifyOtp func={setShowVerifyOTP} />}
     </div>
   );
 };

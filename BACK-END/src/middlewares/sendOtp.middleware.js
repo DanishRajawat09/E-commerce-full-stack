@@ -65,7 +65,7 @@ const sendOtp = (purpose) =>
     }
 
     const hashedOtp = await bcrypt.hash(otp, 10);
-    console.log(hashedOtp);
+    console.log(userData);
 
     const user = await User.findOneAndUpdate(
       {

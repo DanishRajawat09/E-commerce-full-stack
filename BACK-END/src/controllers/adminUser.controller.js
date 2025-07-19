@@ -78,11 +78,10 @@ const registerUser = asyncHandler(async (req, res) => {
     );
   }
 
-const unverifiedUser = await User.findOne({
-  $or: [{ email: email }, { contact: contact }],
-  isVerified: false,
-});
-
+  const unverifiedUser = await User.findOne({
+    $or: [{ email: email }, { contact: contact }],
+    isVerified: false,
+  });
 
   if (unverifiedUser) {
     const resetTokenName = await resetTokenNameFunc(unverifiedUser.role);
@@ -149,7 +148,7 @@ const afterSend = asyncHandler(async (req, res) => {
   res
     .status(200)
     .cookie(resetTokenName, resetToken, cookieOptions)
-    .json(new ApiResponse(200, "OTP sent successfully", {}));
+    .json(new ApiResponse(200, "OTP sent successfully on", { email }));
 });
 
 const afterVerify = asyncHandler(async (req, res) => {
@@ -206,9 +205,9 @@ const afterVerify = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-  const { emailContact ,password, role } = req.body;
+  const { emailContact, password, role } = req.body;
 
-  if ( !emailContact) {
+  if (!emailContact) {
     throw new ApiError(
       400,
       "Please provide either an email or contact number to log in."
