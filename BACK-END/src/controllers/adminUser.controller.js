@@ -78,22 +78,24 @@ const registerUser = asyncHandler(async (req, res) => {
     );
   }
 
-  const unverifiedUser = await User.findOne({
-    $and: [{ $or: [{ email }, { contact }] }, { isVerified: false }, { role }],
-  });
+const unverifiedUser = await User.findOne({
+  $or: [{ email: email }, { contact: contact }],
+  isVerified: false,
+});
+
 
   if (unverifiedUser) {
     const resetTokenName = await resetTokenNameFunc(unverifiedUser.role);
     return res
-      .status(200)
+      .status(409)
       .clearCookie(resetTokenName, {
         httpOnly: true,
         secure: NODE_ENV === "production",
       })
       .json(
         new ApiResponse(
-          200,
-          "Account already exists but is not verified. Please complete verification.",
+          409,
+          "Account already exists but its not verified. Please complete verification.",
           {
             email: unverifiedUser.email,
             contact: unverifiedUser.contact,

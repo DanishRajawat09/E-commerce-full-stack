@@ -9,3 +9,4 @@ export const logIn = async(path , data) => {
     withCredentials : true
    })
  }
+export const registerUser = async(path , data) => instance.post(path , data , { withCredentials : true })
