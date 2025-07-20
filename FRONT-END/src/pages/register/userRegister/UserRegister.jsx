@@ -106,17 +106,21 @@ const UserRegister = ({ role }) => {
     onError: (error) => {
       console.log(error);
 
-      setErrorM({
-        open: true,
-        errorCode: error.response?.status || 500,
-        errorMessage: error.response?.data?.message || "Something went wrong",
-      });
       if (error.response?.status === 409) {
+        showSuccess({
+          open: true,
+        });
         setOtpOptions(true);
         setApiData({
           ...apiData,
           data: error.response?.data?.data,
           message: error.response.data.message,
+        });
+      } else {
+        setErrorM({
+          open: true,
+          errorCode: error.response?.status || 500,
+          errorMessage: error.response?.data?.message || "Something went wrong",
         });
       }
     },

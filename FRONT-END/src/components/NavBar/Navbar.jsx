@@ -1,10 +1,16 @@
 import "./navbar.css";
 
 import { isOpen } from "../../features/stateSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink } from "react-router-dom";
+import { useEffect } from "react";
 const Navbar = () => {
   const dispatch = useDispatch();
+  const userData = useSelector((state) => state.userDetail);
+
+  useEffect(() => {
+    console.log(userData);
+  }, [userData]);
 
   const handleSideNav = () => {
     dispatch(isOpen({ open: true }));

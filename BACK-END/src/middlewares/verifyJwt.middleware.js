@@ -1,4 +1,7 @@
-import { JWT_ACCESSTOKEN_SECRET, JWT_REFRESHTOKEN_SECRET } from "../../config/env.js";
+import {
+  JWT_ACCESSTOKEN_SECRET,
+  JWT_REFRESHTOKEN_SECRET,
+} from "../../config/env.js";
 import { User } from "../models/user.models.js";
 import ApiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";

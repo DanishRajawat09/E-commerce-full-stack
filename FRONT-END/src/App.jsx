@@ -24,6 +24,8 @@ import VerifyOtp from "./components/verifyOtp/VerifyOtp.jsx";
 import ResetRouteProtect from "./components/resetProtect/ResetRouteProtect.jsx";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor } from "./store/store.js";
+import CheckUserLogin from "./utils/VerifyUserLogin.jsx";
+// import { useEffect } from "react";
 // const router = createBrowserRouter(
 //   createRoutesFromElements(
 //     <>
@@ -41,88 +43,92 @@ import { persistor } from "./store/store.js";
 //     </>
 //   )
 // );
-function App() {
-  const client = new QueryClient();
+
+const client = new QueryClient();
+
+function AppWrapper() {
   return (
-    <PersistGate loading={null} persistor={persistor}>
+    <PersistGate loading={<div>loading...</div>} persistor={persistor}>
       <QueryClientProvider client={client}>
-        <BrowserRouter>
-          <ScrollToTop />
-
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Home />} />
-              <Route path="productDetails" element={<ProductDetails />} />
-              <Route path="shop" element={<CasualPage />} />
-              <Route path="cart" element={<Cart />} />
-            </Route>
-
-            <Route path="/user/login" element={<UserLogin role="user" />} />
-            <Route path="/admin/login" element={<UserLogin role="admin" />} />
-            <Route
-              path="/admin/signup"
-              element={<UserRegister role="admin" />}
-            />
-            <Route path="/user/signup" element={<UserRegister role="user" />} />
-            <Route
-              path="/user/forgetpassword"
-              element={<ForgetPassword role="user" />}
-            />
-            <Route
-              path="/admin/forgetpassword"
-              element={<ForgetPassword role="admin" />}
-            />
-
-            <Route
-              path="/user/verifyotp"
-              element={
-                <ResetRouteProtect
-                  role={"user"}
-                  expectedPurpose={"register"}
-                  redirectPath={"/"}
-                />
-              }
-            >
-              <Route index element={<VerifyOtp role={"user"} />}></Route>
-            </Route>
-            <Route
-              path="/admin/verifyotp"
-              element={
-                <ResetRouteProtect
-                  role={"admin"}
-                  expectedPurpose={"adminRegister"}
-                  redirectPath={"/"}
-                />
-              }
-            >
-              <Route index element={<VerifyOtp role={"admin"} />}></Route>
-            </Route>
-            
-            <Route
-              path="/user/newpassword"
-              element={<NewPassword role="user" />}
-            />
-            <Route
-              path="/admin/newpassword"
-              element={<NewPassword role="admin" />}
-            />
-            <Route path="/admin/profile" element={<Profile role="admin" />} />
-            <Route path="/user/profile" element={<Profile role="user" />} />
-            <Route path="/user/address" element={<Address role="user" />} />
-            <Route path="/admin/address" element={<Address role="admin" />} />
-            <Route
-              path="/user/verify-otp"
-              element={<VerifyOtp role="user" />}
-            />
-            <Route
-              path="/admin/verify-otp"
-              element={<VerifyOtp role="admin" />}
-            />
-          </Routes>
-        </BrowserRouter>
+        <App />
       </QueryClientProvider>
     </PersistGate>
   );
 }
+function App() {
+  return (
+    <>
+      <CheckUserLogin />
+      <BrowserRouter>
+        <ScrollToTop />
 
-export default App;
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="productDetails" element={<ProductDetails />} />
+            <Route path="shop" element={<CasualPage />} />
+            <Route path="cart" element={<Cart />} />
+          </Route>
+
+          <Route path="/user/login" element={<UserLogin role="user" />} />
+          <Route path="/admin/login" element={<UserLogin role="admin" />} />
+          <Route path="/admin/signup" element={<UserRegister role="admin" />} />
+          <Route path="/user/signup" element={<UserRegister role="user" />} />
+          <Route
+            path="/user/forgetpassword"
+            element={<ForgetPassword role="user" />}
+          />
+          <Route
+            path="/admin/forgetpassword"
+            element={<ForgetPassword role="admin" />}
+          />
+
+          <Route
+            path="/user/verifyotp"
+            element={
+              <ResetRouteProtect
+                role={"user"}
+                expectedPurpose={"register"}
+                redirectPath={"/"}
+              />
+            }
+          >
+            <Route index element={<VerifyOtp role={"user"} />}></Route>
+          </Route>
+          <Route
+            path="/admin/verifyotp"
+            element={
+              <ResetRouteProtect
+                role={"admin"}
+                expectedPurpose={"adminRegister"}
+                redirectPath={"/"}
+              />
+            }
+          >
+            <Route index element={<VerifyOtp role={"admin"} />}></Route>
+          </Route>
+
+          <Route
+            path="/user/newpassword"
+            element={<NewPassword role="user" />}
+          />
+          <Route
+            path="/admin/newpassword"
+            element={<NewPassword role="admin" />}
+          />
+          <Route path="/admin/profile" element={<Profile role="admin" />} />
+          <Route path="/user/profile" element={<Profile role="user" />} />
+          <Route path="/user/address" element={<Address role="user" />} />
+          <Route path="/admin/address" element={<Address role="admin" />} />
+          <Route path="/user/verify-otp" element={<VerifyOtp role="user" />} />
+          <Route
+            path="/admin/verify-otp"
+            element={<VerifyOtp role="admin" />}
+          />
+        </Routes>
+      </BrowserRouter>
+    </>
+  );
+}
+
+export default AppWrapper;

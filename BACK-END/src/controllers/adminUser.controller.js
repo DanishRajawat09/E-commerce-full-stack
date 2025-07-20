@@ -51,7 +51,9 @@ const checkResetToken = asyncHandler(async (req, res) => {
       `Invalid token purpose. Expected '${decoded.purpose}', got '${purpose}'.`
     );
   }
-  res.status(200).json(new ApiResponse(200, "reset token is valid you can access" , {}))
+  res
+    .status(200)
+    .json(new ApiResponse(200, "reset token is valid you can access", {}));
 });
 
 const getUserAdminInfo = asyncHandler(async (req, res) => {
@@ -65,7 +67,7 @@ const getUserAdminInfo = asyncHandler(async (req, res) => {
     .populate("address")
     .populate("profile")
     .select(
-      "-password -otp -otpExpiry -authProvider -role -isVerified -refreshToken -createdAt -updatedAt"
+      "-_id -adminProfile -__v -password -otp -otpExpiry -authProvider -role -isVerified -refreshToken -createdAt -updatedAt"
     )
     .lean();
 
@@ -700,5 +702,5 @@ export {
   handleContactResetVerifyOtp,
   handleNewContactSet,
   handleUpdateAccessToken,
-  checkResetToken
+  checkResetToken,
 };

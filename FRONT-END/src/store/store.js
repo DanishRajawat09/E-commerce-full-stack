@@ -16,10 +16,11 @@ import {
   REGISTER,
 } from "redux-persist";
 import resendOTPSlice from "../features/resendOTP";
+import userDetailSlice from "../features/userDetailSlice";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["otp"],
+  whitelist: ["otp", "userDetail"],
 };
 const rootReducer = combineReducers({
   otp: resendOTPSlice,
@@ -27,11 +28,12 @@ const rootReducer = combineReducers({
   ProductData: ProductData,
   cart: cartSlice,
   CartCalc: CartCalc,
+  userDetail: userDetailSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 const store = configureStore({
-  reducer: persistedReducer, 
+  reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {

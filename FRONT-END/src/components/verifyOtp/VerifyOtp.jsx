@@ -9,6 +9,7 @@ import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { useSelector } from "react-redux";
 import { useMutation } from "@tanstack/react-query";
+import CheckUserLogin from "../../utils/VerifyUserLogin";
 const VerifyOtp = ({ role }) => {
   const inputs = useRef([]);
   const navigate = useNavigate();
@@ -89,7 +90,7 @@ const VerifyOtp = ({ role }) => {
     pasted.split("").forEach((char, i) => {
       if (inputs.current[i]) {
         inputs.current[i].value = char;
-        setOTP(prev => prev += char)
+        setOTP((prev) => (prev += char));
       }
     });
 
@@ -100,30 +101,37 @@ const VerifyOtp = ({ role }) => {
   };
 
   const verifyOTPMutation = useMutation({
-    mutationFn : (data) => verifyOTP(role === "admin" ? "/api/v1/admin/register/verify-otp" : "/api/v1/user/register/verify-otp",data),
-    onSuccess : (data) => {
+    mutationFn: (data) =>
+      verifyOTP(
+        role === "admin"
+          ? "/api/v1/admin/register/verify-otp"
+          : "/api/v1/user/register/verify-otp",
+        data
+      ),
+    onSuccess: (data) => {
       console.log(data);
-      
-     setSuccess({...success , open : true , successMessage : "verified"}) 
-    },
-    onError : () => {
-      setErrorM({...errorM , open : true , errorMessage : "user is not verifies"})
-    }
-    
-    
 
-    
-  })
+      setSuccess({ ...success, open: true, successMessage: "verified" });
+      CheckUserLogin()
+      navigate(role === "admin" ? "/admin/profile" : "/user/profile");
+    },
+    onError: () => {
+      setErrorM({
+        ...errorM,
+        open: true,
+        errorMessage: "user is not verifies",
+      });
+    },
+  });
 
   const handleOTP = () => {
-    console.log(OTP , OTP.length);
-    
-    if (OTP.length < 6) {
-      setErrorM({...errorM , open : true , errorMessage : "OTP is cheracter"})
-    }else{
-      verifyOTPMutation.mutate({otp : OTP})
-    }
+    console.log(OTP, OTP.length);
 
+    if (OTP.length < 6) {
+      setErrorM({ ...errorM, open: true, errorMessage: "OTP is cheracter" });
+    } else {
+      verifyOTPMutation.mutate({ otp: OTP });
+    }
   };
 
   const handleResend = async () => {

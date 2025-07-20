@@ -61,7 +61,7 @@ const sendOtp = (purpose) =>
     const isRegisterPurpose = ["register", "adminRegister"].includes(purpose);
 
     if (adminPurpose.includes(purpose)) {
-      checkRole = "admin"
+      checkRole = "admin";
     }
 
     const hashedOtp = await bcrypt.hash(otp, 10);
@@ -71,7 +71,8 @@ const sendOtp = (purpose) =>
       {
         $and: [
           { $or: [{ email: userData.email }, { contact: userData.contact }] },
-          { isVerified: !isRegisterPurpose },{role : checkRole}
+          { isVerified: !isRegisterPurpose },
+          { role: checkRole },
         ],
       },
       { $set: { otp: hashedOtp, otpExpiry: expiry } },
