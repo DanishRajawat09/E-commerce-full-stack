@@ -48,7 +48,7 @@ const checkResetToken = asyncHandler(async (req, res) => {
   if (decoded.purpose !== purpose) {
     throw new ApiError(
       403,
-      `Invalid token purpose. Expected '${purpose}', got '${decoded.purpose}'.`
+      `Invalid token purpose. Expected '${decoded.purpose}', got '${purpose}'.`
     );
   }
   res.status(200).json(new ApiResponse(200, "reset token is valid you can access" , {}))

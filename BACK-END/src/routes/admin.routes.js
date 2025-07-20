@@ -15,10 +15,11 @@ import {
   logoutUser,
   registerUser,
   handleUpdateAccessToken,
+  checkResetToken,
 } from "../controllers/adminUser.controller.js";
 import sendOtp from "../middlewares/sendOtp.middleware.js";
 import resetJwt from "../middlewares/resetJwtverify.middleware.js";
-import { verifyJwtAdmin, verifyJwtAdminRefresh } from "../middlewares/verifyJwt.middleware.js";
+import { verifyJwtAdmin, verifyJwtAdminRefresh, verifyJwtUserRefresh } from "../middlewares/verifyJwt.middleware.js";
 import isAdmin from "../middlewares/isAdmin.middleware.js";
 import verifyOtp from "../middlewares/verifyOtp.js";
 import {
@@ -41,7 +42,7 @@ router.route("/register").post((req, res, next) => {
 }, registerUser);
 router.route("/register/send-otp").post(sendOtp("adminRegister"), afterSend);
 router
-  .route("/verify-otp")
+  .route("/register/verify-otp")
   .post(resetJwt("adminRegister"), verifyOtp, afterVerify);
 
 // login admin
@@ -133,6 +134,8 @@ router
   .route("/update/auth-token")
   .patch(verifyJwtAdminRefresh, handleUpdateAccessToken);
 
+  //check resetToken
+router.route("/resettoken").get(checkResetToken)
 // admin products contol
 router
   .route("/product/add")

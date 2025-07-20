@@ -12,6 +12,8 @@ const ResetRouteProtect = ({ role, expectedPurpose, redirectPath }) => {
   }, []);
 
   const validateToken = async () => {
+  console.log(role , expectedPurpose , redirectPath);
+  
     try {
       const tokenAccess = await checkResetToken(
         role === "admin"

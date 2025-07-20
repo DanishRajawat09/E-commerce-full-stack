@@ -77,9 +77,9 @@ function App() {
               path="/user/verifyotp"
               element={
                 <ResetRouteProtect
-                  cookieName={"userResetToken"}
+                  role={"user"}
                   expectedPurpose={"register"}
-                  redirectPath={"/user/signup"}
+                  redirectPath={"/"}
                 />
               }
             >
@@ -87,8 +87,17 @@ function App() {
             </Route>
             <Route
               path="/admin/verifyotp"
-              element={<VerifyOtp role="admin" />}
-            />
+              element={
+                <ResetRouteProtect
+                  role={"admin"}
+                  expectedPurpose={"adminRegister"}
+                  redirectPath={"/"}
+                />
+              }
+            >
+              <Route index element={<VerifyOtp role={"admin"} />}></Route>
+            </Route>
+            
             <Route
               path="/user/newpassword"
               element={<NewPassword role="user" />}

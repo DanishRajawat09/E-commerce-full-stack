@@ -4,10 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 
-import { sendOTP } from "../../api/handleAPi";
+import { sendOTP, verifyOTP } from "../../api/handleAPi";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { useSelector } from "react-redux";
+import { useMutation } from "@tanstack/react-query";
 const VerifyOtp = ({ role }) => {
   const inputs = useRef([]);
   const navigate = useNavigate();
@@ -15,6 +16,11 @@ const VerifyOtp = ({ role }) => {
   console.log(OTPData);
 
   const [OTP, setOTP] = useState("");
+  const [errorM, setErrorM] = useState({
+    open: false,
+    errorCode: null,
+    errorMessage: null,
+  });
   const [success, setSuccess] = useState({
     open: false,
     vertical: "top",
@@ -24,6 +30,13 @@ const VerifyOtp = ({ role }) => {
   const { vertical, horizontal } = success;
   const handleCloseSuccess = () =>
     setSuccess({ ...success, open: false, successMessage: "" });
+  const handleCloseError = () =>
+    setErrorM({
+      open: false,
+      errorCode: null,
+      errorMessage: null,
+    });
+
   useEffect(() => {
     if (success.open === true) {
       const successInterval = setInterval(() => {
@@ -32,6 +45,17 @@ const VerifyOtp = ({ role }) => {
 
       return () => {
         clearInterval(successInterval);
+      };
+    }
+  });
+  useEffect(() => {
+    if (errorM.open === true) {
+      const errorInterval = setInterval(() => {
+        setErrorM({ ...errorM, open: false });
+      }, 5000);
+
+      return () => {
+        clearInterval(errorInterval);
       };
     }
   });
@@ -65,6 +89,7 @@ const VerifyOtp = ({ role }) => {
     pasted.split("").forEach((char, i) => {
       if (inputs.current[i]) {
         inputs.current[i].value = char;
+        setOTP(prev => prev += char)
       }
     });
 
@@ -73,6 +98,34 @@ const VerifyOtp = ({ role }) => {
       inputs.current[nextIndex].focus();
     }
   };
+
+  const verifyOTPMutation = useMutation({
+    mutationFn : (data) => verifyOTP(role === "admin" ? "/api/v1/admin/register/verify-otp" : "/api/v1/user/register/verify-otp",data),
+    onSuccess : (data) => {
+      console.log(data);
+      
+     setSuccess({...success , open : true , successMessage : "verified"}) 
+    },
+    onError : () => {
+      setErrorM({...errorM , open : true , errorMessage : "user is not verifies"})
+    }
+    
+    
+
+    
+  })
+
+  const handleOTP = () => {
+    console.log(OTP , OTP.length);
+    
+    if (OTP.length < 6) {
+      setErrorM({...errorM , open : true , errorMessage : "OTP is cheracter"})
+    }else{
+      verifyOTPMutation.mutate({otp : OTP})
+    }
+
+  };
+
   const handleResend = async () => {
     try {
       const resendOTP = await sendOTP(
@@ -113,6 +166,24 @@ const VerifyOtp = ({ role }) => {
                 sx={{ width: "100%" }}
               >
                 {success.successMessage}
+              </Alert>
+            </Snackbar>
+          )}
+          {errorM.open && (
+            <Snackbar
+              anchorOrigin={{ vertical, horizontal }}
+              open={errorM.open}
+              autoHideDuration={6000}
+              onClose={handleCloseError}
+              key={"error" + vertical + horizontal}
+            >
+              <Alert
+                onClose={handleCloseError}
+                severity="error"
+                variant="filled"
+                sx={{ width: "100%" }}
+              >
+                {errorM.errorMessage || "Something went wrong"}
               </Alert>
             </Snackbar>
           )}
@@ -165,7 +236,7 @@ const VerifyOtp = ({ role }) => {
               role === "admin" ? "otpSubmitButtonAdmin" : "otpSubmitButton"
             }
             onClick={() => {
-              console.log(OTP);
+              handleOTP();
             }}
           >
             Verify
