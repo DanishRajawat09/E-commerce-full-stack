@@ -15,13 +15,15 @@ import Cart from "./pages/CartPage/Cart";
 import UserLogin from "./pages/login/UserLogin/UserLogin";
 import UserRegister from "./pages/register/userRegister/UserRegister.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ForgetPassword from "./pages/forgetPassword/ForgetPassword.jsx";
 import NewPassword from "./components/newPassword/NewPassword.jsx";
 import Profile from "./pages/profilePage/Profile.jsx";
 import Address from "./pages/address/Address.jsx";
 import VerifyOtp from "./components/verifyOtp/VerifyOtp.jsx";
-import  ResetRouteProtect from "./components/resetProtect/ResetRouteProtect.jsx"
+import ResetRouteProtect from "./components/resetProtect/ResetRouteProtect.jsx";
+import { PersistGate } from "redux-persist/integration/react";
+import { persistor } from "./store/store.js";
 // const router = createBrowserRouter(
 //   createRoutesFromElements(
 //     <>
@@ -40,45 +42,77 @@ import  ResetRouteProtect from "./components/resetProtect/ResetRouteProtect.jsx"
 //   )
 // );
 function App() {
-  const client = new QueryClient()
+  const client = new QueryClient();
   return (
-    <QueryClientProvider client={client}>
-    <BrowserRouter>
-     
-      <ScrollToTop />
+    <PersistGate loading={null} persistor={persistor}>
+      <QueryClientProvider client={client}>
+        <BrowserRouter>
+          <ScrollToTop />
 
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="productDetails" element={<ProductDetails />} />
-          <Route path="shop" element={<CasualPage />} />
-          <Route path="cart" element={<Cart />} />
-        </Route>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route path="productDetails" element={<ProductDetails />} />
+              <Route path="shop" element={<CasualPage />} />
+              <Route path="cart" element={<Cart />} />
+            </Route>
 
-        <Route path="/user/login" element={<UserLogin role="user"/>} />
-        <Route path="/admin/login" element={<UserLogin role="admin" />} />
-        <Route path="/admin/signup" element={<UserRegister role="admin" />} />
-        <Route path="/user/signup" element={<UserRegister role="user" />} />
-        <Route path="/user/forgetpassword" element={<ForgetPassword role="user" />} />
-        <Route path="/admin/forgetpassword" element={<ForgetPassword role="admin"/>} />
+            <Route path="/user/login" element={<UserLogin role="user" />} />
+            <Route path="/admin/login" element={<UserLogin role="admin" />} />
+            <Route
+              path="/admin/signup"
+              element={<UserRegister role="admin" />}
+            />
+            <Route path="/user/signup" element={<UserRegister role="user" />} />
+            <Route
+              path="/user/forgetpassword"
+              element={<ForgetPassword role="user" />}
+            />
+            <Route
+              path="/admin/forgetpassword"
+              element={<ForgetPassword role="admin" />}
+            />
 
-
-       <Route path="/user/verifyotp" element={<ResetRouteProtect cookieName={"userResetToken"} expectedPurpose={"register"} redirectPath={"/user/signup"}/>}>
-       <Route index element={<VerifyOtp role={"user"}/>}></Route>
-       </Route>
-        <Route path="/admin/verifyotp" element={<VerifyOtp role="admin"/>} />
-        <Route path="/user/newpassword" element={<NewPassword role="user"/>} />
-        <Route path="/admin/newpassword" element={<NewPassword role="admin"/>} />
-        <Route path="/admin/profile" element={<Profile role="admin"/>} />
-        <Route path="/user/profile" element={<Profile role="user"/>} />
-        <Route path="/user/address" element={<Address role="user"/>} />
-        <Route path="/admin/address" element={<Address role="admin"/>} />
-        <Route path="/user/verify-otp" element={<VerifyOtp role="user"/>} />
-        <Route path="/admin/verify-otp" element={<VerifyOtp role="admin"/>} />
-
-      </Routes>
-    </BrowserRouter>
-    </QueryClientProvider>
+            <Route
+              path="/user/verifyotp"
+              element={
+                <ResetRouteProtect
+                  cookieName={"userResetToken"}
+                  expectedPurpose={"register"}
+                  redirectPath={"/user/signup"}
+                />
+              }
+            >
+              <Route index element={<VerifyOtp role={"user"} />}></Route>
+            </Route>
+            <Route
+              path="/admin/verifyotp"
+              element={<VerifyOtp role="admin" />}
+            />
+            <Route
+              path="/user/newpassword"
+              element={<NewPassword role="user" />}
+            />
+            <Route
+              path="/admin/newpassword"
+              element={<NewPassword role="admin" />}
+            />
+            <Route path="/admin/profile" element={<Profile role="admin" />} />
+            <Route path="/user/profile" element={<Profile role="user" />} />
+            <Route path="/user/address" element={<Address role="user" />} />
+            <Route path="/admin/address" element={<Address role="admin" />} />
+            <Route
+              path="/user/verify-otp"
+              element={<VerifyOtp role="user" />}
+            />
+            <Route
+              path="/admin/verify-otp"
+              element={<VerifyOtp role="admin" />}
+            />
+          </Routes>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </PersistGate>
   );
 }
 

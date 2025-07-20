@@ -21,6 +21,8 @@ import { registerUser, sendOTP } from "../../../api/handleAPi";
 import Alert from "@mui/material/Alert";
 // import AlertTitle from "@mui/material/AlertTitle";
 import Snackbar from "@mui/material/Snackbar";
+import { useDispatch } from "react-redux";
+import { addOTPData } from "../../../features/resendOTP.js";
 // import '@coreui/coreui-pro/dist/css/coreui.min.css'
 const UserRegister = ({ role }) => {
   const [otpOptions, setOtpOptions] = useState(false);
@@ -46,6 +48,7 @@ const UserRegister = ({ role }) => {
   });
 
   const navigate = useNavigate();
+  const disptach = useDispatch();
 
   const handleCloseSuccess = () =>
     setShowSuccess({ ...showSuccess, open: false });
@@ -136,7 +139,14 @@ const UserRegister = ({ role }) => {
         message: data.data.message,
       });
       setOtpOptions(false);
-      navigate(role === "admin" ? "/admin/verifyotp" : "/user/verifyotp");
+      disptach(
+        addOTPData({
+          contact:
+            selectOption.select === "contact" ? selectOption.selectData : "",
+          email: selectOption.select === "email" ? selectOption.selectData : "",
+        })
+      );
+      navigate(role === "admin" ? `/admin/verifyotp` : `/user/verifyotp`);
     },
     onError: (error) => {
       console.log(error);

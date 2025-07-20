@@ -1,18 +1,44 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./verifyOtp.css";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
+
+import { sendOTP } from "../../api/handleAPi";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+import { useSelector } from "react-redux";
 const VerifyOtp = ({ role }) => {
   const inputs = useRef([]);
-const navigate = useNavigate()
+  const navigate = useNavigate();
+  const OTPData = useSelector((state) => state.otp);
+  console.log(OTPData);
 
-const [OTP , setOTP] = useState("")
+  const [OTP, setOTP] = useState("");
+  const [success, setSuccess] = useState({
+    open: false,
+    vertical: "top",
+    horizontal: "right",
+    successMessage: "",
+  });
+  const { vertical, horizontal } = success;
+  const handleCloseSuccess = () =>
+    setSuccess({ ...success, open: false, successMessage: "" });
+  useEffect(() => {
+    if (success.open === true) {
+      const successInterval = setInterval(() => {
+        success({ ...success, open: false });
+      }, 5000);
+
+      return () => {
+        clearInterval(successInterval);
+      };
+    }
+  });
 
   const handleChange = (e, index) => {
     const value = e.target.value;
-setOTP(prev => prev += value)
-
+    setOTP((prev) => (prev += value));
 
     if (/^\d$/.test(value)) {
       if (index < 5) {
@@ -47,13 +73,49 @@ setOTP(prev => prev += value)
       inputs.current[nextIndex].focus();
     }
   };
+  const handleResend = async () => {
+    try {
+      const resendOTP = await sendOTP(
+        role === "admin"
+          ? "/api/v1/admin/register/send-otp"
+          : "/api/v1/user/register/send-otp",
+        OTPData
+      );
 
-
+      if (resendOTP.data.statusCode === 200) {
+        setSuccess({
+          ...success,
+          open: true,
+          successMessage: "resend OTP SuccessFully",
+        });
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   return (
     <div className="otpOverlay">
       <div className="otpModalBox">
         <div className="otpHeader">
+          {success.open && (
+            <Snackbar
+              anchorOrigin={{ vertical, horizontal }}
+              open={success.open}
+              autoHideDuration={6000}
+              onClose={handleCloseSuccess}
+              key={"success" + vertical + horizontal}
+            >
+              <Alert
+                onClose={handleCloseSuccess}
+                severity="success"
+                variant="filled"
+                sx={{ width: "100%" }}
+              >
+                {success.successMessage}
+              </Alert>
+            </Snackbar>
+          )}
           <h2 className="otpHeading">Verify OTP</h2>
         </div>
 
@@ -90,6 +152,7 @@ setOTP(prev => prev += value)
               className={
                 role === "admin" ? "otpResendLinkAdmin" : "otpResendLink"
               }
+              onClick={handleResend}
             >
               Resend
             </span>
@@ -101,7 +164,9 @@ setOTP(prev => prev += value)
             className={
               role === "admin" ? "otpSubmitButtonAdmin" : "otpSubmitButton"
             }
-           onClick={() => { console.log(OTP);}}
+            onClick={() => {
+              console.log(OTP);
+            }}
           >
             Verify
           </button>
