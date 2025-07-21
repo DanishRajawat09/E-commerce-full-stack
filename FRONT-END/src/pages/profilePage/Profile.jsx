@@ -1,9 +1,52 @@
-
 import "./profile.css";
-import Input from "../../components/input/Input";
-
+import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
 import ProfilePicture from "../../components/profilepic/ProfilePicture";
+import { useState } from "react";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
+import { createProfile } from "../../api/handleAPi";
 const Profile = ({ role }) => {
+  const { register, handleSubmit } = useForm();
+  const [avatar, setAvatar] = useState(null);
+
+  const profileMutation = useMutation({
+    mutationFn: (data) =>
+      createProfile(
+        role === "admin"
+          ? "/api/v1/admin/profile/create-profile"
+          : "/api/v1/user/profile/create",
+        data
+      ),
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  const handleProfile = (data) => {
+    if (role !== "admin") {
+      delete data.shopName;
+    }
+
+    const formData = new FormData();
+
+   
+    for (const key in data) {
+      formData.append(key, data[key]);
+    }
+
+
+    if (avatar) {
+      formData.append("avatar", avatar);
+    }
+
+    profileMutation.mutate(formData);
+  };
+
   return (
     <div className="profilePage">
       <div className="profileHeader"></div>
@@ -15,27 +58,36 @@ const Profile = ({ role }) => {
             Profile
           </h2>
 
-          <form>
-            <ProfilePicture role={role} />
+          <form onSubmit={handleSubmit(handleProfile)}>
+            <ProfilePicture role={role} setAvatar={setAvatar} />
 
             <div className="inputGroup">
-              <Input
-                label={"Full Name"}
-                htmlFor={"fullname"}
-                name={"fullName"}
-                placeHolder={"Enter your Full name"}
-                required={true}
-              />
+              <FormControl>
+                <InputLabel htmlFor="component-outlined-fullName">
+                  Full Name
+                </InputLabel>
+                <OutlinedInput
+                  {...register("fullName", {
+                    required: "Full Name is Required",
+                  })}
+                  id="component-outlined-fullName"
+                  label="Full Name"
+                />
+              </FormControl>
             </div>
-           {role === "admin" && ( <div className="inputGroup">
-              <Input
-                label={"Shop Name"}
-                htmlFor={"shopname"}
-                name={"shopName"}
-                placeHolder={"Enter your shop Name"}
-                required={true}
-              />
-            </div>)}
+            {role === "admin" && (
+              <div className="inputGroup">
+                <FormControl>
+                  <InputLabel htmlFor="component-outlined-ShopName">
+                    Shop Name
+                  </InputLabel>
+                  <OutlinedInput
+                    id="component-outlined-shopName"
+                    label="Shop Name"
+                  />
+                </FormControl>
+              </div>
+            )}
 
             <div className="formDivider" />
 

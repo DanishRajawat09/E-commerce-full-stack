@@ -15,6 +15,18 @@ export const verifyOTP = async (path, data) =>
   instance.post(path, data, { withCredentials: true });
 export const sendOTP = async (path, data) =>
   instance.post(path, data, { withCredentials: true });
+export const createProfile = async (path, data) =>
+  instance.post(
+    path,
+    data,
+    {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+
 export const fetchUserData = async () =>
   instance.get("/api/v1/user/", {
     withCredentials: true,

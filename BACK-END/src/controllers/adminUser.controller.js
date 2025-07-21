@@ -65,7 +65,10 @@ const getUserAdminInfo = asyncHandler(async (req, res) => {
 
   const user = await User.findById(userId)
     .populate("address")
-    .populate("profile")
+    .populate({
+     path : "profile",
+     select : "-_id -createdAt -updatedAt -__v -user"
+    })
     .select(
       "-_id -adminProfile -__v -password -otp -otpExpiry -authProvider -role -isVerified -refreshToken -createdAt -updatedAt"
     )

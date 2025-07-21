@@ -2,7 +2,7 @@ import { useState } from "react";
 import ImageCropper from "../imageCropper/ImageCropper";
 import "./profilepic.css";
 
-const ProfilePicture = ({ role }) => {
+const ProfilePicture = ({ role , setAvatar }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [imageURL, setImageURL] = useState(null);
   const [croppedImageURL, setCroppedImageURL] = useState("istockphoto2.jpg");
@@ -19,8 +19,12 @@ const ProfilePicture = ({ role }) => {
   const handleCropComplete = (blob, croppedUrl) => {
     setCroppedImageURL(croppedUrl);
 
+
     // const formData = new FormData();
     // formData.append("avatar", blob);
+const file = new File([blob] , "avatar.jpg" , {type : blob.type})
+
+    setAvatar(file)
   };
   return (
     <>

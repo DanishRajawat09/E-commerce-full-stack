@@ -22,7 +22,7 @@ const ImageCropper = ({ image, onCropComplete, setImage, role }) => {
     );
     onCropComplete(blob, fileUrl);
 
-    setImage(null);
+  
     setCroppedAreaPixels(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);

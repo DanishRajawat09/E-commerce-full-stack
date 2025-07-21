@@ -16,6 +16,7 @@ const createProfile = asyncHandler(async (req, res) => {
   }
 
   const filePath = req.file?.path;
+  console.log(filePath);
 
   if (!filePath) {
     throw new ApiError(400, "avatar not found upload again");
