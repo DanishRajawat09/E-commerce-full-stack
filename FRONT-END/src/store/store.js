@@ -24,7 +24,7 @@ const persistConfig = {
 };
 const rootReducer = combineReducers({
   otp: resendOTPSlice,
-  sideBar: sideBarSliceReducer,
+  sideBarState: sideBarSliceReducer,
   ProductData: ProductData,
   cart: cartSlice,
   CartCalc: CartCalc,

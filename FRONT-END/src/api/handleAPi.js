@@ -27,6 +27,11 @@ export const createProfile = async (path, data) =>
     }
   );
 
+  export const logOut = async (path, data = {}) =>  instance.post(path , data, {
+    withCredentials : true
+  })
+
+
 export const fetchUserData = async () =>
   instance.get("/api/v1/user/", {
     withCredentials: true,

@@ -3,14 +3,14 @@ import { useDispatch } from "react-redux";
 import { isOpen } from "../../features/stateSlice";
 import { useSelector } from "react-redux";
 const SideNavBar = () => {
-  const status = useSelector((state) => state.sideBar.open);
+  const {open} = useSelector((state) => state.sideBarState);
   const dispatch = useDispatch();
   const handleCloseSideBar = () => {
     dispatch(isOpen({ open: false }));
   };
 
   return (
-    <div className={status ? "sideNav" : "discard"}>
+    <div className={open ? "sideNav" : "discard"}>
       <div className="topArea  flexContainer">
         <h1 className="icon">shop.co</h1>
         <img

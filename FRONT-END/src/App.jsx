@@ -25,6 +25,7 @@ import ResetRouteProtect from "./components/resetProtect/ResetRouteProtect.jsx";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor } from "./store/store.js";
 import CheckUserLogin from "./utils/VerifyUserLogin.jsx";
+import ProtectedRoute from "./components/protactedRoute/ProtectedRoute.jsx";
 // import { useEffect } from "react";
 // const router = createBrowserRouter(
 //   createRoutesFromElements(
@@ -66,7 +67,9 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="productDetails" element={<ProductDetails />} />
+            <Route element={<ProtectedRoute/>}>
             <Route path="shop" element={<CasualPage />} />
+            </Route>
             <Route path="cart" element={<Cart />} />
           </Route>
 
