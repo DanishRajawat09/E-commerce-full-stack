@@ -12,6 +12,12 @@
   --AdminTheme : royalblue;
 }
 
+@media screen and (width < 1300px) {
+  body{
+  padding-right: 0px !important;
+
+}
+}
 * {
   margin: 0;
   padding: 0;
@@ -40,7 +46,7 @@ padding: 0 16px;
   line-height: 58px;
 }
 ul{
-list-style: none;
+list-style: none ;
 }
 
 
@@ -68,4 +74,30 @@ list-style: none;
   .reviewArea::-webkit-scrollbar-thumb:hover {
     background-color: #333333; /* Slightly lighter orange on hover */
   }
-  
+
+
+
+  /* Custom slim scrollbar */
+::-webkit-scrollbar {
+  width: 6px; /* Slim width */
+}
+
+::-webkit-scrollbar-track {
+  background: var(--searchBar); /* Light background */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #b5b5b5; /* Subtle gray thumb */
+  border-radius: 10px;
+  border: 1px solid var(--searchBar); /* Inner border to blend with background */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #999999; /* Darker on hover */
+}
+
+  /* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #b5b5b5 var(--searchBar);
+}
