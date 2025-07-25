@@ -32,7 +32,7 @@ const Navbar = () => {
       const scrollbarWidth =
         window.innerWidth - document.documentElement.clientWidth;
 
-      if (open) {
+      if (lock) {
         document.body.style.overflow = "hidden";
         document.body.style.position = "relative";
         document.body.style.paddingRight = `${scrollbarWidth}px`;
