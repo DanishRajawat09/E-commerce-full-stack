@@ -6,7 +6,6 @@ import { useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Divider from "@mui/material/Divider";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -19,10 +18,10 @@ import { Link } from "react-router-dom";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import Person4OutlinedIcon from "@mui/icons-material/Person4Outlined";
-import CircularProgress from "@mui/material/CircularProgress";
 import { logOut } from "../../api/handleAPi";
 import { useMutation } from "@tanstack/react-query";
 import { clearUserData } from "../../features/userDetailSlice";
+import CircularProgress from "@mui/material/CircularProgress";
 const SideNavBar = () => {
   const { open } = useSelector((state) => state.sideBarState);
   const dispatch = useDispatch();
@@ -96,13 +95,13 @@ const SideNavBar = () => {
           <Avatar
             sx={{ width: "60px", height: "60px" }}
             src={
-              (userData.isVerified && userData.profile?.avatar) ||
-              "/broken-image.svg"
+              userData.isVerified
+                ? userData.profile?.avatar
+                : "/broken-image.svg"
             }
           ></Avatar>
           <Typography id="sideNavTitle">
-            {(userData.isVerified && userData.profile?.fullName) ||
-              "No Account"}
+            {userData.isVerified ? userData.profile?.fullName : "No Account"}
           </Typography>
           {userData.isVerified && (
             <Typography id="sideNavSubHeading">{userData.email}</Typography>
@@ -186,7 +185,13 @@ const SideNavBar = () => {
                       handleLogOut("user");
                     }}
                   >
-                    LogOut
+                    {logoutMutation.isPending ? (
+                      <Box sx={{ display: "flex" }}>
+                        <CircularProgress size={25} />
+                      </Box>
+                    ) : (
+                      "LogOut"
+                    )}
                   </Button>
                 )}
               </List>

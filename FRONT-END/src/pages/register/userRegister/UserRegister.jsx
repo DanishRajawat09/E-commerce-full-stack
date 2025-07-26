@@ -23,6 +23,7 @@ import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
 import { useDispatch } from "react-redux";
 import { addOTPData } from "../../../features/resendOTP.js";
+import Typography from "@mui/material/Typography";
 // import '@coreui/coreui-pro/dist/css/coreui.min.css'
 const UserRegister = ({ role }) => {
   const [otpOptions, setOtpOptions] = useState(false);
@@ -84,7 +85,7 @@ const UserRegister = ({ role }) => {
     event.preventDefault();
   };
 
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit , formState : {errors}} = useForm();
 
   const registerMutation = useMutation({
     mutationFn: (formData) =>
@@ -246,7 +247,7 @@ const UserRegister = ({ role }) => {
           >
             <div className="inputGroup">
               <FormControl>
-                <InputLabel htmlFor="component-outlined-email">
+                <InputLabel error={errors.email?.type === "required" || errors.email?.type === "validate" ? true  : false}  htmlFor="component-outlined-email">
                   Email
                 </InputLabel>
                 <OutlinedInput
@@ -254,17 +255,23 @@ const UserRegister = ({ role }) => {
                     validate: (value) =>
                       /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value) ||
                       "Enter a valid email Address",
-                    required: "Email is Required",
+                    required: "true",
                   })}
+                  
+                 error={errors.email?.type === "required" || errors.email?.type === "validate"  ? true  : false }
+                 
+                 
                   id="component-outlined-email"
                   label="Email"
                 />
+               {errors.email?.type === "required" &&  <Typography sx={{color : "red" , fontSize : "14px" , marginTop : "3px"}}>Email is Required</Typography>}
+               {errors.email?.type === "validate" &&  <Typography sx={{color : "red" , fontSize : "14px" , marginTop : "3px"}}>Email is Invalid</Typography>}
               </FormControl>
             </div>
 
             <div className="inputGroup">
               <FormControl>
-                <InputLabel htmlFor="component-outlined-contact">
+                <InputLabel  error={errors.contact?.type === "required" || errors.contact?.type === "validate" ? true : false } htmlFor="component-outlined-contact">
                   Contact
                 </InputLabel>
                 <OutlinedInput
@@ -274,21 +281,26 @@ const UserRegister = ({ role }) => {
                       /^[6-9]\d{9}$/.test(value) ||
                       "Enter Legit 10-digit Number",
                   })}
+                  error={errors.contact?.type === "required" || errors.contact?.type === "validate" ? true : false }
+
                   id="component-outlined-contact"
                   label="Contact"
                 />
+                 {errors.contact?.type === "required" &&  <Typography sx={{color : "red" , fontSize : "14px" , marginTop : "3px"}}>Contact is Required</Typography>}
+               {errors.contact?.type === "validate" &&  <Typography sx={{color : "red" , fontSize : "14px" , marginTop : "3px"}}>Contact Number is Invalid</Typography>}
               </FormControl>
             </div>
 
             <div className="inputGroup">
               <FormControl variant="outlined">
-                <InputLabel htmlFor="outlined-adornment-password">
+                <InputLabel error={errors.password?.type === "required" ? true : false} htmlFor="outlined-adornment-password">
                   Password
                 </InputLabel>
                 <OutlinedInput
                   {...register("password", {
                     required: "password is required",
                   })}
+                  error={errors.password?.type === "required" ? true : false}
                   id="outlined-adornment-password"
                   type={showPassword ? "text" : "password"}
                   endAdornment={
@@ -304,12 +316,15 @@ const UserRegister = ({ role }) => {
                         onMouseUp={handleMouseUpPassword}
                         edge="end"
                       >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                        {showPassword ? <VisibilityOff  /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
                   }
+
                   label="Password"
                 />
+                 {errors.password?.type === "required" &&  <Typography sx={{color : "red" , fontSize : "14px" , marginTop : "3px"}}>Password is Required</Typography>}
+          
               </FormControl>
             </div>
 
