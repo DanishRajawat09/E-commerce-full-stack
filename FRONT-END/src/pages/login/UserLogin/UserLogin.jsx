@@ -15,8 +15,15 @@ import IconButton from "@mui/material/IconButton";
 import { useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 const UserLogin = ({ role }) => {
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -66,7 +73,15 @@ const UserLogin = ({ role }) => {
           >
             <div className="inputGroup">
               <FormControl>
-                <InputLabel htmlFor="component-outlined-emailContact">
+                <InputLabel
+                  error={
+                    errors.emailContact?.type === "required" ||
+                    errors.emailContact?.type === "validate"
+                      ? true
+                      : false
+                  }
+                  htmlFor="component-outlined-emailContact"
+                >
                   Email or Contact
                 </InputLabel>
                 <OutlinedInput
@@ -77,21 +92,45 @@ const UserLogin = ({ role }) => {
                       /^[6-9]\d{9}$/.test(value) ||
                       "Enter a valid email or 10-digit mobile number",
                   })}
+                  error={
+                    errors.emailContact?.type === "required" ||
+                    errors.emailContact?.type === "validate"
+                      ? true
+                      : false
+                  }
                   id="component-outlined-emailContact"
                   label="Email or Contact"
                 />
               </FormControl>
+              {errors.emailContact?.type === "required" && (
+                <Typography
+                  sx={{ color: "red", fontSize: "14px", marginTop: "3px" }}
+                >
+                  Email or Contact is Required
+                </Typography>
+              )}
+              {errors.emailContact?.type === "validate" && (
+                <Typography
+                  sx={{ color: "red", fontSize: "14px", marginTop: "3px" }}
+                >
+                  Email or Contact Number is Invalid
+                </Typography>
+              )}
             </div>
 
             <div className="formGroup">
               <FormControl variant="outlined">
-                <InputLabel htmlFor="outlined-adornment-password">
+                <InputLabel
+                  error={errors.password?.type === "required" ? true : false}
+                  htmlFor="outlined-adornment-password"
+                >
                   Password
                 </InputLabel>
                 <OutlinedInput
                   {...register("password", {
                     required: "password is required",
                   })}
+                  error={errors.password?.type === "required" ? true : false}
                   id="outlined-adornment-password"
                   type={showPassword ? "text" : "password"}
                   endAdornment={
@@ -113,6 +152,13 @@ const UserLogin = ({ role }) => {
                   }
                   label="Password"
                 />
+                {errors.password?.type === "required" && (
+                  <Typography
+                    sx={{ color: "red", fontSize: "14px", marginTop: "3px" }}
+                  >
+                    Password is Required
+                  </Typography>
+                )}
               </FormControl>
             </div>
 
@@ -143,7 +189,13 @@ const UserLogin = ({ role }) => {
                   : "submitButtonUserLogin"
               }
             >
-              Log In
+              {logInMutation.isPending && logInMutation ? (
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  <CircularProgress size={25} color="white" />
+                </Box>
+              ) : (
+                "Login"
+              )}
             </button>
           </form>
 

@@ -185,7 +185,7 @@ const SideNavBar = () => {
                       handleLogOut("user");
                     }}
                   >
-                    {logoutMutation.isPending ? (
+                    {logoutMutation.isPending && logoutMutation ? (
                       <Box sx={{ display: "flex" }}>
                         <CircularProgress size={25} />
                       </Box>

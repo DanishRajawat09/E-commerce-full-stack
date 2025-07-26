@@ -24,6 +24,8 @@ import Snackbar from "@mui/material/Snackbar";
 import { useDispatch } from "react-redux";
 import { addOTPData } from "../../../features/resendOTP.js";
 import Typography from "@mui/material/Typography";
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
 // import '@coreui/coreui-pro/dist/css/coreui.min.css'
 const UserRegister = ({ role }) => {
   const [otpOptions, setOtpOptions] = useState(false);
@@ -85,7 +87,11 @@ const UserRegister = ({ role }) => {
     event.preventDefault();
   };
 
-  const { register, handleSubmit , formState : {errors}} = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   const registerMutation = useMutation({
     mutationFn: (formData) =>
@@ -243,11 +249,21 @@ const UserRegister = ({ role }) => {
               : "Join us and enjoy a smooth shopping experience from day one."}
           </p>
           <form
-            onSubmit={handleSubmit((formData) => registerMutation.mutate(formData))}
+            onSubmit={handleSubmit((formData) =>
+              registerMutation.mutate(formData)
+            )}
           >
             <div className="inputGroup">
               <FormControl>
-                <InputLabel error={errors.email?.type === "required" || errors.email?.type === "validate" ? true  : false}  htmlFor="component-outlined-email">
+                <InputLabel
+                  error={
+                    errors.email?.type === "required" ||
+                    errors.email?.type === "validate"
+                      ? true
+                      : false
+                  }
+                  htmlFor="component-outlined-email"
+                >
                   Email
                 </InputLabel>
                 <OutlinedInput
@@ -257,21 +273,43 @@ const UserRegister = ({ role }) => {
                       "Enter a valid email Address",
                     required: "true",
                   })}
-                  
-                 error={errors.email?.type === "required" || errors.email?.type === "validate"  ? true  : false }
-                 
-                 
+                  error={
+                    errors.email?.type === "required" ||
+                    errors.email?.type === "validate"
+                      ? true
+                      : false
+                  }
                   id="component-outlined-email"
                   label="Email"
                 />
-               {errors.email?.type === "required" &&  <Typography sx={{color : "red" , fontSize : "14px" , marginTop : "3px"}}>Email is Required</Typography>}
-               {errors.email?.type === "validate" &&  <Typography sx={{color : "red" , fontSize : "14px" , marginTop : "3px"}}>Email is Invalid</Typography>}
+                {errors.email?.type === "required" && (
+                  <Typography
+                    sx={{ color: "red", fontSize: "14px", marginTop: "3px" }}
+                  >
+                    Email is Required
+                  </Typography>
+                )}
+                {errors.email?.type === "validate" && (
+                  <Typography
+                    sx={{ color: "red", fontSize: "14px", marginTop: "3px" }}
+                  >
+                    Email is Invalid
+                  </Typography>
+                )}
               </FormControl>
             </div>
 
             <div className="inputGroup">
               <FormControl>
-                <InputLabel  error={errors.contact?.type === "required" || errors.contact?.type === "validate" ? true : false } htmlFor="component-outlined-contact">
+                <InputLabel
+                  error={
+                    errors.contact?.type === "required" ||
+                    errors.contact?.type === "validate"
+                      ? true
+                      : false
+                  }
+                  htmlFor="component-outlined-contact"
+                >
                   Contact
                 </InputLabel>
                 <OutlinedInput
@@ -281,19 +319,38 @@ const UserRegister = ({ role }) => {
                       /^[6-9]\d{9}$/.test(value) ||
                       "Enter Legit 10-digit Number",
                   })}
-                  error={errors.contact?.type === "required" || errors.contact?.type === "validate" ? true : false }
-
+                  error={
+                    errors.contact?.type === "required" ||
+                    errors.contact?.type === "validate"
+                      ? true
+                      : false
+                  }
                   id="component-outlined-contact"
                   label="Contact"
                 />
-                 {errors.contact?.type === "required" &&  <Typography sx={{color : "red" , fontSize : "14px" , marginTop : "3px"}}>Contact is Required</Typography>}
-               {errors.contact?.type === "validate" &&  <Typography sx={{color : "red" , fontSize : "14px" , marginTop : "3px"}}>Contact Number is Invalid</Typography>}
+                {errors.contact?.type === "required" && (
+                  <Typography
+                    sx={{ color: "red", fontSize: "14px", marginTop: "3px" }}
+                  >
+                    Contact is Required
+                  </Typography>
+                )}
+                {errors.contact?.type === "validate" && (
+                  <Typography
+                    sx={{ color: "red", fontSize: "14px", marginTop: "3px" }}
+                  >
+                    Contact Number is Invalid
+                  </Typography>
+                )}
               </FormControl>
             </div>
 
             <div className="inputGroup">
               <FormControl variant="outlined">
-                <InputLabel error={errors.password?.type === "required" ? true : false} htmlFor="outlined-adornment-password">
+                <InputLabel
+                  error={errors.password?.type === "required" ? true : false}
+                  htmlFor="outlined-adornment-password"
+                >
                   Password
                 </InputLabel>
                 <OutlinedInput
@@ -316,15 +373,19 @@ const UserRegister = ({ role }) => {
                         onMouseUp={handleMouseUpPassword}
                         edge="end"
                       >
-                        {showPassword ? <VisibilityOff  /> : <Visibility />}
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
                   }
-
                   label="Password"
                 />
-                 {errors.password?.type === "required" &&  <Typography sx={{color : "red" , fontSize : "14px" , marginTop : "3px"}}>Password is Required</Typography>}
-          
+                {errors.password?.type === "required" && (
+                  <Typography
+                    sx={{ color: "red", fontSize: "14px", marginTop: "3px" }}
+                  >
+                    Password is Required
+                  </Typography>
+                )}
               </FormControl>
             </div>
 
@@ -336,7 +397,13 @@ const UserRegister = ({ role }) => {
                 role === "admin" ? "authSubmitButtonAdmin" : "authSubmitButton"
               }
             >
-              Register
+              {registerMutation.isPending && registerMutation ? (
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  <CircularProgress size={25} color="white" />
+                </Box>
+              ) : (
+                "Register"
+              )}
             </button>
           </form>
 
@@ -419,7 +486,13 @@ const UserRegister = ({ role }) => {
                   handleSendOtp();
                 }}
               >
-                Send OTP
+                {sendOTPMutation.isPending && sendOTPMutation ? (
+                  <Box sx={{ display: "flex", justifyContent: "center" }}>
+                    <CircularProgress size={25} color="white" />
+                  </Box>
+                ) : (
+                  "SendOTP"
+                )}
               </button>
             </div>
             <div className="otpBackContainer">
