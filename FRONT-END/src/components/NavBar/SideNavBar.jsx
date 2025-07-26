@@ -20,12 +20,16 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import Person4OutlinedIcon from "@mui/icons-material/Person4Outlined";
 import CircularProgress from "@mui/material/CircularProgress";
+import { logOut } from "../../api/handleAPi";
+import { useMutation } from "@tanstack/react-query";
+import { clearUserData } from "../../features/userDetailSlice";
 const SideNavBar = () => {
   const { open } = useSelector((state) => state.sideBarState);
   const dispatch = useDispatch();
   const handleCloseSideBar = () => {
     dispatch(isOpen({ open: false }));
   };
+  const userData = useSelector((state) => state.userDetail);
 
   // const [anchorEl, setAnchorEl] = React.useState(null);
   // const open = Boolean(anchorEl);
@@ -67,27 +71,54 @@ const SideNavBar = () => {
     };
   }, [open]);
 
+  const logoutMutation = useMutation({
+    mutationFn: (role) =>
+      logOut(role === "admin" ? "/api/v1/admin/logout" : "/api/v1/user/logout"),
+    onSuccess: (data) => {
+      console.log(data);
+      dispatch(clearUserData());
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  const handleLogOut = (role) => {
+    console.log(role);
+
+    logoutMutation.mutate(role);
+  };
+
   return (
     <>
-
       <div className={open ? "sideNav" : "discard"}>
         <div className="topArea">
           <Avatar
             sx={{ width: "60px", height: "60px" }}
-            src="/broken-image.svg"
+            src={
+              (userData.isVerified && userData.profile?.avatar) ||
+              "/broken-image.svg"
+            }
           ></Avatar>
-          <Typography id="sideNavTitle">danish</Typography>
-          <Typography id="sideNavSubHeading">ibnfarooq070@gmail.com</Typography>
+          <Typography id="sideNavTitle">
+            {(userData.isVerified && userData.profile?.fullName) ||
+              "No Account"}
+          </Typography>
+          {userData.isVerified && (
+            <Typography id="sideNavSubHeading">{userData.email}</Typography>
+          )}
         </div>
-        <Button
-          sx={{ width: "100%", marginBottom: "10px", backgroundColor: "black" }}
-          variant="contained"
-          disableElevation
-        >
-          <Box sx={{ display: "flex" }}>
-            <CircularProgress sx={{ color: "white" }} size={25} />
-          </Box>
-        </Button>
+        {!userData.isVerified && (
+          <Link to={"/user/login"}>
+            <Button
+              sx={{ width: "100%", backgroundColor: "black" }}
+              variant="contained"
+              disableElevation
+            >
+              LogIn
+            </Button>
+          </Link>
+        )}
         <Divider />
         <div className="navArea">
           <Box
@@ -134,31 +165,40 @@ const SideNavBar = () => {
             <Divider />
             <nav aria-label="secondary mailbox folders">
               <List>
-                <Link to={"/profileSetting"} className="sideNavBarLink">
-                  <ListItem disablePadding>
-                    <ListItemButton>
-                      <ListItemIcon sx={{ minWidth: "30px" }}>
-                        <Person4OutlinedIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="Profile" />
-                    </ListItemButton>
-                  </ListItem>
-                </Link>
-                <Button
-                  sx={{ width: "100%", backgroundColor: "black" }}
-                  variant="contained"
-                  disableElevation
-                >
-                  <Box sx={{ display: "flex" }}>
-                    <CircularProgress sx={{ color: "white" }} size={25} />
-                  </Box>
-                </Button>
+                {userData.isVerified && (
+                  <Link to={"/profileSetting"} className="sideNavBarLink">
+                    <ListItem disablePadding>
+                      <ListItemButton>
+                        <ListItemIcon sx={{ minWidth: "30px" }}>
+                          <Person4OutlinedIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Profile" />
+                      </ListItemButton>
+                    </ListItem>
+                  </Link>
+                )}
+                {userData.isVerified && (
+                  <Button
+                    sx={{ width: "100%", backgroundColor: "black" }}
+                    variant="contained"
+                    disableElevation
+                    onClick={() => {
+                      handleLogOut("user");
+                    }}
+                  >
+                    LogOut
+                  </Button>
+                )}
               </List>
             </nav>
           </Box>
         </div>
       </div>
-      {open &&       <div className="screen" onClick={handleCloseSideBar}> </div>}
+      {open && (
+        <div className="screen" onClick={handleCloseSideBar}>
+          {" "}
+        </div>
+      )}
     </>
   );
 };

@@ -18,7 +18,12 @@ z-index: 50;
     padding-block: 20px;
     display: block;
     visibility: visible;
-
+    translate: 0%;
+    transition: all linear 0.5s ;
+    -webkit-transition: all linear 0.5s ;
+    -moz-transition: all linear 0.5s ;
+    -ms-transition: all linear 0.5s ;
+    -o-transition: all linear 0.5s ;
 }
 .sideNavBarLink{
     color: black;
@@ -62,6 +67,11 @@ font-size: 14px;
 .discard{
     visibility: hidden;
     display: none;
+    transform:translate(-100%) ;
+    -webkit-transform:translate(-100%) ;
+    -moz-transform:translate(-100%) ;
+    -ms-transform:translate(-100%) ;
+    -o-transform:translate(-100%) ;
 }
 
 

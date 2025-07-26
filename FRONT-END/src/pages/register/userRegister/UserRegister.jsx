@@ -87,10 +87,10 @@ const UserRegister = ({ role }) => {
   const { register, handleSubmit } = useForm();
 
   const registerMutation = useMutation({
-    mutationFn: (data) =>
+    mutationFn: (formData) =>
       registerUser(
         role === "admin" ? "/api/v1/admin/register" : "/api/v1/user/register",
-        data
+        formData
       ),
     onSuccess: (data) => {
       console.log(data);
@@ -242,7 +242,7 @@ const UserRegister = ({ role }) => {
               : "Join us and enjoy a smooth shopping experience from day one."}
           </p>
           <form
-            onSubmit={handleSubmit((data) => registerMutation.mutate(data))}
+            onSubmit={handleSubmit((formData) => registerMutation.mutate(formData))}
           >
             <div className="inputGroup">
               <FormControl>
