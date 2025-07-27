@@ -7,6 +7,8 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import { createProfile } from "../../api/handleAPi";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 const Profile = ({ role }) => {
   const { register, handleSubmit } = useForm();
   const [avatar, setAvatar] = useState(null);
@@ -99,7 +101,9 @@ const Profile = ({ role }) => {
                   : "submitButtonUserLoginProfile"
               }
             >
-              Create Profile
+             {profileMutation.isPending && profileMutation ? ( <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  <CircularProgress size={25} color="white" />
+                </Box>): "Create Profile"}
             </button>
           </form>
         </div>

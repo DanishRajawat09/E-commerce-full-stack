@@ -27,20 +27,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 // import '@coreui/coreui-pro/dist/css/coreui.min.css'
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -111,7 +97,8 @@ const UserRegister = ({ role }) => {
   } = useForm();
 
   const registerMutation = useMutation({
-    mutationFn: (formData) =>  registerUser(
+    mutationFn: (formData) =>
+      registerUser(
         role === "admin" ? "/api/v1/admin/register" : "/api/v1/user/register",
         formData
       ),
@@ -129,7 +116,7 @@ const UserRegister = ({ role }) => {
     onError: (error) => {
       console.log(error);
 
-      if (error.response?.status === 409) {
+      if (error.response?.status === 401) {
         showSuccess({
           open: true,
         });
@@ -138,6 +125,25 @@ const UserRegister = ({ role }) => {
           ...apiData,
           data: error.response?.data?.data,
           message: error.response.data.message,
+        });
+      } else if (error.response?.status === 422) {
+        setErrorM({
+          open: true,
+          errorCode: error.response?.status || 500,
+          errorMessage:
+            "please enter the Credentials properly, Enter email,contact and password again",
+        });
+      } else if (error.response?.status === 500) {
+        setErrorM({
+          open: true,
+          errorCode: error.response?.status || 500,
+          errorMessage: "Could not Create Your Account, Server Error",
+        });
+      }else if (error.response?.status === 409 && !error.response?.data?.message) {
+        setErrorM({
+          open: true,
+          errorCode: error.response?.status || 500,
+          errorMessage: "User is Already Exist, please login your Account",
         });
       } else {
         setErrorM({

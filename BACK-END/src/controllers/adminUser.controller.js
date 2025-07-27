@@ -94,12 +94,12 @@ const registerUser = asyncHandler(async (req, res) => {
 
   // Basic validations
   if (!email && !contact) {
-    throw new ApiError(400, "Email or contact number is required.");
+    throw new ApiError(422, "Email or contact number is required.");
   }
 
   if (!password || password.length < 6) {
     throw new ApiError(
-      400,
+      422,
       "Password must be a string and at least 6 characters long."
     );
   }
@@ -111,7 +111,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (existingUser) {
     throw new ApiError(
-      400,
+      409,
       `An account with this email or contact already exists for ${existingUser.role}. Please use different credentials.`
     );
   }
@@ -124,14 +124,14 @@ const registerUser = asyncHandler(async (req, res) => {
   if (unverifiedUser) {
     const resetTokenName = await resetTokenNameFunc(unverifiedUser.role);
     return res
-      .status(409)
+      .status(401)
       .clearCookie(resetTokenName, {
         httpOnly: true,
         secure: NODE_ENV === "production",
       })
       .json(
         new ApiResponse(
-          409,
+          401,
           "Account already exists but its not verified. Please complete verification.",
           {
             email: unverifiedUser.email,
@@ -174,7 +174,7 @@ const afterSend = asyncHandler(async (req, res) => {
 
   if (!_id || !email) {
     throw new ApiError(
-      500,
+      422,
       "Unable to retrieve user information for OTP process. Please try again."
     );
   }
