@@ -15,8 +15,7 @@ import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import FormControl from "@mui/material/FormControl";
-import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
+
 import { registerUser, sendOTP } from "../../../api/handleAPi";
 import Alert from "@mui/material/Alert";
 // import AlertTitle from "@mui/material/AlertTitle";
@@ -27,6 +26,24 @@ import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 // import '@coreui/coreui-pro/dist/css/coreui.min.css'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 const UserRegister = ({ role }) => {
   const [otpOptions, setOtpOptions] = useState(false);
 
@@ -94,8 +111,7 @@ const UserRegister = ({ role }) => {
   } = useForm();
 
   const registerMutation = useMutation({
-    mutationFn: (formData) =>
-      registerUser(
+    mutationFn: (formData) =>  registerUser(
         role === "admin" ? "/api/v1/admin/register" : "/api/v1/user/register",
         formData
       ),

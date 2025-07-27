@@ -70,7 +70,7 @@ const getUserAdminInfo = asyncHandler(async (req, res) => {
      select : "-_id -createdAt -updatedAt -__v -user"
     })
     .select(
-      "-_id -adminProfile -__v -password -otp -otpExpiry -authProvider -role -isVerified -refreshToken -createdAt -updatedAt"
+      "-_id -adminProfile -__v -password -otp -otpExpiry -authProvider -role  -refreshToken -createdAt -updatedAt"
     )
     .lean();
 
@@ -247,13 +247,13 @@ const loginUser = asyncHandler(async (req, res) => {
 
   if (!emailContact) {
     throw new ApiError(
-      400,
+      422,
       "Please provide either an email or contact number to log in."
     );
   }
 
   if (!password) {
-    throw new ApiError(400, "Password is required to log in.");
+    throw new ApiError(422, "Password is required to log in.");
   }
 
   const user = await User.findOne({
@@ -265,14 +265,14 @@ const loginUser = asyncHandler(async (req, res) => {
 
   if (!user) {
     throw new ApiError(
-      400,
+      404,
       "No account found for the provided email or contact number."
     );
   }
 
   if (user.isVerified === false) {
     throw new ApiError(
-      400,
+      403,
       "Your account is not verified yet. Please complete OTP verification."
     );
   }
@@ -281,7 +281,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
   if (!isPasswordValid) {
     throw new ApiError(
-      400,
+      401,
       "Incorrect password. Please try again or reset it if you've forgotten."
     );
   }

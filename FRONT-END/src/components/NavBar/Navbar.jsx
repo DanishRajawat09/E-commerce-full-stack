@@ -19,13 +19,49 @@ import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 import Login from "@mui/icons-material/Login";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.userDetail);
+  const [apiData, setApiData] = useState({
+    data: {},
+    message: "",
+  });
+  const [showSuccess, setShowSuccess] = useState({
+    open: false,
+    vertical: "top",
+    horizontal: "center",
+  });
 
+  const { vertical, horizontal } = showSuccess;
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+
+  const handleCloseSuccess = () =>
+    setShowSuccess({ ...showSuccess, open: false });
+  useEffect(() => {
+    if (showSuccess.open === true) {
+      const successInterval = setInterval(() => {
+        setShowSuccess({ ...showSuccess, open: false });
+      }, 5000);
+
+      return () => {
+        clearInterval(successInterval);
+      };
+    }
+  });
+
+  useEffect(() => {
+    if (userData.userData.isVerified) {
+      setShowSuccess({ ...showSuccess, open: true });
+      setApiData({
+        ...apiData,
+        message: `welcome ${userData.userData?.profile?.fullName}`,
+      });
+    }
+  }, []);
 
   const useScrollLock = (lock = false) => {
     useEffect(() => {
@@ -96,6 +132,25 @@ const Navbar = () => {
 
   return (
     <header className="navHeader">
+      {showSuccess.open && (
+        <Snackbar
+          anchorOrigin={{ vertical, horizontal }}
+          open={showSuccess.open}
+          autoHideDuration={6000}
+          onClose={handleCloseSuccess}
+          key={"success" + vertical + horizontal}
+        >
+          <Alert
+            onClose={handleCloseSuccess}
+            severity="success"
+            variant="filled"
+            sx={{ width: "100%" }}
+          >
+            {apiData.message}
+          </Alert>
+        </Snackbar>
+      )}
+
       <div className="container  ">
         <div className="flexContainer navData">
           <div className="navLogo flexContainer">
@@ -165,7 +220,10 @@ const Navbar = () => {
                   >
                     <Avatar
                       sx={{ width: 32, height: 32 }}
-                      src={`${userData.profile?.profilePicture || "/broken-image.svg"}`}
+                      src={`${
+                        userData.userData.profile?.avatar?.url ||
+                        "/broken-image.svg"
+                      }`}
                     ></Avatar>
                   </IconButton>
                 </Tooltip>
@@ -208,10 +266,11 @@ const Navbar = () => {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
               >
-                {userData.email ? (
+                {userData.userData.email ? (
                   <>
                     <MenuItem onClick={handleClose}>
-                      <Avatar /> My account
+                      <Avatar src={userData.userData.profile?.avatar?.url} /> My
+                      account
                     </MenuItem>
                     <Divider />
                     <MenuItem

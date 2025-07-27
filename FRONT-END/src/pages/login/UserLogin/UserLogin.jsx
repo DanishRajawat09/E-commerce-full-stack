@@ -12,19 +12,69 @@ import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useQueryClient } from "@tanstack/react-query";
+import Alert from "@mui/material/Alert";
+import Snackbar from "@mui/material/Snackbar";
 const UserLogin = ({ role }) => {
+  const [showSuccess, setShowSuccess] = useState({
+    open: false,
+    vertical: "top",
+    horizontal: "right",
+  });
+  const [errorM, setErrorM] = useState({
+    open: false,
+    errorCode: null,
+    errorMessage: null,
+  });
+  const [apiData, setApiData] = useState({
+    data: {},
+    message: "",
+  });
+
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm();
   const navigate = useNavigate();
+  const { vertical, horizontal } = showSuccess;
+  const handleCloseSuccess = () =>
+    setShowSuccess({ ...showSuccess, open: false });
+  const handleCloseError = () =>
+    setErrorM({
+      open: false,
+      errorCode: null,
+      errorMessage: null,
+    });
+
+  useEffect(() => {
+    if (showSuccess.open === true) {
+      const successInterval = setInterval(() => {
+        setShowSuccess({ ...showSuccess, open: false });
+      }, 5000);
+
+      return () => {
+        clearInterval(successInterval);
+      };
+    }
+  });
+  useEffect(() => {
+    if (errorM.open === true) {
+      const errorInterval = setInterval(() => {
+        setErrorM({...errorM, open: false });
+      }, 5000);
+
+      return () => {
+        clearInterval(errorInterval);
+      };
+    }
+  });
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
@@ -35,13 +85,56 @@ const UserLogin = ({ role }) => {
     event.preventDefault();
   };
 
+  const queryClient = useQueryClient();
+
   const logInMutation = useMutation({
     mutationFn: (formData) => logIn("/api/v1/user/login", formData),
-    onSuccess: (data) => {
-      console.log(data);
+    onSuccess: async (data) => {
+      setShowSuccess({ ...showSuccess, open: true });
+      setApiData({ ...apiData, message: "User Login SuccessFully" });
+      await queryClient.invalidateQueries(["user"]);
+      navigate("/");
     },
     onError: (error) => {
-      console.log(error);
+      console.log(error.response.status);
+
+      if (error.response.status === 422) {
+        setErrorM({
+          ...errorM,
+          open: true,
+          errorCode: error.response.status,
+          errorMessage: "please provide the credentials properly",
+        });
+      } else if (error.response.status === 404) {
+        setErrorM({
+          ...errorM,
+          open: true,
+          errorCode: error.response.status,
+          errorMessage: "No Account Found, Register first ",
+        });
+      } else if (error.response.status === 403) {
+        setErrorM({
+          ...errorM,
+          open: true,
+          errorCode: error.response.status,
+          errorMessage:
+            "Account is not Verified, complete the verification firt",
+        });
+      } else if (error.response.status === 401) {
+        setErrorM({
+          ...errorM,
+          open: true,
+          errorCode: error.response.status,
+          errorMessage: "Invalid Password try again",
+        });
+      } else {
+        setErrorM({
+          ...errorM,
+          open: true,
+          errorCode: error.response.status,
+          errorMessage: "Something went wrong",
+        });
+      }
     },
   });
   return (
@@ -52,6 +145,43 @@ const UserLogin = ({ role }) => {
           className="backIcon"
           onClick={() => navigate(-1)}
         />
+        {showSuccess.open && (
+          <Snackbar
+            anchorOrigin={{ vertical, horizontal }}
+            open={showSuccess.open}
+            autoHideDuration={6000}
+            onClose={handleCloseSuccess}
+            key={"success" + vertical + horizontal}
+          >
+            <Alert
+              onClose={handleCloseSuccess}
+              severity="success"
+              variant="filled"
+              sx={{ width: "100%" }}
+            >
+              {apiData.message}
+            </Alert>
+          </Snackbar>
+        )}
+
+        {errorM.open && (
+          <Snackbar
+            anchorOrigin={{ vertical, horizontal }}
+            open={errorM.open}
+            autoHideDuration={6000}
+            onClose={handleCloseError}
+            key={"error" + vertical + horizontal}
+          >
+            <Alert
+              onClose={handleCloseError}
+              severity="error"
+              variant="filled"
+              sx={{ width: "100%" }}
+            >
+              {errorM.errorMessage || "Something went wrong"}
+            </Alert>
+          </Snackbar>
+        )}
       </header>
 
       <main className="loginMain">

@@ -95,19 +95,19 @@ const SideNavBar = () => {
           <Avatar
             sx={{ width: "60px", height: "60px" }}
             src={
-              userData.isVerified
-                ? userData.profile?.avatar
+              userData.userData.isVerified
+                ? userData.userData.profile?.avatar?.url
                 : "/broken-image.svg"
             }
           ></Avatar>
           <Typography id="sideNavTitle">
-            {userData.isVerified ? userData.profile?.fullName : "No Account"}
+            {userData.userData.isVerified ? userData.userData.profile?.fullName : "No Account"}
           </Typography>
-          {userData.isVerified && (
-            <Typography id="sideNavSubHeading">{userData.email}</Typography>
+          {userData.userData.isVerified && (
+            <Typography id="sideNavSubHeading">{userData.userData.email}</Typography>
           )}
         </div>
-        {!userData.isVerified && (
+        {!userData.userData.isVerified && (
           <Link to={"/user/login"}>
             <Button
               sx={{ width: "100%", backgroundColor: "black" }}
@@ -164,7 +164,7 @@ const SideNavBar = () => {
             <Divider />
             <nav aria-label="secondary mailbox folders">
               <List>
-                {userData.isVerified && (
+                {userData.userData.isVerified && (
                   <Link to={"/profileSetting"} className="sideNavBarLink">
                     <ListItem disablePadding>
                       <ListItemButton>
@@ -176,7 +176,7 @@ const SideNavBar = () => {
                     </ListItem>
                   </Link>
                 )}
-                {userData.isVerified && (
+                {userData.userData.isVerified&& (
                   <Button
                     sx={{ width: "100%", backgroundColor: "black" }}
                     variant="contained"
