@@ -67,8 +67,8 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="productDetails" element={<ProductDetails />} />
-            <Route element={<ProtectedRoute/>}>
-            <Route path="shop" element={<CasualPage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="shop" element={<CasualPage />} />
             </Route>
             <Route path="cart" element={<Cart />} />
           </Route>
@@ -119,8 +119,13 @@ function App() {
             path="/admin/newpassword"
             element={<NewPassword role="admin" />}
           />
-          <Route path="/admin/profile" element={<Profile role="admin" />} />
-          <Route path="/user/profile" element={<Profile role="user" />} />
+          <Route path={"/admin/profile"} element={<ProtectedRoute />}>
+            <Route index element={<Profile role={"admin"} />}></Route>
+          </Route>
+          <Route path={"/user/profile"} element={<ProtectedRoute />}>
+            <Route index element={<Profile role={"user"} />}></Route>
+          </Route>
+
           <Route path="/user/address" element={<Address role="user" />} />
           <Route path="/admin/address" element={<Address role="admin" />} />
           <Route path="/user/verify-otp" element={<VerifyOtp role="user" />} />

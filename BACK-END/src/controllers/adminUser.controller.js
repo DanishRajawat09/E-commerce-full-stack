@@ -63,7 +63,7 @@ const getUserAdminInfo = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Unauthorized Request, login first");
   }
 
-  const user = await User.findById(userId)
+  const user = await User.findOne({_id : userId , isVerified : true})
     .populate("address")
     .populate({
      path : "profile",

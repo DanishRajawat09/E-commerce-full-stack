@@ -12,7 +12,7 @@ const userDetailSlice = createSlice({
       state.userData = action.payload;
     },
     clearUserData: (state) => {
-      state.userData = {};
+      state.userData = null;
     },
   },
 });

@@ -22,7 +22,7 @@ const Profile = ({ role }) => {
         data
       ),
     onSuccess: (data) => {
-      console.log(data);
+   
     },
     onError: (error) => {
       console.log(error);

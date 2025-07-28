@@ -3,8 +3,9 @@ import { Navigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 const ProtectedRoute = () => {
   const  user  = useSelector((state) => state.userDetail);
+console.log(user);
 
-  if (!user) {
+  if (!user.userData.isVerified) {
     return <Navigate to="/user/login" replace />;
   }
 

@@ -21,6 +21,7 @@ import Logout from "@mui/icons-material/Logout";
 import Login from "@mui/icons-material/Login";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import { persistor } from "../../store/store";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -110,6 +111,7 @@ const Navbar = () => {
     onSuccess: (data) => {
       console.log(data);
       dispatch(clearUserData());
+      persistor.purge()
     },
     onError: (error) => {
       console.log(error);
@@ -221,7 +223,7 @@ const Navbar = () => {
                     <Avatar
                       sx={{ width: 32, height: 32 }}
                       src={`${
-                        userData.userData.profile?.avatar?.url ||
+                        userData.userData?.profile?.avatar?.url ||
                         "/broken-image.svg"
                       }`}
                     ></Avatar>
@@ -269,7 +271,7 @@ const Navbar = () => {
                 {userData.userData.email ? (
                   <>
                     <MenuItem onClick={handleClose}>
-                      <Avatar src={userData.userData.profile?.avatar?.url} /> My
+                      <Avatar src={userData.userData?.profile?.avatar?.url} /> My
                       account
                     </MenuItem>
                     <Divider />

@@ -8,7 +8,7 @@ import { sendOTP, verifyOTP } from "../../api/handleAPi";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { useSelector } from "react-redux";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import CheckUserLogin from "../../utils/VerifyUserLogin";
 const VerifyOtp = ({ role }) => {
   const inputs = useRef([]);
@@ -41,7 +41,7 @@ const VerifyOtp = ({ role }) => {
   useEffect(() => {
     if (success.open === true) {
       const successInterval = setInterval(() => {
-        success({ ...success, open: false });
+       setSuccess({ ...success, open: false });
       }, 5000);
 
       return () => {
@@ -100,6 +100,9 @@ const VerifyOtp = ({ role }) => {
     }
   };
 
+  const queryClient = useQueryClient()
+
+
   const verifyOTPMutation = useMutation({
     mutationFn: (data) =>
       verifyOTP(
@@ -108,14 +111,16 @@ const VerifyOtp = ({ role }) => {
           : "/api/v1/user/register/verify-otp",
         data
       ),
-    onSuccess: (data) => {
-      console.log(data);
+    onSuccess: async(data) => {
+      console.log(data,"success");
 
       setSuccess({ ...success, open: true, successMessage: "verified" });
-      CheckUserLogin()
+     await queryClient.invalidateQueries(["user"])
       navigate(role === "admin" ? "/admin/profile" : "/user/profile");
     },
-    onError: () => {
+    onError: (error) => {
+      console.log(error,"error");
+      
       setErrorM({
         ...errorM,
         open: true,
