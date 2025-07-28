@@ -20,15 +20,17 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import Person4OutlinedIcon from "@mui/icons-material/Person4Outlined";
 import { logOut } from "../../api/handleAPi";
 import { useMutation } from "@tanstack/react-query";
-import { clearUserData } from "../../features/userDetailSlice";
+
 import CircularProgress from "@mui/material/CircularProgress";
+
+import { CheckUserLogin } from "../../utils/VerifyUserLogin";
 const SideNavBar = () => {
   const { open } = useSelector((state) => state.sideBarState);
   const dispatch = useDispatch();
   const handleCloseSideBar = () => {
     dispatch(isOpen({ open: false }));
   };
-  const userData = useSelector((state) => state.userDetail);
+  const { user, isLoggedIn } = CheckUserLogin();
 
   // const [anchorEl, setAnchorEl] = React.useState(null);
   // const open = Boolean(anchorEl);
@@ -73,9 +75,10 @@ const SideNavBar = () => {
   const logoutMutation = useMutation({
     mutationFn: (role) =>
       logOut(role === "admin" ? "/api/v1/admin/logout" : "/api/v1/user/logout"),
-    onSuccess: (data) => {
+    onSuccess: async(data) => {
       console.log(data);
-      dispatch(clearUserData());
+
+      
     },
     onError: (error) => {
       console.log(error);
@@ -95,8 +98,8 @@ const SideNavBar = () => {
           <Avatar
             sx={{ width: "60px", height: "60px" }}
             src={
-              userData.userData
-                ? userData.userData.profile?.avatar?.url
+             isLoggedIn
+                ? user.data.
                 : "/broken-image.svg"
             }
           ></Avatar>

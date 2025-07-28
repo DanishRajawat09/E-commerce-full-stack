@@ -1,23 +1,29 @@
+// src/hooks/useAuth.js
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserData } from "../api/handleAPi";
-import { useDispatch } from "react-redux";
-import { addUserData, clearUserData } from "../features/userDetailSlice";
-import { useEffect } from "react";
 
-const CheckUserLogin = () => {
-  const dispatch = useDispatch();
-  const { data, isSuccess, isError } = useQuery({
-    queryKey: ["userDetails"],
+
+ const CheckUserLogin = () => {
+  const {
+    data : user,
+    isLoading,
+    isError,
+    refetch,
+    isSuccess,
+  } = useQuery({
+    queryKey: ["currentUser"],
     queryFn: fetchUserData,
+    staleTime: 1000 * 60 * 5, // 5 mins
+    retry: false,
   });
 
-  useEffect(() => {
-    if (isSuccess && data?.data?.data) {
-      dispatch(addUserData({ ...data.data.data }));
-    } else {
-      dispatch(clearUserData());
-    }
-  }, [data, isSuccess, dispatch, isError]);
+  return {
+    user,
+    isLoggedIn: !!user,
+    isLoading,
+    isError,
+    refetchUser: refetch,
+    isSuccess,
+  };
 };
-
-export default CheckUserLogin;
+export default CheckUserLogin

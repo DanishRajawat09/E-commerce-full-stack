@@ -55,7 +55,7 @@ const Navbar = () => {
   });
 
   useEffect(() => {
-    if (userData.userData.isVerified) {
+    if (userData.userData?.isVerified) {
       setShowSuccess({ ...showSuccess, open: true });
       setApiData({
         ...apiData,
@@ -108,10 +108,10 @@ const Navbar = () => {
   const logoutMutation = useMutation({
     mutationFn: (role) =>
       logOut(role === "admin" ? "/api/v1/admin/logout" : "/api/v1/user/logout"),
-    onSuccess: (data) => {
+    onSuccess: async(data) => {
       console.log(data);
       dispatch(clearUserData());
-      persistor.purge()
+    await  persistor.purge()
     },
     onError: (error) => {
       console.log(error);
@@ -268,7 +268,7 @@ const Navbar = () => {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
               >
-                {userData.userData.email ? (
+                {userData.userData?.email ? (
                   <>
                     <MenuItem onClick={handleClose}>
                       <Avatar src={userData.userData?.profile?.avatar?.url} /> My

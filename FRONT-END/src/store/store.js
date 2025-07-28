@@ -20,7 +20,7 @@ import userDetailSlice from "../features/userDetailSlice";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["otp", "userDetail"],
+  whitelist: ["otp"],
 };
 const rootReducer = combineReducers({
   otp: resendOTPSlice,
