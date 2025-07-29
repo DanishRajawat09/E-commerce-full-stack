@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import "./sideNav.css";
 import { useDispatch } from "react-redux";
 import { isOpen } from "../../features/stateSlice";
@@ -14,24 +15,22 @@ import List from "@mui/material/List";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Box from "@mui/material/Box";
 import StoreOutlinedIcon from "@mui/icons-material/StoreOutlined";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import Person4OutlinedIcon from "@mui/icons-material/Person4Outlined";
 import { logOut } from "../../api/handleAPi";
-import { useMutation } from "@tanstack/react-query";
+import { QueryClient, useMutation } from "@tanstack/react-query";
 
 import CircularProgress from "@mui/material/CircularProgress";
 
-import { CheckUserLogin } from "../../utils/VerifyUserLogin";
-const SideNavBar = () => {
+const SideNavBar = ({ isLoggedIn, user }) => {
   const { open } = useSelector((state) => state.sideBarState);
   const dispatch = useDispatch();
   const handleCloseSideBar = () => {
     dispatch(isOpen({ open: false }));
   };
-  const { user, isLoggedIn } = CheckUserLogin();
-
+ const navigate = useNavigate()
   // const [anchorEl, setAnchorEl] = React.useState(null);
   // const open = Boolean(anchorEl);
   // const handleClick = (event) => {
@@ -40,6 +39,9 @@ const SideNavBar = () => {
   // const handleClose = () => {
   //   setAnchorEl(null);
   // };
+
+
+ 
 
   useEffect(() => {
     const scrollbarWidth =
@@ -72,13 +74,16 @@ const SideNavBar = () => {
     };
   }, [open]);
 
+  const queryClient = new QueryClient();
+
   const logoutMutation = useMutation({
     mutationFn: (role) =>
       logOut(role === "admin" ? "/api/v1/admin/logout" : "/api/v1/user/logout"),
-    onSuccess: async(data) => {
+    onSuccess: async (data) => {
       console.log(data);
-
       
+await queryClient.invalidateQueries({ queryKey: ["me"] });  
+  navigate("/", { replace: true });  
     },
     onError: (error) => {
       console.log(error);
@@ -97,20 +102,16 @@ const SideNavBar = () => {
         <div className="topArea">
           <Avatar
             sx={{ width: "60px", height: "60px" }}
-            src={
-             isLoggedIn
-                ? user.data.
-                : "/broken-image.svg"
-            }
+            src={isLoggedIn ? user?.profile?.avatar?.url : "/broken-image.svg"}
           ></Avatar>
           <Typography id="sideNavTitle">
-            {userData.userData ? userData.userData.profile?.fullName : "No Account"}
+            {isLoggedIn ? user?.profile?.fullName : "No Account"}
           </Typography>
-          {userData.userData && (
-            <Typography id="sideNavSubHeading">{userData.userData.email}</Typography>
+          {isLoggedIn && (
+            <Typography id="sideNavSubHeading">{user.email}</Typography>
           )}
         </div>
-        {!userData.userData && (
+        {!isLoggedIn && (
           <Link to={"/user/login"}>
             <Button
               sx={{ width: "100%", backgroundColor: "black" }}
@@ -167,7 +168,7 @@ const SideNavBar = () => {
             <Divider />
             <nav aria-label="secondary mailbox folders">
               <List>
-                {userData.userData && (
+                {isLoggedIn && (
                   <Link to={"/profileSetting"} className="sideNavBarLink">
                     <ListItem disablePadding>
                       <ListItemButton>
@@ -179,7 +180,7 @@ const SideNavBar = () => {
                     </ListItem>
                   </Link>
                 )}
-                {userData.userData&& (
+                {isLoggedIn && (
                   <Button
                     sx={{ width: "100%", backgroundColor: "black" }}
                     variant="contained"
@@ -203,7 +204,7 @@ const SideNavBar = () => {
         </div>
       </div>
       {open && (
-        <div className="screen" onClick={handleCloseSideBar}>
+        <div className={open ? "side-nav-bar-screen" : "side-nav-bar-no-screen"} onClick={handleCloseSideBar}>
           {" "}
         </div>
       )}

@@ -1,11 +1,11 @@
+/* eslint-disable react/prop-types */
 import "./navbar.css";
 import { isOpen } from "../../features/stateSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Link, NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { QueryClient, useMutation } from "@tanstack/react-query";
 import { logOut } from "../../api/handleAPi";
-import { clearUserData } from "../../features/userDetailSlice";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
@@ -13,19 +13,14 @@ import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
-import PersonAdd from "@mui/icons-material/PersonAdd";
-import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 import Login from "@mui/icons-material/Login";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
-import { persistor } from "../../store/store";
 
-const Navbar = () => {
+const Navbar = ({user , isLoggedIn}) => {
   const dispatch = useDispatch();
-  const userData = useSelector((state) => state.userDetail);
   const [apiData, setApiData] = useState({
     data: {},
     message: "",
@@ -54,15 +49,7 @@ const Navbar = () => {
     }
   });
 
-  useEffect(() => {
-    if (userData.userData?.isVerified) {
-      setShowSuccess({ ...showSuccess, open: true });
-      setApiData({
-        ...apiData,
-        message: `welcome ${userData.userData?.profile?.fullName}`,
-      });
-    }
-  }, []);
+
 
   const useScrollLock = (lock = false) => {
     useEffect(() => {
@@ -105,22 +92,22 @@ const Navbar = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const queryClient = new QueryClient()
+
   const logoutMutation = useMutation({
     mutationFn: (role) =>
       logOut(role === "admin" ? "/api/v1/admin/logout" : "/api/v1/user/logout"),
     onSuccess: async(data) => {
       console.log(data);
-      dispatch(clearUserData());
-    await  persistor.purge()
+     queryClient.removeQueries(["me"])
     },
     onError: (error) => {
       console.log(error);
     },
   });
 
-  useEffect(() => {
-    console.log(userData);
-  }, [userData]);
+
 
   const handleSideNav = () => {
     dispatch(isOpen({ open: true }));
@@ -223,7 +210,7 @@ const Navbar = () => {
                     <Avatar
                       sx={{ width: 32, height: 32 }}
                       src={`${
-                        userData.userData?.profile?.avatar?.url ||
+                        user?.profile?.avatar?.url ||
                         "/broken-image.svg"
                       }`}
                     ></Avatar>
@@ -268,10 +255,10 @@ const Navbar = () => {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
               >
-                {userData.userData?.email ? (
+                {isLoggedIn ? (
                   <>
                     <MenuItem onClick={handleClose}>
-                      <Avatar src={userData.userData?.profile?.avatar?.url} /> My
+                      <Avatar src={user.profile?.avatar?.url} /> My
                       account
                     </MenuItem>
                     <Divider />

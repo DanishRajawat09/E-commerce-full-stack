@@ -1,13 +1,13 @@
 import { Navigate } from "react-router-dom";
-import { Outlet } from "react-router-dom";
-import CheckUserLogin  from "../../utils/VerifyUserLogin";
-const ProtectedRoute = () => {
-   const { isLoggedIn, isLoading } = CheckUserLogin();
+
+import useCheckUserLogin from "../../utils/VerifyUserLogin";
+const ProtectedRoute = ({children}) => {
+   const { isLoggedIn, isLoading  } = useCheckUserLogin();
 
   if (isLoading) return <div>Loading...</div>;
 
   if (!isLoggedIn) return <Navigate to="/user/login" replace />;
 
-  return <Outlet />;
+  return children;
 };
 export default ProtectedRoute

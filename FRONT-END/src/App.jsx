@@ -24,7 +24,6 @@ import VerifyOtp from "./components/verifyOtp/VerifyOtp.jsx";
 import ResetRouteProtect from "./components/resetProtect/ResetRouteProtect.jsx";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor } from "./store/store.js";
-import CheckUserLogin from "./utils/VerifyUserLogin.jsx";
 import ProtectedRoute from "./components/protactedRoute/ProtectedRoute.jsx";
 // import { useEffect } from "react";
 // const router = createBrowserRouter(
@@ -57,9 +56,9 @@ function AppWrapper() {
   );
 }
 function App() {
+
   return (
     <>
-      <CheckUserLogin />
       <BrowserRouter>
         <ScrollToTop />
 

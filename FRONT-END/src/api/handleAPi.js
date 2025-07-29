@@ -32,10 +32,22 @@ export const createProfile = async (path, data) =>
   })
 
 
-export const fetchUserData = async () =>
-  instance.get("/api/v1/user/", {
+export const fetchUserData = async () =>{
+  try {
+  const res = await instance.get("/api/v1/user/", {
     withCredentials: true,
   });
+
+return res.data.data
+
+  } catch (error) {
+   if (error.response?.status === 401) {
+    throw new Error("unauthorized")
+   }
+    throw error
+  }
+}
+
 
 export const checkResetToken = async (path) =>
   instance.get(path, {

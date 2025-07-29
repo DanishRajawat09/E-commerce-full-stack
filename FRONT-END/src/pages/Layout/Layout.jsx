@@ -1,14 +1,22 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
-// import Navbar from '../../components/NavBar/Navbar'
-// import SideNavBar from '../../components/NavBar/SideNavBar'
+import Navbar from '../../components/NavBar/Navbar'
+import SideNavBar from '../../components/NavBar/SideNavBar'
 import FooterArea from '../../components/FooterArea/FooterArea'
+import useCheckUserLogin from '../../utils/VerifyUserLogin'
+import useAutoCloseSidebar from '../../utils/closeSideBar'
 
 const Layout = () => {
+  const {isLoggedIn , userData} = useCheckUserLogin()
+
+  console.log(isLoggedIn , userData);
+
+  useAutoCloseSidebar()
+
   return (
     <>
-    {/* <SideNavBar/> */}
-    {/* <Navbar/> */}
+    <SideNavBar isLoggedIn={isLoggedIn} user={userData}/>
+    <Navbar isLoggedIn={isLoggedIn} user={userData}/>
       <Outlet/>
       <FooterArea/>
     </>

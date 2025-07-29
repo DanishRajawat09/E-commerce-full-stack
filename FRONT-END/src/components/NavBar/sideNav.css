@@ -1,4 +1,4 @@
-.screen{
+.side-nav-bar-screen{
     width: 100vw;
     height: 100vh;
     background-color: transparent;
@@ -77,6 +77,9 @@ font-size: 14px;
 
 @media screen and (width > 630px) {
     .sideNav{
+        display: none;
+    }
+    .side-nav-bar-screen{
         display: none;
     }
 }
