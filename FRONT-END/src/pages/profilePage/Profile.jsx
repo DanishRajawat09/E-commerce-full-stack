@@ -14,19 +14,20 @@ import {
   showErrorMessage,
   showSuccessMessage,
 } from "../../features/snackbarSlice";
+import { useNavigate } from "react-router-dom";
 const Profile = ({ role }) => {
   const disptach = useDispatch();
   const { register, handleSubmit } = useForm();
   const [avatar, setAvatar] = useState(null);
-
+const navigate = useNavigate()
   const profileMutation = useMutation({
-    mutationFn: (data) =>
-      createProfile(
+    mutationFn: (data) => {
+      const path =
         role === "admin"
           ? "/api/v1/admin/profile/create-profile"
-          : "/api/v1/user/profile/create",
-        data
-      ),
+          : "/api/v1/user/profile/create";
+    return  createProfile(path, data);
+    },
     onSuccess: () => {
       disptach(
         showSuccessMessage({
@@ -34,6 +35,7 @@ const Profile = ({ role }) => {
           open: true,
         })
       );
+      navigate("/user/address")
     },
     onError: (error) => {
       if (error.response?.status === 422) {
@@ -67,7 +69,10 @@ const Profile = ({ role }) => {
         );
       } else {
         disptach(
-          showErrorMessage({ errorMessage: "Profile is not create due to Some Error", open: true })
+          showErrorMessage({
+            errorMessage: "Profile is not create due to Some Error",
+            open: true,
+          })
         );
       }
     },

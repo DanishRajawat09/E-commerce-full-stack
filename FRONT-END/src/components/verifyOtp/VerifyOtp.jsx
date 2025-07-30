@@ -63,13 +63,14 @@ const VerifyOtp = ({ role }) => {
   const queryClient = useQueryClient();
 
   const verifyOTPMutation = useMutation({
-    mutationFn: (data) =>
-      verifyOTP(
+    mutationFn: (data) => {
+      const path =
         role === "admin"
           ? "/api/v1/admin/register/verify-otp"
-          : "/api/v1/user/register/verify-otp",
-        data
-      ),
+          : "/api/v1/user/register/verify-otp";
+
+      return verifyOTP(path, data);
+    },
     onSuccess: async (data) => {
       console.log(data, "success");
       dispatch(
@@ -139,13 +140,13 @@ const VerifyOtp = ({ role }) => {
   };
 
   const resendMutation = useMutation({
-    mutationFn: (OTPData) =>
-      sendOTP(
+    mutationFn: (OTPData) => {
+      const path =
         role === "admin"
           ? "/api/v1/admin/register/send-otp"
-          : "/api/v1/user/register/send-otp",
-        OTPData
-      ),
+          : "/api/v1/user/register/send-otp";
+     return sendOTP(path, OTPData);
+    },
     onSuccess: (data) => {
       dispatch(
         showSuccessMessage({

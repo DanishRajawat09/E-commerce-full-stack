@@ -13,12 +13,12 @@ const snackBarSlice = createSlice({
     showSuccessMessage: (state, action) => {
       state.successMessage = action.payload.successMessage;
       state.errorMessage = "";
-      state.open = action.payload.open;
+      state.open = true;
     },
     showErrorMessage: (state, action) => {
       state.errorMessage = action.payload.errorMessage;
       state.successMessage = "";
-      state.open = action.payload.open;
+      state.open = true;
     },
     clearAllMessage: (state) => {
       state.errorMessage = "";

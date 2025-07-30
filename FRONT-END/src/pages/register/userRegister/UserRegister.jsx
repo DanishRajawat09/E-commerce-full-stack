@@ -66,11 +66,13 @@ const UserRegister = ({ role }) => {
   } = useForm();
 
   const registerMutation = useMutation({
-    mutationFn: (formData) =>
-      registerUser(
-        role === "admin" ? "/api/v1/admin/register" : "/api/v1/user/register",
-        formData
-      ),
+    mutationFn: (formData) => {
+      const path =
+        role === "admin" ? "/api/v1/admin/register" : "/api/v1/user/register";
+      console.log(path);
+
+      return registerUser(path, formData);
+    },
     onSuccess: (data) => {
       console.log(data);
 
@@ -95,7 +97,14 @@ const UserRegister = ({ role }) => {
             open: true,
           })
         );
-        
+        setApiData({
+          ...apiData,
+          data: {
+            email: error.response.data.data.email,
+            contact: error.response.data.data.contact,
+          },
+        });
+        setOtpOptions(true);
       } else if (error.response?.status === 422) {
         disptach(
           showErrorMessage({
@@ -134,13 +143,13 @@ const UserRegister = ({ role }) => {
   });
 
   const sendOTPMutation = useMutation({
-    mutationFn: (data) =>
-      sendOTP(
+    mutationFn: (data) => {
+      const path =
         role === "admin"
           ? "/api/v1/admin/register/send-otp"
-          : "/api/v1/user/register/send-otp",
-        data
-      ),
+          : "/api/v1/user/register/send-otp";
+      return sendOTP(path, data);
+    },
     onSuccess: (data) => {
       console.log(data);
       disptach(

@@ -127,8 +127,8 @@ function App() {
           
           </Route>
 
-          <Route path="/user/address" element={<Address role="user" />} />
-          <Route path="/admin/address" element={<Address role="admin" />} />
+          <Route path="/user/address" element={<ProtectedRoute><Address role="user" /></ProtectedRoute>} />
+          <Route path="/admin/address" element={<ProtectedRoute><Address role="admin" /></ProtectedRoute>} />
           <Route path="/user/verify-otp" element={<VerifyOtp role="user" />} />
           <Route
             path="/admin/verify-otp"
