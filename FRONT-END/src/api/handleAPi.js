@@ -17,39 +17,36 @@ export const sendOTP = async (path, data) =>
   instance.post(path, data, { withCredentials: true });
 export const AddAddress = async (path, data) =>
   instance.post(path, data, { withCredentials: true });
+export const forgotPassword = async (path, data) =>
+  instance.post(path, data, { withCredentials: true });
+
 export const createProfile = async (path, data) =>
-  instance.post(
-    path,
-    data,
-    {
-      withCredentials: true,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
-  );
+  instance.post(path, data, {
+    withCredentials: true,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 
-  export const logOut = async (path, data = {}) =>  instance.post(path , data, {
-    withCredentials : true
-  })
-
-
-export const fetchUserData = async () =>{
-  try {
-  const res = await instance.get("/api/v1/user/", {
+export const logOut = async (path, data = {}) =>
+  instance.post(path, data, {
     withCredentials: true,
   });
 
-return res.data.data
+export const fetchUserData = async () => {
+  try {
+    const res = await instance.get("/api/v1/user/", {
+      withCredentials: true,
+    });
 
+    return res.data.data;
   } catch (error) {
-   if (error.response?.status === 401) {
-    throw new Error("unauthorized")
-   }
-    throw error
+    if (error.response?.status === 401) {
+      throw new Error("unauthorized");
+    }
+    throw error;
   }
-}
-
+};
 
 export const checkResetToken = async (path) =>
   instance.get(path, {

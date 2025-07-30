@@ -186,7 +186,7 @@ const afterSend = asyncHandler(async (req, res) => {
   res
     .status(200)
     .cookie(resetTokenName, resetToken, cookieOptions)
-    .json(new ApiResponse(200, "OTP sent successfully on", { email }));
+    .json(new ApiResponse(200, "OTP sent successfully on", {}));
 });
 
 const afterVerify = asyncHandler(async (req, res) => {

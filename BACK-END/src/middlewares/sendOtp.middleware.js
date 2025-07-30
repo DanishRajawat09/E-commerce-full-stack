@@ -10,24 +10,29 @@ const sendOtp = (purpose) =>
 
     const emailResetPurposes = ["resetEmail", "resetAdminEmail"];
     const contactResetPurposes = ["resetContact", "resetAdminContact"];
-    const publicPurposes = [
-      "register",
-      "adminRegister",
-      "resetPassword",
-      "resetAdminPassword",
-    ];
+    const ResetPasswordPurposes = ["resetPassword", "resetAdminPassword"];
+    const publicPurposes = ["register", "adminRegister"];
     const adminPurpose = [
       "resetAdminEmail",
       "adminRegister",
       "resetAdminContact",
       "resetAdminPassword",
     ];
+
     let checkRole = "user";
     if (publicPurposes.includes(purpose)) {
       userData.email = req.body.email;
       userData.contact = req.body.contact;
     }
-
+    if (ResetPasswordPurposes.includes(purpose)) {
+      if (!req.body.emailContact) {
+        throw new ApiError(
+          422,
+          "resetting password the email or contact is required"
+        );
+      }
+      userData.emailContact = req.body?.emailContact;
+    }
     if (emailResetPurposes.includes(purpose)) {
       if (!req.user?.contact) {
         throw new ApiError(400, "Contact is required to reset email.");
@@ -43,7 +48,7 @@ const sendOtp = (purpose) =>
     }
 
     // Validations
-    if (["register", "resetPassword"].includes(purpose)) {
+    if (["register", "adminRegister"].includes(purpose)) {
       if (!userData.email && !userData.contact) {
         throw new ApiError(400, "Please provide email or contact number.");
       }
@@ -70,7 +75,12 @@ const sendOtp = (purpose) =>
     const user = await User.findOneAndUpdate(
       {
         $and: [
-          { $or: [{ email: userData.email }, { contact: userData.contact }] },
+          {
+            $or: [
+              { email: userData?.email || userData?.emailContact },
+              { contact: userData?.contact || userData?.emailContact },
+            ],
+          },
           { isVerified: !isRegisterPurpose },
           { role: checkRole },
         ],
