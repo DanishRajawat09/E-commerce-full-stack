@@ -15,10 +15,8 @@ const useCheckUserLogin = () => {
     queryFn: fetchUserData,
     retry: false,
     refetchOnWindowFocus: false,
+    staleTime: 0,
   });
-
-
-
 
   return {
     userData,

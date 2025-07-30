@@ -15,12 +15,12 @@ import List from "@mui/material/List";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Box from "@mui/material/Box";
 import StoreOutlinedIcon from "@mui/icons-material/StoreOutlined";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import Person4OutlinedIcon from "@mui/icons-material/Person4Outlined";
 import { logOut } from "../../api/handleAPi";
-import { QueryClient, useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import CircularProgress from "@mui/material/CircularProgress";
 
@@ -30,7 +30,7 @@ const SideNavBar = ({ isLoggedIn, user }) => {
   const handleCloseSideBar = () => {
     dispatch(isOpen({ open: false }));
   };
- const navigate = useNavigate()
+  const navigate = useNavigate();
   // const [anchorEl, setAnchorEl] = React.useState(null);
   // const open = Boolean(anchorEl);
   // const handleClick = (event) => {
@@ -39,9 +39,6 @@ const SideNavBar = ({ isLoggedIn, user }) => {
   // const handleClose = () => {
   //   setAnchorEl(null);
   // };
-
-
- 
 
   useEffect(() => {
     const scrollbarWidth =
@@ -74,16 +71,16 @@ const SideNavBar = ({ isLoggedIn, user }) => {
     };
   }, [open]);
 
-  const queryClient = new QueryClient();
+  const queryClient = useQueryClient();
 
   const logoutMutation = useMutation({
     mutationFn: (role) =>
       logOut(role === "admin" ? "/api/v1/admin/logout" : "/api/v1/user/logout"),
     onSuccess: async (data) => {
       console.log(data);
-      
-await queryClient.invalidateQueries({ queryKey: ["me"] });  
-  navigate("/", { replace: true });  
+      queryClient.setQueryData(["me"], null);
+      await queryClient.invalidateQueries({ queryKey: ["me"] });
+      navigate("/", { replace: true });
     },
     onError: (error) => {
       console.log(error);
@@ -204,7 +201,10 @@ await queryClient.invalidateQueries({ queryKey: ["me"] });
         </div>
       </div>
       {open && (
-        <div className={open ? "side-nav-bar-screen" : "side-nav-bar-no-screen"} onClick={handleCloseSideBar}>
+        <div
+          className={open ? "side-nav-bar-screen" : "side-nav-bar-no-screen"}
+          onClick={handleCloseSideBar}
+        >
           {" "}
         </div>
       )}

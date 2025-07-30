@@ -2,9 +2,9 @@
 import "./navbar.css";
 import { isOpen } from "../../features/stateSlice";
 import { useDispatch } from "react-redux";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { QueryClient, useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { logOut } from "../../api/handleAPi";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
@@ -19,8 +19,9 @@ import Login from "@mui/icons-material/Login";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 
-const Navbar = ({user , isLoggedIn}) => {
+const Navbar = ({ user, isLoggedIn }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [apiData, setApiData] = useState({
     data: {},
     message: "",
@@ -48,8 +49,6 @@ const Navbar = ({user , isLoggedIn}) => {
       };
     }
   });
-
-
 
   const useScrollLock = (lock = false) => {
     useEffect(() => {
@@ -93,21 +92,21 @@ const Navbar = ({user , isLoggedIn}) => {
     setAnchorEl(null);
   };
 
-  const queryClient = new QueryClient()
+  const queryClient = useQueryClient();
 
   const logoutMutation = useMutation({
     mutationFn: (role) =>
       logOut(role === "admin" ? "/api/v1/admin/logout" : "/api/v1/user/logout"),
-    onSuccess: async(data) => {
+    onSuccess: async (data) => {
       console.log(data);
-     queryClient.removeQueries(["me"])
+       queryClient.setQueryData(["me"], null); 
+      queryClient.removeQueries(["me"]);
+      navigate("/");
     },
     onError: (error) => {
       console.log(error);
     },
   });
-
-
 
   const handleSideNav = () => {
     dispatch(isOpen({ open: true }));
@@ -209,10 +208,11 @@ const Navbar = ({user , isLoggedIn}) => {
                   >
                     <Avatar
                       sx={{ width: 32, height: 32 }}
-                      src={`${
-                        user?.profile?.avatar?.url ||
-                        "/broken-image.svg"
-                      }`}
+                      src={
+                        isLoggedIn
+                          ? user?.profile?.avatar?.url
+                          : "/broken-image.svg"
+                      }
                     ></Avatar>
                   </IconButton>
                 </Tooltip>
@@ -258,8 +258,7 @@ const Navbar = ({user , isLoggedIn}) => {
                 {isLoggedIn ? (
                   <>
                     <MenuItem onClick={handleClose}>
-                      <Avatar src={user.profile?.avatar?.url} /> My
-                      account
+                      <Avatar src={user.profile?.avatar?.url} /> My account
                     </MenuItem>
                     <Divider />
                     <MenuItem
