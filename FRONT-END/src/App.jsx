@@ -25,6 +25,7 @@ import ResetRouteProtect from "./components/resetProtect/ResetRouteProtect.jsx";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor } from "./store/store.js";
 import ProtectedRoute from "./components/protactedRoute/ProtectedRoute.jsx";
+import SnackBar from "./components/SnackBar.jsx";
 // import { useEffect } from "react";
 // const router = createBrowserRouter(
 //   createRoutesFromElements(
@@ -59,6 +60,7 @@ function App() {
 
   return (
     <>
+    <SnackBar/>
       <BrowserRouter>
         <ScrollToTop />
 
@@ -121,8 +123,8 @@ function App() {
           <Route path={"/admin/profile"} element={<ProtectedRoute />}>
             <Route index element={<Profile role={"admin"} />}></Route>
           </Route>
-          <Route path={"/user/profile"} element={<ProtectedRoute />}>
-            <Route index element={<Profile role={"user"} />}></Route>
+          <Route path={"/user/profile"} element={<ProtectedRoute ><Profile role={"user"} /></ProtectedRoute>}>
+          
           </Route>
 
           <Route path="/user/address" element={<Address role="user" />} />

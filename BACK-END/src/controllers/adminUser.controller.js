@@ -75,7 +75,7 @@ const getUserAdminInfo = asyncHandler(async (req, res) => {
     .lean();
 
   if (!user) {
-    throw new ApiError(400, "User not Found, please register and try again");
+    throw new ApiError(404, "User not Found, please register and try again");
   }
 
   res
@@ -86,13 +86,13 @@ const getUserAdminInfo = asyncHandler(async (req, res) => {
 const registerUser = asyncHandler(async (req, res) => {
   let { email, contact, password, role } = req.body;
 
-  // Normalize input
+ 
   email = email?.trim();
   contact = contact?.trim();
   password = password?.trim();
   role = role?.trim() || "user";
 
-  // Basic validations
+  
   if (!email && !contact) {
     throw new ApiError(422, "Email or contact number is required.");
   }
@@ -193,7 +193,7 @@ const afterVerify = asyncHandler(async (req, res) => {
   const user = req.user || {};
 
   if (!user._id) {
-    throw new ApiError(401, "User not found during OTP verification.");
+    throw new ApiError(422, "User not found during OTP verification.");
   }
 
   user.otp = null;

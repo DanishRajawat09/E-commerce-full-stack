@@ -9,29 +9,29 @@ const createProfile = asyncHandler(async (req, res) => {
   const { fullName } = req.body;
   const user = req.user;
   if (!fullName) {
-    throw new ApiError(400, "Full name is required.");
+    throw new ApiError(422, "Full name is required.");
   }
   if (!user) {
-    throw new ApiError(400, "User not found invalid token");
+    throw new ApiError(401, "User not found invalid token");
   }
 
   const filePath = req.file?.path;
-  console.log(filePath);
 
-  if (!filePath) {
-    throw new ApiError(400, "avatar not found upload again");
-  }
-  const avatarUpload = await uploadImage(filePath);
+  let avatarUpload = null;
 
-  if (!avatarUpload) {
-    throw new ApiError(400, "Failed to upload avatar. Please try again.");
+  if (filePath) {
+    avatarUpload = await uploadImage(filePath);
+
+    if (!avatarUpload) {
+      throw new ApiError(503, "Failed to upload avatar. Please try again.");
+    }
   }
 
   const profile = await Profile.create({
     fullName,
     avatar: {
-      url: avatarUpload.url,
-      publicId: avatarUpload.public_id,
+      url: avatarUpload?.url || "",
+      publicId: avatarUpload?.public_id || "",
     },
     user: user._id,
   });
@@ -50,7 +50,7 @@ const createProfile = asyncHandler(async (req, res) => {
     { new: true }
   );
   if (!userData) {
-    throw new ApiError(400, "Unauthorized Request , please register first");
+    throw new ApiError(401, "Unauthorized Request , please register first");
   }
 
   res

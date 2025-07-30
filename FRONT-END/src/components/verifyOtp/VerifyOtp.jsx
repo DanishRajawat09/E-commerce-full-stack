@@ -1,65 +1,25 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./verifyOtp.css";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 
 import { sendOTP, verifyOTP } from "../../api/handleAPi";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
-import { useSelector } from "react-redux";
+
+import { useDispatch, useSelector } from "react-redux";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import CheckUserLogin from "../../utils/VerifyUserLogin";
+import {
+  showErrorMessage,
+  showSuccessMessage,
+} from "../../features/snackbarSlice";
 const VerifyOtp = ({ role }) => {
   const inputs = useRef([]);
   const navigate = useNavigate();
   const OTPData = useSelector((state) => state.otp);
-  console.log(OTPData);
+
+  const dispatch = useDispatch();
 
   const [OTP, setOTP] = useState("");
-  const [errorM, setErrorM] = useState({
-    open: false,
-    errorCode: null,
-    errorMessage: null,
-  });
-  const [success, setSuccess] = useState({
-    open: false,
-    vertical: "top",
-    horizontal: "right",
-    successMessage: "",
-  });
-  const { vertical, horizontal } = success;
-  const handleCloseSuccess = () =>
-    setSuccess({ ...success, open: false, successMessage: "" });
-  const handleCloseError = () =>
-    setErrorM({
-      open: false,
-      errorCode: null,
-      errorMessage: null,
-    });
-
-  useEffect(() => {
-    if (success.open === true) {
-      const successInterval = setInterval(() => {
-       setSuccess({ ...success, open: false });
-      }, 5000);
-
-      return () => {
-        clearInterval(successInterval);
-      };
-    }
-  });
-  useEffect(() => {
-    if (errorM.open === true) {
-      const errorInterval = setInterval(() => {
-        setErrorM({ ...errorM, open: false });
-      }, 5000);
-
-      return () => {
-        clearInterval(errorInterval);
-      };
-    }
-  });
 
   const handleChange = (e, index) => {
     const value = e.target.value;
@@ -100,8 +60,7 @@ const VerifyOtp = ({ role }) => {
     }
   };
 
-  const queryClient = useQueryClient()
-
+  const queryClient = useQueryClient();
 
   const verifyOTPMutation = useMutation({
     mutationFn: (data) =>
@@ -111,21 +70,56 @@ const VerifyOtp = ({ role }) => {
           : "/api/v1/user/register/verify-otp",
         data
       ),
-    onSuccess: async(data) => {
-      console.log(data,"success");
+    onSuccess: async (data) => {
+      console.log(data, "success");
+      dispatch(
+        showSuccessMessage({
+          successMessage: `${role.toUpperCase()} Verified SuccessFully`,
+          open: true,
+        })
+      );
 
-      setSuccess({ ...success, open: true, successMessage: "verified" });
-     await queryClient.invalidateQueries(["user"])
+      await queryClient.invalidateQueries(["user"]);
       navigate(role === "admin" ? "/admin/profile" : "/user/profile");
     },
     onError: (error) => {
-      console.log(error,"error");
-      
-      setErrorM({
-        ...errorM,
-        open: true,
-        errorMessage: "user is not verifies",
-      });
+      if (error.response?.status === 422) {
+        dispatch(
+          showErrorMessage({
+            errorMessage: `Unable to Access OTP or ${role.toUpperCase()} is not Logged in Properly , try again later`,
+            open: true,
+          })
+        );
+      } else if (error.response?.status === 500) {
+        dispatch(
+          showErrorMessage({ errorMessage: `Server Error`, open: true })
+        );
+      } else if (error.response?.status === 401) {
+        dispatch(
+          showErrorMessage({
+            errorMessage: `OTP is Incorrect , try again`,
+            open: true,
+          })
+        );
+      } else if (error.response?.status === 403) {
+        dispatch(
+          showErrorMessage({ errorMessage: `OTP is Expired`, open: true })
+        );
+      } else if (error.response?.status === 404) {
+        dispatch(
+          showErrorMessage({
+            errorMessage: `User not Found, please Login`,
+            open: true,
+          })
+        );
+      } else {
+        dispatch(
+          showErrorMessage({
+            errorMessage: `Something Went Wrong while Verifing OTP`,
+            open: true,
+          })
+        );
+      }
     },
   });
 
@@ -133,73 +127,49 @@ const VerifyOtp = ({ role }) => {
     console.log(OTP, OTP.length);
 
     if (OTP.length < 6) {
-      setErrorM({ ...errorM, open: true, errorMessage: "OTP is cheracter" });
+      dispatch(
+        showErrorMessage({
+          errorMessage: "OTP must be 6 charectors",
+          open: true,
+        })
+      );
     } else {
       verifyOTPMutation.mutate({ otp: OTP });
     }
   };
 
-  const handleResend = async () => {
-    try {
-      const resendOTP = await sendOTP(
+  const resendMutation = useMutation({
+    mutationFn: (OTPData) =>
+      sendOTP(
         role === "admin"
           ? "/api/v1/admin/register/send-otp"
           : "/api/v1/user/register/send-otp",
         OTPData
-      );
-
-      if (resendOTP.data.statusCode === 200) {
-        setSuccess({
-          ...success,
+      ),
+    onSuccess: (data) => {
+      dispatch(
+        showSuccessMessage({
+          successMessage: `Resend OTP Successfully On ${
+            (data.data.data.email && "Your Email") ||
+            (data.data.data.contact && "Your Contact")
+          }`,
           open: true,
-          successMessage: "resend OTP SuccessFully",
-        });
-      }
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
+        })
+      );
+    },
+    onError: (error) => {
+      dispatch(
+        showErrorMessage({
+          errorMessage: "Error While Resending the OTP , try again later",
+        })
+      );
+    },
+  });
 
   return (
     <div className="otpOverlay">
       <div className="otpModalBox">
         <div className="otpHeader">
-          {success.open && (
-            <Snackbar
-              anchorOrigin={{ vertical, horizontal }}
-              open={success.open}
-              autoHideDuration={6000}
-              onClose={handleCloseSuccess}
-              key={"success" + vertical + horizontal}
-            >
-              <Alert
-                onClose={handleCloseSuccess}
-                severity="success"
-                variant="filled"
-                sx={{ width: "100%" }}
-              >
-                {success.successMessage}
-              </Alert>
-            </Snackbar>
-          )}
-          {errorM.open && (
-            <Snackbar
-              anchorOrigin={{ vertical, horizontal }}
-              open={errorM.open}
-              autoHideDuration={6000}
-              onClose={handleCloseError}
-              key={"error" + vertical + horizontal}
-            >
-              <Alert
-                onClose={handleCloseError}
-                severity="error"
-                variant="filled"
-                sx={{ width: "100%" }}
-              >
-                {errorM.errorMessage || "Something went wrong"}
-              </Alert>
-            </Snackbar>
-          )}
           <h2 className="otpHeading">Verify OTP</h2>
         </div>
 
@@ -236,7 +206,7 @@ const VerifyOtp = ({ role }) => {
               className={
                 role === "admin" ? "otpResendLinkAdmin" : "otpResendLink"
               }
-              onClick={handleResend}
+              onClick={() => resendMutation.mutate(OTPData)}
             >
               Resend
             </span>

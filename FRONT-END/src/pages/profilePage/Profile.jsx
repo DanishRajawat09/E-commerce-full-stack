@@ -9,7 +9,13 @@ import FormControl from "@mui/material/FormControl";
 import { createProfile } from "../../api/handleAPi";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useDispatch } from "react-redux";
+import {
+  showErrorMessage,
+  showSuccessMessage,
+} from "../../features/snackbarSlice";
 const Profile = ({ role }) => {
+  const disptach = useDispatch();
   const { register, handleSubmit } = useForm();
   const [avatar, setAvatar] = useState(null);
 
@@ -21,11 +27,49 @@ const Profile = ({ role }) => {
           : "/api/v1/user/profile/create",
         data
       ),
-    onSuccess: (data) => {
-   
+    onSuccess: () => {
+      disptach(
+        showSuccessMessage({
+          successMessage: "Profile Created SuccessFully",
+          open: true,
+        })
+      );
     },
     onError: (error) => {
-      console.log(error);
+      if (error.response?.status === 422) {
+        disptach(
+          showErrorMessage({
+            errorMessage: "Full Name is Required",
+            open: true,
+          })
+        );
+      } else if (error.response?.status === 401) {
+        disptach(
+          showErrorMessage({
+            errorMessage: "Unautorized Request please login First",
+            open: true,
+          })
+        );
+      } else if (error.response?.status === 503) {
+        disptach(
+          showErrorMessage({
+            errorMessage: "Failed to upload avatar. Please try again.",
+            open: true,
+          })
+        );
+      } else if (error.response?.status === 500) {
+        disptach(
+          showErrorMessage({
+            errorMessage:
+              "Profile was not Created due to Server Issue, please try again later",
+            open: true,
+          })
+        );
+      } else {
+        disptach(
+          showErrorMessage({ errorMessage: "Profile is not create due to Some Error", open: true })
+        );
+      }
     },
   });
 
@@ -36,11 +80,9 @@ const Profile = ({ role }) => {
 
     const formData = new FormData();
 
-   
     for (const key in data) {
       formData.append(key, data[key]);
     }
-
 
     if (avatar) {
       formData.append("avatar", avatar);
@@ -101,9 +143,13 @@ const Profile = ({ role }) => {
                   : "submitButtonUserLoginProfile"
               }
             >
-             {profileMutation.isPending && profileMutation ? ( <Box sx={{ display: "flex", justifyContent: "center" }}>
+              {profileMutation.isPending && profileMutation ? (
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
                   <CircularProgress size={25} color="white" />
-                </Box>): "Create Profile"}
+                </Box>
+              ) : (
+                "Create Profile"
+              )}
             </button>
           </form>
         </div>

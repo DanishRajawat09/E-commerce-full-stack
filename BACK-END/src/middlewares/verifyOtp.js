@@ -7,7 +7,7 @@ const verifyOtp = asyncHandler(async (req, res, next) => {
   const id = req.user._id;
 
   if (!otp) {
-    throw new ApiError(400, "OTP is required.");
+    throw new ApiError(422, "OTP is required.");
   }
 
   const user = await User.findById(id);
@@ -17,7 +17,7 @@ const verifyOtp = asyncHandler(async (req, res, next) => {
   }
   if (!user.otpExpiry || new Date(user.otpExpiry).getTime() < Date.now()) {
     console.log("OTP expired at:", user.otpExpiry);
-    throw new ApiError(401, "OTP has expired. Please request a new one.");
+    throw new ApiError(403, "OTP has expired. Please request a new one.");
   }
 
   const isOtpValid = await bcrypt.compare(otp, user.otp);

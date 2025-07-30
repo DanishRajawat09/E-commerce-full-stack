@@ -3,6 +3,7 @@ import sideBarSliceReducer from "../features/stateSlice";
 import ProductData from "../features/productData";
 import cartSlice from "../features/cartSlice";
 import CartCalc from "../features/cartCalc";
+import snackBarSlice from "../features/snackbarSlice"
 import { combineReducers } from "redux";
 import storage from "redux-persist/lib/storage";
 import {
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
   cart: cartSlice,
   CartCalc: CartCalc,
   userDetail: userDetailSlice,
+  snackBarSlice : snackBarSlice
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

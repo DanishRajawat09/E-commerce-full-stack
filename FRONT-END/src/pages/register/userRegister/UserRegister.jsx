@@ -5,9 +5,8 @@ import {
   faEnvelope,
   faPhone,
 } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
 import InputLabel from "@mui/material/InputLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -15,21 +14,18 @@ import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import FormControl from "@mui/material/FormControl";
-
 import { registerUser, sendOTP } from "../../../api/handleAPi";
-import Alert from "@mui/material/Alert";
-// import AlertTitle from "@mui/material/AlertTitle";
-import Snackbar from "@mui/material/Snackbar";
 import { useDispatch } from "react-redux";
 import { addOTPData } from "../../../features/resendOTP.js";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
-// import '@coreui/coreui-pro/dist/css/coreui.min.css'
-
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import {
+  showErrorMessage,
+  showSuccessMessage,
+} from "../../../features/snackbarSlice.js";
 const UserRegister = ({ role }) => {
   const [otpOptions, setOtpOptions] = useState(false);
 
@@ -38,11 +34,6 @@ const UserRegister = ({ role }) => {
     selectData: "",
   });
 
-  const [showSuccess, setShowSuccess] = useState({
-    open: false,
-    vertical: "top",
-    horizontal: "right",
-  });
   const [errorM, setErrorM] = useState({
     open: false,
     errorCode: null,
@@ -55,28 +46,6 @@ const UserRegister = ({ role }) => {
 
   const navigate = useNavigate();
   const disptach = useDispatch();
-
-  const handleCloseSuccess = () =>
-    setShowSuccess({ ...showSuccess, open: false });
-  const handleCloseError = () =>
-    setErrorM({
-      open: false,
-      errorCode: null,
-      errorMessage: null,
-    });
-
-  useEffect(() => {
-    if (showSuccess.open === true) {
-      const successInterval = setInterval(() => {
-        setShowSuccess({ ...showSuccess, open: false });
-      }, 5000);
-
-      return () => {
-        clearInterval(successInterval);
-      };
-    }
-  });
-  const { vertical, horizontal } = showSuccess;
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -105,52 +74,61 @@ const UserRegister = ({ role }) => {
     onSuccess: (data) => {
       console.log(data);
 
-      setShowSuccess({ ...showSuccess, open: true });
+      disptach(
+        showSuccessMessage({ successMessage: data.data.message, open: true })
+      );
+
       setApiData({
         ...apiData,
-        data: data.data.data,
-        message: data.data.message,
+        data: { email: data.data.data.email, contact: data.data.data.contact },
       });
+
       setOtpOptions(true);
     },
     onError: (error) => {
       console.log(error);
 
       if (error.response?.status === 401) {
-        showSuccess({
-          open: true,
-        });
-        setOtpOptions(true);
-        setApiData({
-          ...apiData,
-          data: error.response?.data?.data,
-          message: error.response.data.message,
-        });
+        disptach(
+          showSuccessMessage({
+            successMessage: error.response.data.message,
+            open: true,
+          })
+        );
+        
       } else if (error.response?.status === 422) {
-        setErrorM({
-          open: true,
-          errorCode: error.response?.status || 500,
-          errorMessage:
-            "please enter the Credentials properly, Enter email,contact and password again",
-        });
+        disptach(
+          showErrorMessage({
+            errorMessage:
+              "please enter the Credentials properly, Enter email,contact and password again",
+            open: true,
+          })
+        );
       } else if (error.response?.status === 500) {
-        setErrorM({
-          open: true,
-          errorCode: error.response?.status || 500,
-          errorMessage: "Could not Create Your Account, Server Error",
-        });
-      }else if (error.response?.status === 409 && !error.response?.data?.message) {
-        setErrorM({
-          open: true,
-          errorCode: error.response?.status || 500,
-          errorMessage: "User is Already Exist, please login your Account",
-        });
+        disptach(
+          showErrorMessage({
+            errorMessage: "Could not Create Your Account, Server Error",
+            open: true,
+          })
+        );
+      } else if (
+        error.response?.status === 409 &&
+        !error.response?.data?.message
+      ) {
+        disptach(
+          showErrorMessage({
+            errorMessage: `${role.toUpperCase()} is Already Exist, please login your Account`,
+            open: true,
+          })
+        );
       } else {
-        setErrorM({
-          open: true,
-          errorCode: error.response?.status || 500,
-          errorMessage: error.response?.data?.message || "Something went wrong",
-        });
+        disptach(
+          showErrorMessage({
+            errorMessage:
+              "Registration is not Complete due to Some Error, Please try again later",
+            open: true,
+          })
+        );
       }
     },
   });
@@ -165,12 +143,9 @@ const UserRegister = ({ role }) => {
       ),
     onSuccess: (data) => {
       console.log(data);
-
-      setApiData({
-        ...apiData,
-        data: data.data.data,
-        message: data.data.message,
-      });
+      disptach(
+        showSuccessMessage({ successMessage: data.data.message, open: true })
+      );
       setOtpOptions(false);
       disptach(
         addOTPData({
@@ -183,23 +158,48 @@ const UserRegister = ({ role }) => {
     },
     onError: (error) => {
       console.log(error);
-
-      setErrorM({
-        ...errorM,
-        open: true,
-        errorCode: error.response?.status || 500,
-        errorMessage: error.response?.data?.message || "Something went wrong",
-      });
+      if (error.response?.status === 422) {
+        disptach(
+          showErrorMessage({
+            errorMessage:
+              "Unauthorized Request or Unable to retrieve information",
+            open: true,
+          })
+        );
+      } else if (error.response?.status === 404) {
+        disptach(
+          showErrorMessage({
+            errorMessage: `Access Denied or ${role.toUpperCase()}  is not Register Properly, try again later`,
+            open: true,
+          })
+        );
+      } else if (error.response?.status === 400) {
+        disptach(
+          showErrorMessage({
+            errorMessage: "Credentials did'nt Send Properly",
+            open: true,
+          })
+        );
+      } else {
+        disptach(
+          showErrorMessage({
+            errorMessage: "OTP is not sent due to Some Error, try again later",
+            open: true,
+          })
+        );
+      }
     },
   });
 
   const handleSendOtp = () => {
     if (selectOption.select === "" && selectOption.selectData === "") {
-      setErrorM({
-        ...errorM,
-        errorMessage: "Please Select Atleast Option for Send OTP",
-        open: true,
-      });
+      disptach(
+        showErrorMessage({
+          errorMessage: "Please Select Atleast one Option for Send OTP",
+          open: true,
+        })
+      );
+      return;
     }
     console.log(selectOption);
 
@@ -216,43 +216,6 @@ const UserRegister = ({ role }) => {
           className="backIcon"
           onClick={() => navigate(-1)}
         />
-        {showSuccess.open && (
-          <Snackbar
-            anchorOrigin={{ vertical, horizontal }}
-            open={showSuccess.open}
-            autoHideDuration={6000}
-            onClose={handleCloseSuccess}
-            key={"success" + vertical + horizontal}
-          >
-            <Alert
-              onClose={handleCloseSuccess}
-              severity="success"
-              variant="filled"
-              sx={{ width: "100%" }}
-            >
-              {apiData.message}
-            </Alert>
-          </Snackbar>
-        )}
-
-        {errorM.open && (
-          <Snackbar
-            anchorOrigin={{ vertical, horizontal }}
-            open={errorM.open}
-            autoHideDuration={6000}
-            onClose={handleCloseError}
-            key={"error" + vertical + horizontal}
-          >
-            <Alert
-              onClose={handleCloseError}
-              severity="error"
-              variant="filled"
-              sx={{ width: "100%" }}
-            >
-              {errorM.errorMessage || "Something went wrong"}
-            </Alert>
-          </Snackbar>
-        )}
       </header>
 
       <main className="authMain">
