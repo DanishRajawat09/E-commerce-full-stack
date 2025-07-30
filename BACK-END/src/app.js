@@ -19,6 +19,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/user/profile", profileRouter);
 app.use("/api/v1/admin/profile", adminProfileRouter);
-app.use("/api/v1/address", addressRouter);
+app.use("/api/v1/user/address", addressRouter);
 app.use("/api/v1/admin", adminRouter);
 export { app };

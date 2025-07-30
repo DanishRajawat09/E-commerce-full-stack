@@ -34,11 +34,7 @@ const UserRegister = ({ role }) => {
     selectData: "",
   });
 
-  const [errorM, setErrorM] = useState({
-    open: false,
-    errorCode: null,
-    errorMessage: null,
-  });
+ 
   const [apiData, setApiData] = useState({
     data: {},
     message: "",

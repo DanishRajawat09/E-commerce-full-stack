@@ -15,6 +15,8 @@ export const verifyOTP = async (path, data) =>
   instance.post(path, data, { withCredentials: true });
 export const sendOTP = async (path, data) =>
   instance.post(path, data, { withCredentials: true });
+export const AddAddress = async (path, data) =>
+  instance.post(path, data, { withCredentials: true });
 export const createProfile = async (path, data) =>
   instance.post(
     path,

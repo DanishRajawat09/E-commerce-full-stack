@@ -14,7 +14,7 @@ const addAddress = asyncHandler(async (req, res) => {
   if (
     fields.some((field) => typeof field !== "string" || field.trim() === "")
   ) {
-    throw new ApiError(400, "All fields are required.");
+    throw new ApiError(422, "All fields are required.");
   }
 
   if (!user) {
@@ -35,7 +35,7 @@ const addAddress = asyncHandler(async (req, res) => {
 
   if (existingAddress) {
     throw new ApiError(
-      400,
+      409,
       `This address already exists in ${user.role} account.`
     );
   }
@@ -46,7 +46,7 @@ const addAddress = asyncHandler(async (req, res) => {
   });
 
   if (!userAddress) {
-    throw new ApiError(400, "Failed to add new address. Please try again.");
+    throw new ApiError(500, "Failed to add new address. Please try again.");
   }
 
   const userData = await User.findByIdAndUpdate(
@@ -55,7 +55,7 @@ const addAddress = asyncHandler(async (req, res) => {
     { new: true }
   );
   if (!userData) {
-    throw new ApiError(400, "Unauthorized Request, plz register First");
+    throw new ApiError(401, "Unauthorized Request, plz register First");
   }
   const excludedKeys = [
     "_id",
@@ -71,7 +71,7 @@ const addAddress = asyncHandler(async (req, res) => {
       { new: true }
     );
     if (!adminAddress) {
-      throw new ApiError(400, "Unable to update admin profile with address.");
+      throw new ApiError(500, "Unable to update admin profile with address.");
     }
     return res
       .status(200)
