@@ -21,22 +21,26 @@ const mutationData = [
   {
     purpose: "register",
     path: "/api/v1/user/register/verify-otp",
+    resendOTPRoute: "/api/v1/user/register/send-otp",
     route: "/user/profile",
   },
   {
     purpose: "adminRegister",
     path: "/api/v1/admin/register/verify-otp",
+    resendOTPRoute: "/api/v1/admin/register/send-otp",
     route: "/admin/profile",
   },
   {
     purpose: "resetPassword",
     path: "/api/v1/user/password/forgot/verify-otp",
-    route: "/user/login",
+    resendOTPRoute: "/api/v1/user/password/forgot/send-otp",
+    route: "/user/new/password",
   },
   {
     purpose: "resetAdminPassword",
     path: "/api/v1/admin/password/forget/verify-otp",
-    route: "/admin/login",
+    resendOTPRoute: "/api/v1/admin/password/forget/send-otp",
+    route: "/admin/new/password",
   },
 ];
 
@@ -45,7 +49,7 @@ const VerifyOtp = ({ role, purpose }) => {
   const navigate = useNavigate();
   const OTPData = useSelector((state) => state.otp);
 
-  const data = useMemo(() => {
+  const dataMutate = useMemo(() => {
     return mutationData.find((val) => val.purpose === purpose);
   }, [purpose]);
 
@@ -106,7 +110,7 @@ const VerifyOtp = ({ role, purpose }) => {
 
   const verifyOTPMutation = useMutation({
     mutationFn: (formData) => {
-      if (!data) {
+      if (!dataMutate) {
         dispatch(
           showErrorMessage({
             errorMessage: "Invalid OTP purpose. Please try again.",
@@ -117,7 +121,7 @@ const VerifyOtp = ({ role, purpose }) => {
         return Promise.reject("Invalid OTP purpose.");
       }
 
-      return verifyOTP(data.path, formData);
+      return verifyOTP(dataMutate.path, formData);
     },
     onSuccess: async (data) => {
       console.log(data, "success");
@@ -129,7 +133,7 @@ const VerifyOtp = ({ role, purpose }) => {
       );
 
       await queryClient.invalidateQueries(["user"]);
-      navigate(data.route);
+      navigate(dataMutate.route);
     },
     onError: (error) => {
       if (error.response?.status === 422) {
@@ -190,10 +194,7 @@ const VerifyOtp = ({ role, purpose }) => {
 
   const resendMutation = useMutation({
     mutationFn: (OTPData) => {
-      const path =
-        role === "admin"
-          ? "/api/v1/admin/register/send-otp"
-          : "/api/v1/user/register/send-otp";
+      const path = dataMutate.resendOTPRoute;
       return sendOTP(path, OTPData);
     },
     onSuccess: (data) => {

@@ -13,6 +13,7 @@ import { forgotPassword } from "../../api/handleAPi";
 import { useDispatch } from "react-redux";
 import { showErrorMessage, showSuccessMessage } from "../../features/snackbarSlice";
 import getApiPath from "../../utils/getApiPath";
+import { addOTPData } from "../../features/resendOTP";
 
 const ForgetPassword = ({ role }) => {
   const dispatch = useDispatch();
@@ -37,7 +38,9 @@ const ForgetPassword = ({ role }) => {
           } `,
         })
       );
-     setTimeout(() => {  navigate(role === "admin" ? "/admin/forgot/password/verifyotp" : "/user/forgot/password/verifyotp") }, 1000)
+
+      dispatch(addOTPData({email: data.data.data.email , contact : data.data.data.contact}))
+     setTimeout(() => {  navigate(role === "admin" ? "/admin/forgot/password/verifyotp" : "/user/forgot/password/verifyotp") }, 500)
     },
     onError: (error) => {
     if (error.response?.status === 422) {
