@@ -15,18 +15,16 @@ import {
   showSuccessMessage,
 } from "../../features/snackbarSlice";
 import { useNavigate } from "react-router-dom";
+import getApiPath from "../../utils/getApiPath";
 const Profile = ({ role }) => {
   const disptach = useDispatch();
   const { register, handleSubmit } = useForm();
   const [avatar, setAvatar] = useState(null);
-const navigate = useNavigate()
+  const navigate = useNavigate();
   const profileMutation = useMutation({
     mutationFn: (data) => {
-      const path =
-        role === "admin"
-          ? "/api/v1/admin/profile/create-profile"
-          : "/api/v1/user/profile/create";
-    return  createProfile(path, data);
+      const path = getApiPath({ role: role, purpose: "createProfile" });
+      return createProfile(path, data);
     },
     onSuccess: () => {
       disptach(
@@ -35,7 +33,9 @@ const navigate = useNavigate()
           open: true,
         })
       );
-      navigate("/user/address")
+     setTimeout(() => {
+       navigate("/user/address");
+     }, 1000);
     },
     onError: (error) => {
       if (error.response?.status === 422) {

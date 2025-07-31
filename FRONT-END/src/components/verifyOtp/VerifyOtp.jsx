@@ -12,10 +12,48 @@ import {
   showErrorMessage,
   showSuccessMessage,
 } from "../../features/snackbarSlice";
-const VerifyOtp = ({ role }) => {
+import { useMemo } from "react";
+import { useEffect } from "react";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+
+const mutationData = [
+  {
+    purpose: "register",
+    path: "/api/v1/user/register/verify-otp",
+    route: "/user/profile",
+  },
+  {
+    purpose: "adminRegister",
+    path: "/api/v1/admin/register/verify-otp",
+    route: "/admin/profile",
+  },
+  {
+    purpose: "resetPassword",
+    path: "/api/v1/user/password/forgot/verify-otp",
+    route: "/user/login",
+  },
+  {
+    purpose: "resetAdminPassword",
+    path: "/api/v1/admin/password/forget/verify-otp",
+    route: "/admin/login",
+  },
+];
+
+const VerifyOtp = ({ role, purpose }) => {
   const inputs = useRef([]);
   const navigate = useNavigate();
   const OTPData = useSelector((state) => state.otp);
+
+  const data = useMemo(() => {
+    return mutationData.find((val) => val.purpose === purpose);
+  }, [purpose]);
+
+  useEffect(() => {
+    return () => {
+      setOTP("");
+    };
+  }, []);
 
   const dispatch = useDispatch();
 
@@ -23,7 +61,8 @@ const VerifyOtp = ({ role }) => {
 
   const handleChange = (e, index) => {
     const value = e.target.value;
-    setOTP((prev) => (prev += value));
+    const newOTP = [...inputs.current].map((input) => input.value).join("");
+    setOTP(newOTP);
 
     if (/^\d$/.test(value)) {
       if (index < 5) {
@@ -39,6 +78,9 @@ const VerifyOtp = ({ role }) => {
       inputs.current[index - 1].focus();
     }
   };
+  useEffect(() => {
+    if (inputs.current[0]) inputs.current[0].focus();
+  }, []);
 
   const handlePaste = (e) => {
     e.preventDefault();
@@ -63,13 +105,19 @@ const VerifyOtp = ({ role }) => {
   const queryClient = useQueryClient();
 
   const verifyOTPMutation = useMutation({
-    mutationFn: (data) => {
-      const path =
-        role === "admin"
-          ? "/api/v1/admin/register/verify-otp"
-          : "/api/v1/user/register/verify-otp";
+    mutationFn: (formData) => {
+      if (!data) {
+        dispatch(
+          showErrorMessage({
+            errorMessage: "Invalid OTP purpose. Please try again.",
+            open: true,
+          })
+        );
 
-      return verifyOTP(path, data);
+        return Promise.reject("Invalid OTP purpose.");
+      }
+
+      return verifyOTP(data.path, formData);
     },
     onSuccess: async (data) => {
       console.log(data, "success");
@@ -81,7 +129,7 @@ const VerifyOtp = ({ role }) => {
       );
 
       await queryClient.invalidateQueries(["user"]);
-      navigate(role === "admin" ? "/admin/profile" : "/user/profile");
+      navigate(data.route);
     },
     onError: (error) => {
       if (error.response?.status === 422) {
@@ -127,13 +175,14 @@ const VerifyOtp = ({ role }) => {
   const handleOTP = () => {
     console.log(OTP, OTP.length);
 
-    if (OTP.length < 6) {
+    if (!/^\d{6}$/.test(OTP)) {
       dispatch(
         showErrorMessage({
-          errorMessage: "OTP must be 6 charectors",
+          errorMessage: "Please enter a 6-digit numeric OTP.",
           open: true,
         })
       );
+      return;
     } else {
       verifyOTPMutation.mutate({ otp: OTP });
     }
@@ -145,7 +194,7 @@ const VerifyOtp = ({ role }) => {
         role === "admin"
           ? "/api/v1/admin/register/send-otp"
           : "/api/v1/user/register/send-otp";
-     return sendOTP(path, OTPData);
+      return sendOTP(path, OTPData);
     },
     onSuccess: (data) => {
       dispatch(
@@ -207,6 +256,7 @@ const VerifyOtp = ({ role }) => {
               className={
                 role === "admin" ? "otpResendLinkAdmin" : "otpResendLink"
               }
+              disabled={resendMutation.isLoading}
               onClick={() => resendMutation.mutate(OTPData)}
             >
               Resend
@@ -223,7 +273,13 @@ const VerifyOtp = ({ role }) => {
               handleOTP();
             }}
           >
-            Verify
+            {verifyOTPMutation.isLoading && verifyOTPMutation ? (
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <CircularProgress size={25} color="white" />
+              </Box>
+            ) : (
+              "Verify"
+            )}
           </button>
         </div>
 

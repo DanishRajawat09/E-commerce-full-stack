@@ -3,6 +3,7 @@ import ApiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { generateOtp } from "../utils/basicUtils.js";
 import bcrypt from "bcrypt";
+import { emailRegex, phoneRegex } from "../utils/regexValidator.js";
 const sendOtp = (purpose) =>
   asyncHandler(async (req, res, next) => {
     const userData = {};
@@ -25,14 +26,15 @@ const sendOtp = (purpose) =>
       userData.contact = req.body.contact;
     }
     if (ResetPasswordPurposes.includes(purpose)) {
-      if (!req.body.emailContact) {
-        throw new ApiError(
-          422,
-          "resetting password the email or contact is required"
-        );
+      if (emailRegex.test(req.body?.emailContact.trim())) {
+        userData.email = req.body?.emailContact.trim();
+      } else if (phoneRegex.test(req.body?.emailContact.trim())) {
+        userData.contact = req.body?.emailContact.trim();
+      } else {
+        throw new ApiError(422, "Please Enter a Valid Email or Phone Number");
       }
-      userData.emailContact = req.body?.emailContact;
     }
+
     if (emailResetPurposes.includes(purpose)) {
       if (!req.user?.contact) {
         throw new ApiError(400, "Contact is required to reset email.");
@@ -76,10 +78,7 @@ const sendOtp = (purpose) =>
       {
         $and: [
           {
-            $or: [
-              { email: userData?.email || userData?.emailContact },
-              { contact: userData?.contact || userData?.emailContact },
-            ],
+            $or: [{ email: userData?.email }, { contact: userData?.contact }],
           },
           { isVerified: !isRegisterPurpose },
           { role: checkRole },
@@ -96,7 +95,7 @@ const sendOtp = (purpose) =>
     if (userData.email) console.log("OTP sent to email:", otp);
     if (userData.contact) console.log("OTP sent to contact:", otp);
 
-    req.user = { ...user.toObject(), purpose: purposeOtp };
+    req.user = { ...user.toObject(), purpose: purposeOtp , userData : userData};
     next();
   });
 

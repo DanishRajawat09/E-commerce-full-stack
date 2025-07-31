@@ -18,6 +18,7 @@ import Logout from "@mui/icons-material/Logout";
 import Login from "@mui/icons-material/Login";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import getApiPath from "../../utils/getApiPath";
 
 const Navbar = ({ user, isLoggedIn }) => {
   const dispatch = useDispatch();
@@ -95,11 +96,13 @@ const Navbar = ({ user, isLoggedIn }) => {
   const queryClient = useQueryClient();
 
   const logoutMutation = useMutation({
-    mutationFn: (role) =>
-      logOut(role === "admin" ? "/api/v1/admin/logout" : "/api/v1/user/logout"),
+    mutationFn: (role) => {
+      const path = getApiPath({ role: role, purpose: "logOut" });
+      logOut(path);
+    },
     onSuccess: async (data) => {
       console.log(data);
-       queryClient.setQueryData(["me"], null); 
+      queryClient.setQueryData(["me"], null);
       queryClient.removeQueries(["me"]);
       navigate("/");
     },

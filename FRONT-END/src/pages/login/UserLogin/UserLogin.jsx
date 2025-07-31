@@ -23,6 +23,7 @@ import {
   showErrorMessage,
   showSuccessMessage,
 } from "../../../features/snackbarSlice";
+import getApiPath from "../../../utils/getApiPath";
 const UserLogin = ({ role }) => {
   const dispatch = useDispatch();
 
@@ -47,8 +48,7 @@ const UserLogin = ({ role }) => {
 
   const logInMutation = useMutation({
     mutationFn: (formData) => {
-      const path =
-        role === "admin" ? "/api/v1/admin/login" : "/api/v1/user/login";
+      const path = getApiPath({ role: role, purpose: "logIn" });
       logIn(path, formData);
     },
     onSuccess: async (data) => {

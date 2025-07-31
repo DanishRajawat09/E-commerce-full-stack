@@ -23,6 +23,7 @@ import { logOut } from "../../api/handleAPi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import CircularProgress from "@mui/material/CircularProgress";
+import getApiPath from "../../utils/getApiPath";
 
 const SideNavBar = ({ isLoggedIn, user }) => {
   const { open } = useSelector((state) => state.sideBarState);
@@ -74,8 +75,10 @@ const SideNavBar = ({ isLoggedIn, user }) => {
   const queryClient = useQueryClient();
 
   const logoutMutation = useMutation({
-    mutationFn: (role) =>
-      logOut(role === "admin" ? "/api/v1/admin/logout" : "/api/v1/user/logout"),
+    mutationFn: (role) => {
+      const path = getApiPath({ role: role, purpose: "logOut" });
+      logOut(path);
+    },
     onSuccess: async (data) => {
       console.log(data);
       queryClient.setQueryData(["me"], null);

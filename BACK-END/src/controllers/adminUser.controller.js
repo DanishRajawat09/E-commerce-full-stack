@@ -350,17 +350,17 @@ const logoutUser = asyncHandler(async (req, res) => {
 });
 
 const handleForgotOtpSent = asyncHandler(async (req, res) => {
-  const { _id, email, purpose, role } = req?.user?.toObject?.() || req.user;
+  const { _id, email, purpose, role , userData } = req?.user?.toObject?.() || req.user;
 
   if (!_id || !email) {
     throw new ApiError(
-      500,
+      422,
       "Missing user ID or email in request. Cannot send OTP."
     );
   }
   if (!purpose) {
     throw new ApiError(
-      400,
+      422,
       "OTP purpose is missing. Cannot generate reset token."
     );
   }
@@ -376,7 +376,7 @@ const handleForgotOtpSent = asyncHandler(async (req, res) => {
       new ApiResponse(
         200,
         "OTP sent successfully. Please check your email or SMS.",
-        {}
+        {email : userData.email , contact : userData.contact}
       )
     );
 });

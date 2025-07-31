@@ -14,17 +14,16 @@ const SnackBar = () => {
   const vertical = "top";
   const horizontal = "right";
 
-  useEffect(() => {
-    if (successMessage && open) {
-      const successInterval = setInterval(() => {
-        dispatch(clearAllMessage());
-      }, 5000);
+useEffect(() => {
+  if ((successMessage || errorMessage) && open) {
+    const timer = setTimeout(() => {
+      dispatch(clearAllMessage());
+    }, 5000);
 
-      return () => {
-        clearInterval(successInterval);
-      };
-    }
-  }, [open]);
+    return () => clearTimeout(timer); 
+  }
+}, [successMessage, errorMessage, open]);
+
 
   const handleCloseSuccess = () => dispatch(clearAllMessage());
 

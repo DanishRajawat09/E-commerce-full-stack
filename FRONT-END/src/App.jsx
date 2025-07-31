@@ -87,32 +87,9 @@ function App() {
             element={<ForgetPassword role="admin" />}
           />
 
-          <Route
-            path="/user/verifyotp"
-            element={
-              <ResetRouteProtect
-                role={"user"}
-                expectedPurpose={"register"}
-                redirectPath={"/"}
-              />
-            }
-          >
-            <Route index element={<VerifyOtp role={"user"} />}></Route>
-          </Route>
-          <Route
-            path="/admin/verifyotp"
-            element={
-              <ResetRouteProtect
-                role={"admin"}
-                expectedPurpose={"adminRegister"}
-                redirectPath={"/"}
-              />
-            }
-          >
-            <Route index element={<VerifyOtp role={"admin"} />}></Route>
-          </Route>
 
-          <Route
+
+            <Route
             path="/user/newpassword"
             element={<NewPassword role="user" />}
           />
@@ -129,11 +106,66 @@ function App() {
 
           <Route path="/user/address" element={<ProtectedRoute><Address role="user" /></ProtectedRoute>} />
           <Route path="/admin/address" element={<ProtectedRoute><Address role="admin" /></ProtectedRoute>} />
-          <Route path="/user/verify-otp" element={<VerifyOtp role="user" />} />
+         
+
+        {/* verify otp routes */}
+
+        {/* register purpose */}
           <Route
-            path="/admin/verify-otp"
-            element={<VerifyOtp role="admin" />}
-          />
+            path="/user/verifyotp"
+            element={
+              <ResetRouteProtect
+                role={"user"}
+                expectedPurpose={"register"}
+                redirectPath={"/"}
+              />
+            }
+          >
+            <Route index element={<VerifyOtp role={"user"} purpose={"register"}/>}></Route>
+          </Route>
+          <Route
+            path="/admin/verifyotp"
+            element={
+              <ResetRouteProtect
+                role={"admin"}
+                expectedPurpose={"adminRegister"}
+                redirectPath={"/"}
+              />
+            }
+          >
+            <Route index element={<VerifyOtp role={"admin"}  purpose={"adminRegister"} />}></Route>
+          </Route>
+
+
+          {/* forgot password purpose */}
+          <Route
+            path="/user/forgot/password/verifyotp"
+            element={
+              <ResetRouteProtect
+                role={"user"}
+                expectedPurpose={"resetPassword"}
+                redirectPath={"/user/login"}
+              />
+            }
+          >
+            <Route index element={<VerifyOtp role={"user"}  purpose={"resetPassword"}/>}></Route>
+          </Route>
+          <Route
+            path="/admin/forgot/password/verifyotp"
+            element={
+              <ResetRouteProtect
+                role={"admin"}
+                expectedPurpose={"resetAdminPassword"}
+                redirectPath={"/"}
+              />
+            }
+          >
+            <Route index element={<VerifyOtp role={"admin"} purpose={"resetAdminPassword"} />}></Route>
+          </Route>
+
+
+
+        
         </Routes>
       </BrowserRouter>
     </>

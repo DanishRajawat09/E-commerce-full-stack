@@ -10,8 +10,12 @@ import { useForm } from "react-hook-form";
 import Typography from "@mui/material/Typography";
 import { useMutation } from "@tanstack/react-query";
 import { forgotPassword } from "../../api/handleAPi";
+import { useDispatch } from "react-redux";
+import { showErrorMessage, showSuccessMessage } from "../../features/snackbarSlice";
+import getApiPath from "../../utils/getApiPath";
 
 const ForgetPassword = ({ role }) => {
+  const dispatch = useDispatch();
   const {
     register,
     handleSubmit,
@@ -21,17 +25,51 @@ const ForgetPassword = ({ role }) => {
 
   const forgotPasswordMutation = useMutation({
     mutationFn: (formData) => {
-      const path =
-        role === "admin"
-          ? "/api/v1/admin/password/forget/send-otp"
-          : "/api/v1/user/password/forgot/send-otp";
+      const path = getApiPath({role : role , purpose : "forgotPassword"})
       return forgotPassword(path, formData);
     },
     onSuccess: (data) => {
-      console.log("success");
+      dispatch(
+        showSuccessMessage({
+          successMessage: `OTP Send to Your ${
+            (data.data.data.email && "email") ||
+            (data.data.data.contact && "contact")
+          } `,
+        })
+      );
+     setTimeout(() => {  navigate(role === "admin" ? "/admin/forgot/password/verifyotp" : "/user/forgot/password/verifyotp") }, 1000)
     },
     onError: (error) => {
-      console.log(error);
+    if (error.response?.status === 422) {
+           dispatch(
+             showErrorMessage({
+               errorMessage:
+                 "Unauthorized Request or Unable to retrieve information",
+               open: true,
+             })
+           );
+         } else if (error.response?.status === 404) {
+           dispatch(
+             showErrorMessage({
+               errorMessage: `Access Denied or ${role.toUpperCase()}  is not Register Properly, try again later`,
+               open: true,
+             })
+           );
+         } else if (error.response?.status === 400) {
+           dispatch(
+             showErrorMessage({
+               errorMessage: "Credentials did'nt Send Properly",
+               open: true,
+             })
+           );
+         } else {
+           dispatch(
+             showErrorMessage({
+               errorMessage: "Something went wrong while sending OTP. Please try again.",
+               open: true,
+             })
+           );
+         }
     },
   });
 

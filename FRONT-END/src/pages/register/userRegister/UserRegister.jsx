@@ -26,6 +26,7 @@ import {
   showErrorMessage,
   showSuccessMessage,
 } from "../../../features/snackbarSlice.js";
+import getApiPath from "../../../utils/getApiPath.js";
 const UserRegister = ({ role }) => {
   const [otpOptions, setOtpOptions] = useState(false);
 
@@ -34,7 +35,6 @@ const UserRegister = ({ role }) => {
     selectData: "",
   });
 
- 
   const [apiData, setApiData] = useState({
     data: {},
     message: "",
@@ -63,8 +63,7 @@ const UserRegister = ({ role }) => {
 
   const registerMutation = useMutation({
     mutationFn: (formData) => {
-      const path =
-        role === "admin" ? "/api/v1/admin/register" : "/api/v1/user/register";
+      const path = getApiPath({ role, purpose: "register" });
       console.log(path);
 
       return registerUser(path, formData);
@@ -81,7 +80,9 @@ const UserRegister = ({ role }) => {
         data: { email: data.data.data.email, contact: data.data.data.contact },
       });
 
-      setOtpOptions(true);
+      setTimeout(() => {
+        setOtpOptions(true);
+      }, 1000);
     },
     onError: (error) => {
       console.log(error);
@@ -140,10 +141,7 @@ const UserRegister = ({ role }) => {
 
   const sendOTPMutation = useMutation({
     mutationFn: (data) => {
-      const path =
-        role === "admin"
-          ? "/api/v1/admin/register/send-otp"
-          : "/api/v1/user/register/send-otp";
+      const path = getApiPath({ role: role, purpose: "sendOTPRegister" });
       return sendOTP(path, data);
     },
     onSuccess: (data) => {
@@ -159,7 +157,9 @@ const UserRegister = ({ role }) => {
           email: selectOption.select === "email" ? selectOption.selectData : "",
         })
       );
-      navigate(role === "admin" ? `/admin/verifyotp` : `/user/verifyotp`);
+      setTimeout(() => {
+        navigate(role === "admin" ? `/admin/verifyotp` : `/user/verifyotp`);
+      }, 1000);
     },
     onError: (error) => {
       console.log(error);
