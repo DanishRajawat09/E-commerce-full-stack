@@ -16,6 +16,9 @@ import {
   showErrorMessage,
   showSuccessMessage,
 } from "../../features/snackbarSlice";
+import getApiPath from "../../utils/getApiPath";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 const Address = ({ role }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -24,13 +27,11 @@ const Address = ({ role }) => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-
+    const {path , route} = getApiPath({role : role , purpose : "addaddress"})
   const addressMutation = useMutation({
     mutationFn: (formData) => {
-      const path =
-        role === "admin"
-          ? "/api/v1/admin/profile/add/shop-address"
-          : "/api/v1/user/address/add-address";
+  
+   
       return AddAddress(path, formData);
     },
     onSuccess: () => {
@@ -39,7 +40,7 @@ const Address = ({ role }) => {
           successMessage: `${role.toUpperCase()} Address Added Successfully`,
         })
       );
-      navigate("/");
+      navigate(route);
     },
     onError: (error) => {
       console.log(error);
@@ -216,7 +217,14 @@ const Address = ({ role }) => {
                 role === "admin" ? "authSubmitButtonAdmin" : "authSubmitButton"
               }
             >
-              Add Address
+
+              {addressMutation.isPending && addressMutation ? (
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  <CircularProgress size={25} color="white" />
+                </Box>
+              ) : (
+                "Add Address"
+              )}
             </button>
           </form>
         </div>

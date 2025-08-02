@@ -24,8 +24,6 @@ const Navbar = ({ user, isLoggedIn }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
- 
-
   const useScrollLock = (lock = false) => {
     useEffect(() => {
       const scrollbarWidth =
@@ -70,11 +68,10 @@ const Navbar = ({ user, isLoggedIn }) => {
 
   const queryClient = useQueryClient();
 
-   const {path , route}= getApiPath({ role: "user", purpose: "logout" });
+  const { path, route } = getApiPath({ role: "user", purpose: "logout" });
   const logoutMutation = useMutation({
     mutationFn: () => logOut(path),
-    onSuccess: async (data) => {
-      console.log(data);
+    onSuccess: async () => {
       queryClient.setQueryData(["me"], null);
       await queryClient.invalidateQueries({ queryKey: ["me"] });
       navigate(route, { replace: true });
@@ -214,7 +211,7 @@ const Navbar = ({ user, isLoggedIn }) => {
                     <Divider />
                     <MenuItem
                       onClick={() => {
-                        handleClose(),logoutMutation.mutate();;
+                        handleClose(), logoutMutation.mutate();
                       }}
                     >
                       <ListItemIcon>

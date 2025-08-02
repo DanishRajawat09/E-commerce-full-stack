@@ -73,7 +73,7 @@ const SideNavBar = ({ isLoggedIn, user }) => {
   }, [open]);
 
   const queryClient = useQueryClient();
-  const {path , route}= getApiPath({ role: "user", purpose: "logout" });
+  const { path, route } = getApiPath({ role: "user", purpose: "logout" });
   const logoutMutation = useMutation({
     mutationFn: () => logOut(path),
     onSuccess: async (data) => {
@@ -86,10 +86,6 @@ const SideNavBar = ({ isLoggedIn, user }) => {
       console.log(error);
     },
   });
-
-
-    
-
 
   return (
     <>
@@ -182,7 +178,7 @@ const SideNavBar = ({ isLoggedIn, user }) => {
                     disabled={logoutMutation.isPending && logoutMutation}
                     disableElevation
                     onClick={() => {
-                    logoutMutation.mutate();
+                      logoutMutation.mutate();
                     }}
                   >
                     {logoutMutation.isPending && logoutMutation ? (

@@ -21,11 +21,9 @@ const Profile = ({ role }) => {
   const { register, handleSubmit } = useForm();
   const [avatar, setAvatar] = useState(null);
   const navigate = useNavigate();
+   const { path , route} = getApiPath({ role: role, purpose: "createprofile" });
   const profileMutation = useMutation({
-    mutationFn: (data) => {
-      const path = getApiPath({ role: role, purpose: "createProfile" });
-      return createProfile(path, data);
-    },
+    mutationFn: (data) => createProfile(path, data),
     onSuccess: () => {
       disptach(
         showSuccessMessage({
@@ -33,9 +31,9 @@ const Profile = ({ role }) => {
           open: true,
         })
       );
-     setTimeout(() => {
-       navigate("/user/address");
-     }, 1000);
+     
+       navigate(route);
+    
     },
     onError: (error) => {
       if (error.response?.status === 422) {
@@ -147,6 +145,7 @@ const Profile = ({ role }) => {
                   ? "submitButtonAdminLoginProfile"
                   : "submitButtonUserLoginProfile"
               }
+              disabled={profileMutation.isPending && profileMutation}
             >
               {profileMutation.isPending && profileMutation ? (
                 <Box sx={{ display: "flex", justifyContent: "center" }}>

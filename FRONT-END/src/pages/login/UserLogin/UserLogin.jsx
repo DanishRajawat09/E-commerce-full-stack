@@ -24,6 +24,8 @@ import {
   showSuccessMessage,
 } from "../../../features/snackbarSlice";
 import getApiPath from "../../../utils/getApiPath";
+import { waitForLogin } from "../../../utils/waitLogin";
+
 const UserLogin = ({ role }) => {
   const dispatch = useDispatch();
 
@@ -45,20 +47,18 @@ const UserLogin = ({ role }) => {
   };
 
   const queryClient = useQueryClient();
-
+  const { path, route } = getApiPath({ role: role, purpose: "login" });
   const logInMutation = useMutation({
     mutationFn: (formData) => {
-      const path = getApiPath({ role: role, purpose: "logIn" });
       logIn(path, formData);
     },
-    onSuccess: async (data) => {
+    onSuccess: async () => {
       dispatch(
         showSuccessMessage({
           successMessage: `${role.toUpperCase()} Login SuccessFully`,
         })
       );
-      await queryClient.invalidateQueries(["me"]);
-      navigate("/");
+      waitForLogin({ queryClient, navigate, route });
     },
     onError: (error) => {
       console.log(error.response.status);

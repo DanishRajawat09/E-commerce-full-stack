@@ -42,7 +42,7 @@ export const createProfile = async (path, data) => {
 };
 
 export const logOut = async (path, data = {}) => {
-  const res = instance.post(path, data);
+  const res = await instance.post(path, data);
   return await responseDataHandler(res);
 };
 
@@ -59,4 +59,4 @@ export const fetchUserData = async () => {
   }
 };
 
-export const checkResetToken = async (path) =>  instance.get(path);
+export const checkResetToken = async (path) => instance.get(path);

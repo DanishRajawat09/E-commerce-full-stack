@@ -1,9 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserData } from "../api/handleAPi";
 
-
 const useCheckUserLogin = () => {
-
   const {
     data: userData,
     isLoading,
@@ -11,11 +9,13 @@ const useCheckUserLogin = () => {
     refetch,
     isSuccess,
   } = useQuery({
-    queryKey:["me"],
+    queryKey: ["me"],
     queryFn: fetchUserData,
     retry: false,
+    refetchOnMount: true,
     refetchOnWindowFocus: false,
-    staleTime: 0,
+    staleTime: Infinity, // ✅ Don't mark data stale unless you say so
+    enabled: true, // ✅ Always run on mount
   });
 
   return {

@@ -384,6 +384,7 @@ const UserRegister = ({ role }) => {
               className={
                 role === "admin" ? "authSubmitButtonAdmin" : "authSubmitButton"
               }
+              disabled={registerMutation.isPending && registerMutation }
             >
               {registerMutation.isPending && registerMutation ? (
                 <Box sx={{ display: "flex", justifyContent: "center" }}>
@@ -473,6 +474,7 @@ const UserRegister = ({ role }) => {
                 onClick={() => {
                   handleSendOtp();
                 }}
+                disabled={sendOTPMutation.isPending && sendOTPMutation}
               >
                 {sendOTPMutation.isPending && sendOTPMutation ? (
                   <Box sx={{ display: "flex", justifyContent: "center" }}>
