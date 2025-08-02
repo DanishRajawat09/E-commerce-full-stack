@@ -63,30 +63,17 @@ const UserRegister = ({ role }) => {
 
   const registerMutation = useMutation({
     mutationFn: (formData) => {
-      const path = getApiPath({ role, purpose: "register" });
-      console.log(path);
-
+      const { path } = getApiPath({ role, purpose: "register" });
       return registerUser(path, formData);
     },
-    onSuccess: (data) => {
-      console.log(data);
-
-      disptach(
-        showSuccessMessage({ successMessage: data.data.message, open: true })
-      );
-
+    onSuccess: (res) => {
       setApiData({
         ...apiData,
-        data: { email: data.data.data.email, contact: data.data.data.contact },
+        data: { email: res.email, contact: res.contact },
       });
-
-      setTimeout(() => {
-        setOtpOptions(true);
-      }, 1000);
+      setOtpOptions(true);
     },
     onError: (error) => {
-      console.log(error);
-
       if (error.response?.status === 401) {
         disptach(
           showSuccessMessage({
@@ -138,16 +125,29 @@ const UserRegister = ({ role }) => {
       }
     },
   });
-
+  const { path, route } = getApiPath({
+    role: role,
+    purpose: "sendotpregister",
+  });
+  console.log(path , route);
+  
   const sendOTPMutation = useMutation({
     mutationFn: (data) => {
-      const path = getApiPath({ role: role, purpose: "sendOTPRegister" });
       return sendOTP(path, data);
     },
-    onSuccess: (data) => {
-      console.log(data);
+    onSuccess: () => {
       disptach(
-        showSuccessMessage({ successMessage: data.data.message, open: true })
+        showSuccessMessage({
+          successMessage: `OTP Send on Your ${
+            (selectOption.select === "contact" &&
+              selectOption.selectData &&
+              "Contact") ||
+            (selectOption.select === "email" &&
+              selectOption.selectData &&
+              "Email")
+          }`,
+          open: true,
+        })
       );
       setOtpOptions(false);
       disptach(
@@ -157,9 +157,8 @@ const UserRegister = ({ role }) => {
           email: selectOption.select === "email" ? selectOption.selectData : "",
         })
       );
-      setTimeout(() => {
-        navigate(role === "admin" ? `/admin/verifyotp` : `/user/verifyotp`);
-      }, 1000);
+
+      navigate(route);
     },
     onError: (error) => {
       console.log(error);
@@ -204,10 +203,9 @@ const UserRegister = ({ role }) => {
           open: true,
         })
       );
+      
       return;
     }
-    console.log(selectOption);
-
     sendOTPMutation.mutate({
       contact: selectOption.select === "contact" ? selectOption.selectData : "",
       email: selectOption.select === "email" ? selectOption.selectData : "",

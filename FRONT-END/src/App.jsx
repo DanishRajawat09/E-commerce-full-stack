@@ -156,7 +156,7 @@ function App() {
           >
             <Route
               index
-              element={<VerifyOtp role={"user"} purpose={"register"} />}
+              element={<VerifyOtp role={"user"} purpose={"registerverify"} />}
             ></Route>
           </Route>
           <Route
@@ -171,7 +171,7 @@ function App() {
           >
             <Route
               index
-              element={<VerifyOtp role={"admin"} purpose={"adminRegister"} />}
+              element={<VerifyOtp role={"admin"} purpose={"registerverify"} />}
             ></Route>
           </Route>
 
@@ -182,13 +182,13 @@ function App() {
               <ResetRouteProtect
                 role={"user"}
                 expectedPurpose={"resetPassword"}
-                redirectPath={"/user/login"}
+                redirectPath={"/user/forgetpassword"}
               />
             }
           >
             <Route
               index
-              element={<VerifyOtp role={"user"} purpose={"resetPassword"} />}
+              element={<VerifyOtp role={"user"} purpose={"resetpasswordverify"} />}
             ></Route>
           </Route>
           <Route
@@ -197,14 +197,14 @@ function App() {
               <ResetRouteProtect
                 role={"admin"}
                 expectedPurpose={"resetAdminPassword"}
-                redirectPath={"/"}
+                redirectPath={"/admin/forgetpassword"}
               />
             }
           >
             <Route
               index
               element={
-                <VerifyOtp role={"admin"} purpose={"resetAdminPassword"} />
+                <VerifyOtp role={"admin"} purpose={"resetpasswordverify"} />
               }
             ></Route>
           </Route>

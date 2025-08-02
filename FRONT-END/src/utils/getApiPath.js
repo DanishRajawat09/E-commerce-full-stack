@@ -1,40 +1,127 @@
-const getApiPath = ({ role, purpose }) => {
-  const ApiPaths = {
+const getApiPath = ({ role, purpose, key }) => {
+
+  const roleKey = role === "admin" ? "admin" : "user";
+  const purposeKey = purpose?.trim().toLowerCase();
+
+
+  const apiPaths = {
+    userdata: {
+      user: { path: "/api/v1/user/" },
+    },
+
     register: {
-      user: "/api/v1/user/registe",
-      admin: "/api/v1/admin/register",
+      user: { path: "/api/v1/user/register" },
+      admin: { path: "/api/v1/admin/register" },
     },
-    createProfile: {
-      user: "/api/v1/user/profile/create",
-      admin: "/api/v1/admin/profile/create-profile",
+
+    sendotpregister: {
+      user: {
+        path: "/api/v1/user/register/send-otp",
+        route: "/user/verifyotp",
+      },
+      admin: {
+        path: "/api/v1/admin/register/send-otp",
+        route: "/admin/verifyotp",
+      },
     },
-    sendOTPRegister: {
-      user: "/api/v1/user/register/send-otp",
-      admin: "/api/v1/admin/register/send-otp",
+
+    registerverify: {
+      user: {
+        path: "/api/v1/user/register/verify-otp",
+        resendOTPRoute: "/api/v1/user/register/send-otp",
+        route: "/user/profile",
+      },
+      admin: {
+        path: "/api/v1/admin/register/verify-otp",
+        resendOTPRoute: "/api/v1/admin/register/send-otp",
+        route: "/admin/profile",
+      },
     },
-    logIn: {
-      user: "/api/v1/user/login",
-      admin: "/api/v1/admin/login",
+
+    createprofile: {
+      user: {
+        path: "/api/v1/user/profile/create",
+        route: "/user/address",
+      },
+      admin: {
+        path: "/api/v1/admin/profile/create-profile",
+        route: "/admin/address",
+      },
     },
-    forgotPassword : {
-        user : "/api/v1/user/password/forgot/send-otp",
-        admin : "/api/v1/admin/password/forget/send-otp"
+
+    login: {
+      user: {
+        path: "/api/v1/user/login",
+        route: "/",
+      },
+      admin: {
+        path: "/api/v1/admin/login",
+        route: "/admin",
+      },
     },
-     logOut : {
-        user  : "/api/v1/user/logout",
-        admin : "/api/v1/admin/logout"
-     } 
+
+    forgotpassword: {
+      user: {
+        path: "/api/v1/user/password/forgot/send-otp",
+        route: "/user/forgot/password/verifyotp",
+      },
+      admin: {
+        path: "/api/v1/admin/password/forget/send-otp",
+        route: "/admin/forgot/password/verifyotp",
+      },
+    },
+
+    resetpasswordverify: {
+      user: {
+        path: "/api/v1/user/password/forgot/verify-otp",
+        resendOTPRoute: "/api/v1/user/password/forgot/send-otp",
+        route: "/user/new/password",
+      },
+      admin: {
+        path: "/api/v1/admin/password/forget/verify-otp",
+        resendOTPRoute: "/api/v1/admin/password/forget/send-otp",
+        route: "/admin/new/password",
+      },
+    },
+
+    logout: {
+      user: {
+        path: "/api/v1/user/logout",
+        route: "/",
+      },
+      admin: {
+        path: "/api/v1/admin/logout",
+        route: "/admin",
+      },
+    },
+
+    addaddress: {
+      user: {
+        path: "/api/v1/user/address/add-address",
+        route: "/",
+      },
+      admin: {
+        path: "/api/v1/admin/profile/add/shop-address",
+        route: "/admin",
+      },
+    },
   };
 
-  const roleKey = role.trim() === "admin" ? "admin" : "user";
 
-  if (!ApiPaths[purpose.trim()] || !ApiPaths[purpose.trim()][roleKey]) {
+  const roleData = apiPaths[purposeKey];
+  if (!roleData) {
+    throw new Error(`Invalid API purpose: "${purpose}"`);
+  }
+
+  const pathData = roleData[roleKey];
+  if (!pathData) {
     throw new Error(
       `No API path found for role "${role}" and purpose "${purpose}"`
     );
   }
 
-  return ApiPaths[purpose.trim()][roleKey];
+
+  return key ? pathData[key] : pathData;
 };
 
 export default getApiPath;

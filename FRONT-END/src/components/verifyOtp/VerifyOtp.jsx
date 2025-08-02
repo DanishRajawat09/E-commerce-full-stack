@@ -12,46 +12,14 @@ import {
   showErrorMessage,
   showSuccessMessage,
 } from "../../features/snackbarSlice";
-import { useMemo } from "react";
 import { useEffect } from "react";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
-
-const mutationData = [
-  {
-    purpose: "register",
-    path: "/api/v1/user/register/verify-otp",
-    resendOTPRoute: "/api/v1/user/register/send-otp",
-    route: "/user/profile",
-  },
-  {
-    purpose: "adminRegister",
-    path: "/api/v1/admin/register/verify-otp",
-    resendOTPRoute: "/api/v1/admin/register/send-otp",
-    route: "/admin/profile",
-  },
-  {
-    purpose: "resetPassword",
-    path: "/api/v1/user/password/forgot/verify-otp",
-    resendOTPRoute: "/api/v1/user/password/forgot/send-otp",
-    route: "/user/new/password",
-  },
-  {
-    purpose: "resetAdminPassword",
-    path: "/api/v1/admin/password/forget/verify-otp",
-    resendOTPRoute: "/api/v1/admin/password/forget/send-otp",
-    route: "/admin/new/password",
-  },
-];
-
+import getApiPath from "../../utils/getApiPath";
 const VerifyOtp = ({ role, purpose }) => {
   const inputs = useRef([]);
   const navigate = useNavigate();
   const OTPData = useSelector((state) => state.otp);
-
-  const dataMutate = useMemo(() => {
-    return mutationData.find((val) => val.purpose === purpose);
-  }, [purpose]);
 
   useEffect(() => {
     return () => {
@@ -108,9 +76,14 @@ const VerifyOtp = ({ role, purpose }) => {
 
   const queryClient = useQueryClient();
 
+  const { path, resendOTPRoute, route } = getApiPath({
+    role: role,
+    purpose: purpose,
+  });
+
   const verifyOTPMutation = useMutation({
     mutationFn: (formData) => {
-      if (!dataMutate) {
+      if (!path && !route) {
         dispatch(
           showErrorMessage({
             errorMessage: "Invalid OTP purpose. Please try again.",
@@ -121,10 +94,9 @@ const VerifyOtp = ({ role, purpose }) => {
         return Promise.reject("Invalid OTP purpose.");
       }
 
-      return verifyOTP(dataMutate.path, formData);
+      return verifyOTP(path, formData);
     },
-    onSuccess: async (data) => {
-      console.log(data, "success");
+    onSuccess: async () => {
       dispatch(
         showSuccessMessage({
           successMessage: `${role.toUpperCase()} Verified SuccessFully`,
@@ -133,7 +105,7 @@ const VerifyOtp = ({ role, purpose }) => {
       );
 
       await queryClient.invalidateQueries(["user"]);
-      navigate(dataMutate.route);
+      navigate(route);
     },
     onError: (error) => {
       if (error.response?.status === 422) {
@@ -194,21 +166,19 @@ const VerifyOtp = ({ role, purpose }) => {
 
   const resendMutation = useMutation({
     mutationFn: (OTPData) => {
-      const path = dataMutate.resendOTPRoute;
-      return sendOTP(path, OTPData);
+      return sendOTP(resendOTPRoute, OTPData);
     },
-    onSuccess: (data) => {
+    onSuccess: (res) => {
       dispatch(
         showSuccessMessage({
           successMessage: `Resend OTP Successfully On ${
-            (data.data.data.email && "Your Email") ||
-            (data.data.data.contact && "Your Contact")
+            (res.email && "Your Email") || (res.contact && "Your Contact")
           }`,
           open: true,
         })
       );
     },
-    onError: (error) => {
+    onError: () => {
       dispatch(
         showErrorMessage({
           errorMessage: "Error While Resending the OTP , try again later",
@@ -270,6 +240,7 @@ const VerifyOtp = ({ role, purpose }) => {
             className={
               role === "admin" ? "otpSubmitButtonAdmin" : "otpSubmitButton"
             }
+            disabled={verifyOTPMutation.isLoading && verifyOTPMutation}
             onClick={() => {
               handleOTP();
             }}

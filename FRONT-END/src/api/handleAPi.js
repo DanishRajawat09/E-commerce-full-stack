@@ -2,44 +2,55 @@ import axios from "axios";
 
 const instance = axios.create({
   baseURL: "http://localhost:5500",
+  withCredentials: true,
 });
 
-export const logIn = async (path, data) => {
-  return await instance.post(path, data, {
-    withCredentials: true,
-  });
-};
-export const registerUser = async (path, data) =>
-  instance.post(path, data, { withCredentials: true });
-export const verifyOTP = async (path, data) =>
-  instance.post(path, data, { withCredentials: true });
-export const sendOTP = async (path, data) =>
-  instance.post(path, data, { withCredentials: true });
-export const AddAddress = async (path, data) =>
-  instance.post(path, data, { withCredentials: true });
-export const forgotPassword = async (path, data) =>
-  instance.post(path, data, { withCredentials: true });
+const responseDataHandler = (res) => res?.data?.data ?? res?.data;
 
-export const createProfile = async (path, data) =>
-  instance.post(path, data, {
-    withCredentials: true,
+export const logIn = async (path, data) => {
+  const res = await instance.post(path, data);
+  return await responseDataHandler(res);
+};
+export const registerUser = async (path, data) => {
+  const res = await instance.post(path, data);
+  return await responseDataHandler(res);
+};
+export const verifyOTP = async (path, data) => {
+  const res = await instance.post(path, data);
+  return await responseDataHandler(res);
+};
+export const sendOTP = async (path, data) => {
+  const res = await instance.post(path, data);
+  return await responseDataHandler(res);
+};
+export const AddAddress = async (path, data) => {
+  const res = await instance.post(path, data);
+  return await responseDataHandler(res);
+};
+export const forgotPassword = async (path, data) => {
+  const res = await instance.post(path, data);
+  return await responseDataHandler(res);
+};
+
+export const createProfile = async (path, data) => {
+  const res = await instance.post(path, data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
+  return await responseDataHandler(res);
+};
 
-export const logOut = async (path, data = {}) =>
-  instance.post(path, data, {
-    withCredentials: true,
-  });
+export const logOut = async (path, data = {}) => {
+  const res = instance.post(path, data);
+  return await responseDataHandler(res);
+};
 
 export const fetchUserData = async () => {
   try {
-    const res = await instance.get("/api/v1/user/", {
-      withCredentials: true,
-    });
+    const res = await instance.get("/api/v1/user/");
 
-    return res.data.data;
+    return responseDataHandler(res);
   } catch (error) {
     if (error.response?.status === 401) {
       throw new Error("unauthorized");
@@ -48,7 +59,4 @@ export const fetchUserData = async () => {
   }
 };
 
-export const checkResetToken = async (path) =>
-  instance.get(path, {
-    withCredentials: true,
-  });
+export const checkResetToken = async (path) =>  instance.get(path);

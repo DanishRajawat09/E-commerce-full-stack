@@ -16,40 +16,15 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Logout from "@mui/icons-material/Logout";
 import Login from "@mui/icons-material/Login";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
 import getApiPath from "../../utils/getApiPath";
 
 const Navbar = ({ user, isLoggedIn }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [apiData, setApiData] = useState({
-    data: {},
-    message: "",
-  });
-  const [showSuccess, setShowSuccess] = useState({
-    open: false,
-    vertical: "top",
-    horizontal: "center",
-  });
-
-  const { vertical, horizontal } = showSuccess;
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
-  const handleCloseSuccess = () =>
-    setShowSuccess({ ...showSuccess, open: false });
-  useEffect(() => {
-    if (showSuccess.open === true) {
-      const successInterval = setInterval(() => {
-        setShowSuccess({ ...showSuccess, open: false });
-      }, 5000);
-
-      return () => {
-        clearInterval(successInterval);
-      };
-    }
-  });
+ 
 
   const useScrollLock = (lock = false) => {
     useEffect(() => {
@@ -95,16 +70,14 @@ const Navbar = ({ user, isLoggedIn }) => {
 
   const queryClient = useQueryClient();
 
+   const {path , route}= getApiPath({ role: "user", purpose: "logout" });
   const logoutMutation = useMutation({
-    mutationFn: (role) => {
-      const path = getApiPath({ role: role, purpose: "logOut" });
-      logOut(path);
-    },
+    mutationFn: () => logOut(path),
     onSuccess: async (data) => {
       console.log(data);
       queryClient.setQueryData(["me"], null);
-      queryClient.removeQueries(["me"]);
-      navigate("/");
+      await queryClient.invalidateQueries({ queryKey: ["me"] });
+      navigate(route, { replace: true });
     },
     onError: (error) => {
       console.log(error);
@@ -115,33 +88,8 @@ const Navbar = ({ user, isLoggedIn }) => {
     dispatch(isOpen({ open: true }));
   };
 
-  const handleLogOut = (role) => {
-    console.log(role);
-
-    logoutMutation.mutate(role);
-  };
-
   return (
     <header className="navHeader">
-      {showSuccess.open && (
-        <Snackbar
-          anchorOrigin={{ vertical, horizontal }}
-          open={showSuccess.open}
-          autoHideDuration={6000}
-          onClose={handleCloseSuccess}
-          key={"success" + vertical + horizontal}
-        >
-          <Alert
-            onClose={handleCloseSuccess}
-            severity="success"
-            variant="filled"
-            sx={{ width: "100%" }}
-          >
-            {apiData.message}
-          </Alert>
-        </Snackbar>
-      )}
-
       <div className="container  ">
         <div className="flexContainer navData">
           <div className="navLogo flexContainer">
@@ -266,7 +214,7 @@ const Navbar = ({ user, isLoggedIn }) => {
                     <Divider />
                     <MenuItem
                       onClick={() => {
-                        handleClose(), handleLogOut();
+                        handleClose(),logoutMutation.mutate();;
                       }}
                     >
                       <ListItemIcon>
