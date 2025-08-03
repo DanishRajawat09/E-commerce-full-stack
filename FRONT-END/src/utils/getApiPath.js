@@ -1,8 +1,6 @@
 const getApiPath = ({ role, purpose, key }) => {
-
   const roleKey = role === "admin" ? "admin" : "user";
   const purposeKey = purpose?.trim().toLowerCase();
-
 
   const apiPaths = {
     userdata: {
@@ -83,6 +81,16 @@ const getApiPath = ({ role, purpose, key }) => {
         route: "/admin/new/password",
       },
     },
+    newpassword: {
+      user: {
+        path: "/api/v1/user/password/reset",
+        route: "/user/login",
+      },
+      admin: {
+        path: "/api/v1/admin/new-password",
+        route: "/admin/login",
+      },
+    },
 
     logout: {
       user: {
@@ -107,7 +115,6 @@ const getApiPath = ({ role, purpose, key }) => {
     },
   };
 
-
   const roleData = apiPaths[purposeKey];
   if (!roleData) {
     throw new Error(`Invalid API purpose: "${purpose}"`);
@@ -119,7 +126,6 @@ const getApiPath = ({ role, purpose, key }) => {
       `No API path found for role "${role}" and purpose "${purpose}"`
     );
   }
-
 
   return key ? pathData[key] : pathData;
 };

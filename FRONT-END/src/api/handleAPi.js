@@ -46,6 +46,15 @@ export const logOut = async (path, data = {}) => {
   return await responseDataHandler(res);
 };
 
+
+// Patch requests
+export const newPasswordFn = async (path , newPassword) => {
+  const res = await instance.patch(path , newPassword)
+  console.log(res);
+  
+  return await responseDataHandler(res)
+}
+
 export const fetchUserData = async () => {
   try {
     const res = await instance.get("/api/v1/user/");

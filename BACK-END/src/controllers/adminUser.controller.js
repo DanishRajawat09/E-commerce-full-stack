@@ -420,10 +420,10 @@ const handleNewPasswordSet = asyncHandler(async (req, res) => {
   if (
     !newPassword ||
     typeof newPassword !== "string" ||
-    newPassword.trim().length < 6
+    newPassword.trim().length < 8
   ) {
     throw new ApiError(
-      400,
+      422,
       "New password is required and must be at least 6 characters long."
     );
   }

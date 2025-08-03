@@ -2,7 +2,6 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
 import "./forgetPass.css";
-import Input from "../../components/input/Input";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
@@ -14,6 +13,8 @@ import { useDispatch } from "react-redux";
 import { showErrorMessage, showSuccessMessage } from "../../features/snackbarSlice";
 import getApiPath from "../../utils/getApiPath";
 import { addOTPData } from "../../features/resendOTP";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const ForgetPassword = ({ role }) => {
   const dispatch = useDispatch();
@@ -23,24 +24,24 @@ const ForgetPassword = ({ role }) => {
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
-
+   const {path , route} = getApiPath({role : role , purpose : "forgotpassword"})
   const forgotPasswordMutation = useMutation({
     mutationFn: (formData) => {
-      const path = getApiPath({role : role , purpose : "forgotPassword"})
+   
       return forgotPassword(path, formData);
     },
-    onSuccess: (data) => {
+    onSuccess: (res) => {
       dispatch(
         showSuccessMessage({
           successMessage: `OTP Send to Your ${
-            (data.data.data.email && "email") ||
-            (data.data.data.contact && "contact")
+            (res.email && "email") ||
+            (res.contact && "contact")
           } `,
         })
       );
 
-      dispatch(addOTPData({email: data.data.data.email , contact : data.data.data.contact}))
-     setTimeout(() => {  navigate(role === "admin" ? "/admin/forgot/password/verifyotp" : "/user/forgot/password/verifyotp") }, 500)
+      dispatch(addOTPData({email: res.email , contact : res.contact}))
+    navigate(route) 
     },
     onError: (error) => {
     if (error.response?.status === 422) {
@@ -155,8 +156,15 @@ const ForgetPassword = ({ role }) => {
                   ? "forgetSubmitButtonAdmin"
                   : "forgetSubmitButton"
               }
+              disabled={forgotPasswordMutation.isPending && forgotPasswordMutation }
             >
-              Find and Send OTP
+              {forgotPasswordMutation.isPending && forgotPasswordMutation ? (
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  <CircularProgress size={25} color="white" />
+                </Box>
+              ) : (
+                "Find and Send OTP"
+              )}
             </button>
           </form>
 
