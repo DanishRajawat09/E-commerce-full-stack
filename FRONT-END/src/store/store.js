@@ -18,6 +18,7 @@ import {
 } from "redux-persist";
 import resendOTPSlice from "../features/resendOTP";
 import userDetailSlice from "../features/userDetailSlice";
+import accountBarSlice from "../features/accountBarSlice"
 const persistConfig = {
   key: "root",
   storage,
@@ -30,7 +31,8 @@ const rootReducer = combineReducers({
   cart: cartSlice,
   CartCalc: CartCalc,
   userDetail: userDetailSlice,
-  snackBarSlice : snackBarSlice
+  snackBarSlice : snackBarSlice,
+  accountBarSlice : accountBarSlice
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

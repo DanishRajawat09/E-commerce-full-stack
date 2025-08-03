@@ -17,6 +17,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Logout from "@mui/icons-material/Logout";
 import Login from "@mui/icons-material/Login";
 import getApiPath from "../../utils/getApiPath";
+import { openAccountBar } from "../../features/accountBarSlice";
 
 const Navbar = ({ user, isLoggedIn }) => {
   const dispatch = useDispatch();
@@ -205,7 +206,9 @@ const Navbar = ({ user, isLoggedIn }) => {
               >
                 {isLoggedIn ? (
                   <>
-                    <MenuItem onClick={handleClose}>
+                    <MenuItem onClick={() =>{ handleClose() ,setTimeout(() => {
+                       dispatch(openAccountBar())
+                    }, 50);}}>
                       <Avatar src={user.profile?.avatar?.url} /> My account
                     </MenuItem>
                     <Divider />
