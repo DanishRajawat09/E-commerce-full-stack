@@ -55,7 +55,7 @@ const ForgetPassword = ({ role }) => {
          } else if (error.response?.status === 404) {
            dispatch(
              showErrorMessage({
-               errorMessage: `Access Denied or ${role.toUpperCase()}  is not Register Properly, try again later`,
+               errorMessage: `${role.toUpperCase()} Not Found`,
                open: true,
              })
            );

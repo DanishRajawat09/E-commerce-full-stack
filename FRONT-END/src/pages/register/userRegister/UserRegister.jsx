@@ -129,8 +129,8 @@ const UserRegister = ({ role }) => {
     role: role,
     purpose: "sendotpregister",
   });
-  console.log(path , route);
-  
+  console.log(path, route);
+
   const sendOTPMutation = useMutation({
     mutationFn: (data) => {
       return sendOTP(path, data);
@@ -203,7 +203,7 @@ const UserRegister = ({ role }) => {
           open: true,
         })
       );
-      
+
       return;
     }
     sendOTPMutation.mutate({
@@ -336,16 +336,34 @@ const UserRegister = ({ role }) => {
             <div className="inputGroup">
               <FormControl variant="outlined">
                 <InputLabel
-                  error={errors.password?.type === "required" ? true : false}
+                  error={
+                    errors.password?.type === "required" ||
+                    errors.password?.type === "minLength" ||
+                    errors.password?.type === "pattern"
+                      ? true
+                      : false
+                  }
                   htmlFor="outlined-adornment-password"
                 >
                   Password
                 </InputLabel>
                 <OutlinedInput
                   {...register("password", {
-                    required: "password is required",
+                    required: true,
+                    minLength: 8,
+                    pattern: {
+                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
+                      message:
+                        "Password must contain at least 1 uppercase, 1 lowercase, and 1 number",
+                    },
                   })}
-                  error={errors.password?.type === "required" ? true : false}
+                  error={
+                    errors.password?.type === "required" ||
+                    errors.password?.type === "minLength" ||
+                    errors.password?.type === "pattern"
+                      ? true
+                      : false
+                  }
                   id="outlined-adornment-password"
                   type={showPassword ? "text" : "password"}
                   endAdornment={
@@ -374,6 +392,20 @@ const UserRegister = ({ role }) => {
                     Password is Required
                   </Typography>
                 )}
+                {errors.password?.type === "pattern" && (
+                  <Typography
+                    sx={{ color: "red", fontSize: "12px", marginTop: "3px" }}
+                  >
+                    {errors.password?.message}
+                  </Typography>
+                )}
+                {errors.password?.type === "minLength" && (
+                  <Typography
+                    sx={{ color: "red", fontSize: "14px", marginTop: "3px" }}
+                  >
+                    Password Must be 8 characters
+                  </Typography>
+                )}
               </FormControl>
             </div>
 
@@ -384,7 +416,7 @@ const UserRegister = ({ role }) => {
               className={
                 role === "admin" ? "authSubmitButtonAdmin" : "authSubmitButton"
               }
-              disabled={registerMutation.isPending && registerMutation }
+              disabled={registerMutation.isPending && registerMutation}
             >
               {registerMutation.isPending && registerMutation ? (
                 <Box sx={{ display: "flex", justifyContent: "center" }}>

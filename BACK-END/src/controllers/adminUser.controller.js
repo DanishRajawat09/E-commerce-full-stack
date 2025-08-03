@@ -20,6 +20,7 @@ import { generateResetToken } from "../utils/resetToken.utils.js";
 
 import cookieOption from "../utils/cookieOption.utils.js";
 import generateAccessRefreshToken from "../utils/generateAccessRefresh.utils.js";
+import { passwordRegex } from "../utils/regexValidator.js";
 
 const checkResetToken = asyncHandler(async (req, res) => {
   const { purpose } = req.query;
@@ -97,12 +98,13 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(422, "Email or contact number is required.");
   }
 
-  if (!password || password.length < 6) {
+  if (!password || !passwordRegex.test(password) ) {
     throw new ApiError(
       422,
-      "Password must be a string and at least 6 characters long."
+       "Password must have at least 8 characters, one uppercase, one lowercase, and one number."
     );
   }
+
 
   // Check for verified existing user
   const existingUser = await User.findOne({
@@ -252,8 +254,8 @@ const loginUser = asyncHandler(async (req, res) => {
     );
   }
 
-  if (!password) {
-    throw new ApiError(422, "Password is required to log in.");
+  if (!password || !passwordRegex.test(password)) {
+    throw new ApiError(422, "Password must have at least 8 characters, one uppercase, one lowercase, and one number.");
   }
 
   const user = await User.findOne({
@@ -418,13 +420,11 @@ const handleNewPasswordSet = asyncHandler(async (req, res) => {
   }
 
   if (
-    !newPassword ||
-    typeof newPassword !== "string" ||
-    newPassword.trim().length < 8
+    !newPassword || !passwordRegex.test(newPassword)
   ) {
     throw new ApiError(
       422,
-      "New password is required and must be at least 6 characters long."
+      "Password must have at least 8 characters, one uppercase, one lowercase, and one number."
     );
   }
 

@@ -168,16 +168,34 @@ const UserLogin = ({ role }) => {
             <div className="formGroup">
               <FormControl variant="outlined">
                 <InputLabel
-                  error={errors.password?.type === "required" ? true : false}
+                  error={
+                    errors.password?.type === "required" ||
+                    errors.password?.type === "minLength" ||
+                    errors.password?.type === "pattern"
+                      ? true
+                      : false
+                  }
                   htmlFor="outlined-adornment-password"
                 >
                   Password
                 </InputLabel>
                 <OutlinedInput
                   {...register("password", {
-                    required: "password is required",
+                    required: true,
+                    minLength: 8,
+                    pattern: {
+                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
+                      message:
+                        "Password must contain at least 1 uppercase, 1 lowercase, and 1 number",
+                    },
                   })}
-                  error={errors.password?.type === "required" ? true : false}
+                  error={
+                    errors.password?.type === "required" ||
+                    errors.password?.type === "minLength" ||
+                    errors.password?.type === "pattern"
+                      ? true
+                      : false
+                  }
                   id="outlined-adornment-password"
                   type={showPassword ? "text" : "password"}
                   endAdornment={
@@ -204,6 +222,20 @@ const UserLogin = ({ role }) => {
                     sx={{ color: "red", fontSize: "14px", marginTop: "3px" }}
                   >
                     Password is Required
+                  </Typography>
+                )}
+                {errors.password?.type === "pattern" && (
+                  <Typography
+                    sx={{ color: "red", fontSize: "12px", marginTop: "3px" }}
+                  >
+                    {errors.password?.message}
+                  </Typography>
+                )}
+                {errors.password?.type === "minLength" && (
+                  <Typography
+                    sx={{ color: "red", fontSize: "14px", marginTop: "3px" }}
+                  >
+                    Password Must be 8 characters
                   </Typography>
                 )}
               </FormControl>

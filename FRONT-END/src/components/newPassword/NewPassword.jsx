@@ -84,44 +84,33 @@ const NewPassword = ({ role }) => {
     },
   });
 
-  const handleNewPasswords = (passwords) => {
-    const password = passwords.password?.trim();
-    const confirmPassword = passwords.confirmPassword?.trim();
-    let newPassword = { newPassword: "" };
+const handleNewPasswords = (passwords) => {
+  const password = passwords.password?.trim();
+  const confirmPassword = passwords.confirmPassword?.trim();
 
-    setError({ ...error, error: false, errorMess: "" });
+  setError({ ...error, error: false, errorMess: "" });
 
-    if (password.length !== confirmPassword.length) {
-      setError({
-        ...error,
-        error: true,
-        errorMess: "Password Does Not Match , try again",
-      });
-      return;
-    }
+  if (!password || !confirmPassword) {
+    setError({
+      ...error,
+      error: true,
+      errorMess: "Password fields cannot be empty",
+    });
+    return;
+  }
 
-    for (let i = 0; i < password.length; i++) {
-      if (!confirmPassword.includes(password[i])) {
-        setError({
-          ...error,
-          error: true,
-          errorMess: "Password Does Not Match , try again",
-        });
-        return;
-      } else {
-        newPassword.newPassword += password[i];
-      }
-    }
-    if (!newPassword.newPassword) {
-      setError({
-        ...error,
-        error: true,
-        errorMess: "could not set new Password Try Again",
-      });
-      return;
-    }
-    newPasswordMutation.mutate(newPassword);
-  };
+  if (password !== confirmPassword) {
+    setError({
+      ...error,
+      error: true,
+      errorMess: "Passwords do not match, try again",
+    });
+    return;
+  }
+
+
+  newPasswordMutation.mutate({ newPassword: password });
+};
   return (
     <div className="newPassOverlay">
       <div className="newPassBox">
@@ -151,8 +140,7 @@ const NewPassword = ({ role }) => {
                 error={
                   errors.password?.type === "required" ||
                   error.error === true ||
-                  errors.password?.type === "minLength" ||
-                  errors.password?.type === "maxLength"
+                  errors.password?.type === "minLength" || errors.password?.type === "pattern" 
                     ? true
                     : false
                 }
@@ -161,16 +149,19 @@ const NewPassword = ({ role }) => {
                 Password
               </InputLabel>
               <OutlinedInput
-                {...register("password", {
-                  required: "password is required",
-                  maxLength: 8,
-                  minLength: 8,
-                })}
+              {...register("password", {
+                    required: true,
+                    minLength: 8,
+                    pattern: {
+                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
+                      message:
+                        "Password must contain at least 1 uppercase, 1 lowercase, and 1 number",
+                    },
+                  })}
                 error={
                   errors.password?.type === "required" ||
                   error.error === true ||
-                  errors.password?.type === "minLength" ||
-                  errors.password?.type === "maxLength"
+                  errors.password?.type === "minLength" || errors.password?.type === "pattern"  
                     ? true
                     : false
                 }
@@ -193,12 +184,11 @@ const NewPassword = ({ role }) => {
                   Password must be 8 characters
                 </Typography>
               )}
-              {errors.password?.type === "maxLength" && (
+              {errors.password?.type === "pattern" && (
                 <Typography
-                  sx={{ color: "red", fontSize: "14px", marginTop: "3px" }}
+                  sx={{ color: "red", fontSize: "12px", marginTop: "3px" }}
                 >
-                  Password is greater then 8 characters, Password must be 8
-                  characters
+                  {errors.password?.message}
                 </Typography>
               )}
             </FormControl>
@@ -209,8 +199,8 @@ const NewPassword = ({ role }) => {
                 error={
                   errors.confirmPassword?.type === "required" ||
                   error.error === true ||
-                  errors.confirmPassword?.type === "minLength" ||
-                  errors.confirmPassword?.type === "maxLength"
+                  errors.confirmPassword?.type === "minLength" || errors.confirmPassword?.type === "pattern"
+                 
                     ? true
                     : false
                 }
@@ -222,13 +212,17 @@ const NewPassword = ({ role }) => {
                 {...register("confirmPassword", {
                   required: "ConfirmPassword is required",
                   minLength: 8,
-                  maxLength: 8,
+                    pattern: {
+                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
+                      message:
+                        "Confirm Password must contain at least 1 uppercase, 1 lowercase, and 1 number",
+                    },
                 })}
                 error={
                   errors.confirmPassword?.type === "required" ||
                   error.error === true ||
-                  errors.confirmPassword?.type === "minLength" ||
-                  errors.confirmPassword?.type === "maxLength"
+                  errors.confirmPassword?.type === "minLength" || errors.confirmPassword?.type === "pattern"
+        
                     ? true
                     : false
                 }
@@ -267,14 +261,7 @@ const NewPassword = ({ role }) => {
                   Confirm Password must be 8 characters
                 </Typography>
               )}
-              {errors.confirmPassword?.type === "maxLength" && (
-                <Typography
-                  sx={{ color: "red", fontSize: "14px", marginTop: "3px" }}
-                >
-                  Confirm Password is greater then 8 characters, Password must
-                  be 8 characters
-                </Typography>
-              )}
+           
             </FormControl>
           </div>
 
