@@ -16,7 +16,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useMutation } from "@tanstack/react-query";
 import getApiPath from "../../utils/getApiPath";
 import { newPasswordFn } from "../../api/handleAPi";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   showErrorMessage,
   showSuccessMessage,
@@ -32,6 +32,8 @@ const NewPassword = ({ role }) => {
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
+ 
+  
   const dispatch = useDispatch();
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
@@ -167,7 +169,6 @@ const handleNewPasswords = (passwords) => {
                 }
                 id="outlined-adornment-password"
                 type={"text"}
-                endAdornment={<InputAdornment position="end"></InputAdornment>}
                 label="Password"
               />
               {errors.password?.type === "required" && (
@@ -288,7 +289,7 @@ const handleNewPasswords = (passwords) => {
           <button
             className="newPassBackButton"
             onClick={() => {
-              openNewPass(false);
+
             }}
           >
             <FontAwesomeIcon icon={faArrowLeft} />

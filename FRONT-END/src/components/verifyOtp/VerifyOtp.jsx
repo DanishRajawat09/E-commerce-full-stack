@@ -20,6 +20,7 @@ const VerifyOtp = ({ role, purpose }) => {
   const inputs = useRef([]);
   const navigate = useNavigate();
   const OTPData = useSelector((state) => state.otp);
+console.log({...OTPData});
 
   useEffect(() => {
     return () => {
@@ -169,6 +170,7 @@ const VerifyOtp = ({ role, purpose }) => {
       return sendOTP(resendOTPRoute, OTPData);
     },
     onSuccess: (res) => {
+
       dispatch(
         showSuccessMessage({
           successMessage: `Resend OTP Successfully On ${

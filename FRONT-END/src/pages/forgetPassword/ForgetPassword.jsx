@@ -40,7 +40,7 @@ const ForgetPassword = ({ role }) => {
         })
       );
 
-      dispatch(addOTPData({email: res.email , contact : res.contact}))
+      dispatch(addOTPData({email: res.email || "" , contact : res.contact || ""}))
     navigate(route) 
     },
     onError: (error) => {

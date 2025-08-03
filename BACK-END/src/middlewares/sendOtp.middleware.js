@@ -26,13 +26,11 @@ const sendOtp = (purpose) =>
       userData.contact = req.body.contact;
     }
     if (ResetPasswordPurposes.includes(purpose)) {
-      if (emailRegex.test(req.body?.emailContact.trim())) {
-        userData.email = req.body?.emailContact.trim();
-      } else if (phoneRegex.test(req.body?.emailContact.trim())) {
-        userData.contact = req.body?.emailContact.trim();
-      } else {
+      if (!req.body?.email && !req.body?.contact) {
         throw new ApiError(422, "Please Enter a Valid Email or Phone Number");
       }
+      userData.email = req.body?.email;
+      userData.contact = req.body?.contact;
     }
 
     if (emailResetPurposes.includes(purpose)) {
@@ -95,7 +93,7 @@ const sendOtp = (purpose) =>
     if (userData.email) console.log("OTP sent to email:", otp);
     if (userData.contact) console.log("OTP sent to contact:", otp);
 
-    req.user = { ...user.toObject(), purpose: purposeOtp , userData : userData};
+    req.user = { ...user.toObject(), purpose: purposeOtp, userData: userData };
     next();
   });
 

@@ -50,7 +50,7 @@ const UserLogin = ({ role }) => {
   const { path, route } = getApiPath({ role: role, purpose: "login" });
   const logInMutation = useMutation({
     mutationFn: (formData) => {
-      logIn(path, formData);
+      return logIn(path, formData);
     },
     onSuccess: async () => {
       dispatch(
