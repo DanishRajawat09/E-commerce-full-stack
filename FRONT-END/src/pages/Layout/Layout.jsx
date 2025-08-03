@@ -7,9 +7,6 @@ import useAutoCloseSidebar from '../../utils/closeSideBar'
 
 const Layout = () => {
   const {isLoggedIn , userData} = useCheckUserLogin()
-
-  console.log(isLoggedIn , userData);
-
   useAutoCloseSidebar()
 
   return (

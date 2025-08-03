@@ -12,7 +12,7 @@ const ResetRouteProtect = ({ role, expectedPurpose, redirectPath }) => {
   }, []);
 
   const validateToken = async () => {
-  console.log(role , expectedPurpose , redirectPath);
+
   
     try {
       const tokenAccess = await checkResetToken(
@@ -20,7 +20,7 @@ const ResetRouteProtect = ({ role, expectedPurpose, redirectPath }) => {
           ? `/api/v1/admin/resettoken?purpose=${expectedPurpose}`
           : `/api/v1/user/resettoken?purpose=${expectedPurpose}`
       );
-      console.log(tokenAccess);
+
 
       if (tokenAccess?.data?.statusCode === 200) {
         setIsValid(true);

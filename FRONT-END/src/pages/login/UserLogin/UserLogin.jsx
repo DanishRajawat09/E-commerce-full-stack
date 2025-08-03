@@ -61,7 +61,6 @@ const UserLogin = ({ role }) => {
       waitForLogin({ queryClient, navigate, route });
     },
     onError: (error) => {
-      console.log(error.response.status);
 
       if (error.response.status === 422) {
         dispatch(

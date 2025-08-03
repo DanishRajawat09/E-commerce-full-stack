@@ -20,7 +20,7 @@ const VerifyOtp = ({ role, purpose }) => {
   const inputs = useRef([]);
   const navigate = useNavigate();
   const OTPData = useSelector((state) => state.otp);
-console.log({...OTPData});
+
 
   useEffect(() => {
     return () => {
@@ -150,7 +150,6 @@ console.log({...OTPData});
   });
 
   const handleOTP = () => {
-    console.log(OTP, OTP.length);
 
     if (!/^\d{6}$/.test(OTP)) {
       dispatch(

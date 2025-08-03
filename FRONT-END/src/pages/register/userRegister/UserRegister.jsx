@@ -129,7 +129,6 @@ const UserRegister = ({ role }) => {
     role: role,
     purpose: "sendotpregister",
   });
-  console.log(path, route);
 
   const sendOTPMutation = useMutation({
     mutationFn: (data) => {
@@ -161,7 +160,6 @@ const UserRegister = ({ role }) => {
       navigate(route);
     },
     onError: (error) => {
-      console.log(error);
       if (error.response?.status === 422) {
         disptach(
           showErrorMessage({

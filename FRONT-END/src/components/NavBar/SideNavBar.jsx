@@ -77,13 +77,13 @@ const SideNavBar = ({ isLoggedIn, user }) => {
   const logoutMutation = useMutation({
     mutationFn: () => logOut(path),
     onSuccess: async (data) => {
-      console.log(data);
+
       queryClient.setQueryData(["me"], null);
       await queryClient.invalidateQueries({ queryKey: ["me"] });
       navigate(route, { replace: true });
     },
     onError: (error) => {
-      console.log(error);
+
     },
   });
 

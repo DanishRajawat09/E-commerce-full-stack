@@ -43,7 +43,6 @@ const Address = ({ role }) => {
       navigate(route);
     },
     onError: (error) => {
-      console.log(error);
       if (error.response?.status === 422) {
         dispatch(showErrorMessage({ errorMessage: "All Fields are Required" }));
       } else if (error.response?.status === 401) {
