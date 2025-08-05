@@ -3,7 +3,6 @@ import ApiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { generateOtp } from "../utils/basicUtils.js";
 import bcrypt from "bcrypt";
-import { emailRegex, phoneRegex } from "../utils/regexValidator.js";
 const sendOtp = (purpose) =>
   asyncHandler(async (req, res, next) => {
     const userData = {};
@@ -34,17 +33,17 @@ const sendOtp = (purpose) =>
     }
 
     if (emailResetPurposes.includes(purpose)) {
-      if (!req.user?.contact) {
-        throw new ApiError(400, "Contact is required to reset email.");
+      if (!req.body.newEmail) {
+        throw new ApiError(400, "New Email is required for Send OTP");
       }
-      userData.contact = req.user.contact;
+      userData.email = req.body.newEmail;
     }
 
     if (contactResetPurposes.includes(purpose)) {
-      if (!req.user?.email) {
-        throw new ApiError(400, "Email is required to reset contact.");
+      if (!req.body.newContact) {
+        throw new ApiError(400, "New Contact is required for Send OTP");
       }
-      userData.email = req.user.email;
+      userData.contact = req.body.newContact;
     }
 
     // Validations
@@ -54,12 +53,12 @@ const sendOtp = (purpose) =>
       }
     }
 
-    if (emailResetPurposes.includes(purpose) && !userData.contact) {
-      throw new ApiError(400, "Contact is required to reset email.");
+    if (emailResetPurposes.includes(purpose) && !userData.email) {
+      throw new ApiError(400, "New Email is required to reset email.");
     }
 
-    if (contactResetPurposes.includes(purpose) && !userData.email) {
-      throw new ApiError(400, "Email is required to reset contact.");
+    if (contactResetPurposes.includes(purpose) && !userData.contact) {
+      throw new ApiError(400, "New Contact is required to reset contact.");
     }
 
     const { otp, expiry } = generateOtp();
@@ -70,7 +69,6 @@ const sendOtp = (purpose) =>
     }
 
     const hashedOtp = await bcrypt.hash(otp, 10);
- 
 
     const user = await User.findOneAndUpdate(
       {

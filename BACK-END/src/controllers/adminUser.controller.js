@@ -64,11 +64,11 @@ const getUserAdminInfo = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Unauthorized Request, login first");
   }
 
-  const user = await User.findOne({_id : userId , isVerified : true})
+  const user = await User.findOne({ _id: userId, isVerified: true })
     .populate("address")
     .populate({
-     path : "profile",
-     select : "-_id -createdAt -updatedAt -__v -user"
+      path: "profile",
+      select: "-_id -createdAt -updatedAt -__v -user",
     })
     .select(
       "-_id -adminProfile -__v -password -otp -otpExpiry -authProvider -role  -refreshToken -createdAt -updatedAt"
@@ -87,24 +87,21 @@ const getUserAdminInfo = asyncHandler(async (req, res) => {
 const registerUser = asyncHandler(async (req, res) => {
   let { email, contact, password, role } = req.body;
 
- 
   email = email?.trim();
   contact = contact?.trim();
   password = password?.trim();
   role = role?.trim() || "user";
 
-  
   if (!email && !contact) {
     throw new ApiError(422, "Email or contact number is required.");
   }
 
-  if (!password || !passwordRegex.test(password) ) {
+  if (!password || !passwordRegex.test(password)) {
     throw new ApiError(
       422,
-       "Password must have at least 8 characters, one uppercase, one lowercase, and one number."
+      "Password must have at least 8 characters, one uppercase, one lowercase, and one number."
     );
   }
-
 
   // Check for verified existing user
   const existingUser = await User.findOne({
@@ -254,8 +251,8 @@ const loginUser = asyncHandler(async (req, res) => {
     );
   }
 
-  if (!password || !passwordRegex.test(password)) {
-    throw new ApiError(422, "Password must have at least 8 characters, one uppercase, one lowercase, and one number.");
+  if (!password) {
+    throw new ApiError(422, "Password is required to log in.");
   }
 
   const user = await User.findOne({
@@ -274,7 +271,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
   if (user.isVerified === false) {
     throw new ApiError(
-      403,
+      401,
       "Your account is not verified yet. Please complete OTP verification."
     );
   }
@@ -352,7 +349,8 @@ const logoutUser = asyncHandler(async (req, res) => {
 });
 
 const handleForgotOtpSent = asyncHandler(async (req, res) => {
-  const { _id, email, purpose, role , userData } = req?.user?.toObject?.() || req.user;
+  const { _id, email, purpose, role, userData } =
+    req?.user?.toObject?.() || req.user;
 
   if (!_id || !email) {
     throw new ApiError(
@@ -378,7 +376,7 @@ const handleForgotOtpSent = asyncHandler(async (req, res) => {
       new ApiResponse(
         200,
         "OTP sent successfully. Please check your email or SMS.",
-        {email : userData.email , contact : userData.contact}
+        { email: userData.email, contact: userData.contact }
       )
     );
 });
@@ -419,9 +417,7 @@ const handleNewPasswordSet = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Unauthorized request. User ID missing.");
   }
 
-  if (
-    !newPassword || !passwordRegex.test(newPassword)
-  ) {
+  if (!newPassword || !passwordRegex.test(newPassword)) {
     throw new ApiError(
       422,
       "Password must have at least 8 characters, one uppercase, one lowercase, and one number."
@@ -448,21 +444,35 @@ const handleNewPasswordSet = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "Password has been successfully updated.", {}));
 });
 
-const handleEmailResetSendOtp = asyncHandler(async (req, res) => {
+const handleEmailChangeSendOtp = asyncHandler(async (req, res) => {
   const { _id, email, purpose, role } = req?.user;
 
+  const newEmail = req.body.newEmail;
+  if (!newEmail) {
+    ApiError(422, "Failed to get new email for generating token.");
+  }
   if (!_id || !email) {
     throw new ApiError(
       500,
       "Failed to retrieve user ID or email to generate reset token."
     );
   }
-  const resetToken = await generateResetToken({ _id, email, purpose, role });
+  if (purpose !== "resetEmail") {
+    throw new ApiError(403, "Invalid purpose for email reset.");
+  }
+
+  const resetToken = await generateResetToken({
+    _id,
+    email,
+    newEmail,
+    purpose,
+    role,
+  });
 
   const resetCookieOptions = cookieOption(ms(JWT_RESET_EXPIRY));
 
   const resetTokenName = await resetTokenNameFunc(role);
-  res
+  return res
     .status(200)
     .cookie(resetTokenName, resetToken, resetCookieOptions)
     .json(
@@ -698,7 +708,7 @@ export {
   handleForgotOtpSent,
   handleForgotOtpVerified,
   handleNewPasswordSet,
-  handleEmailResetSendOtp,
+  handleEmailChangeSendOtp,
   handleEmailResetVerifyOtp,
   handleNewEmailSet,
   handleContactResetSendOtp,

@@ -17,11 +17,15 @@ import {
   handleUpdateAccessToken,
   getUserAdminInfo,
   checkResetToken,
+  handleEmailChangeSendOtp,
 } from "../controllers/adminUser.controller.js";
 import sendOtp from "../middlewares/sendOtp.middleware.js";
 import verifyOtp from "../middlewares/verifyOtp.js";
 import resetJwt from "../middlewares/resetJwtverify.middleware.js";
-import { verifyJwtUser, verifyJwtUserRefresh } from "../middlewares/verifyJwt.middleware.js";
+import {
+  verifyJwtUser,
+  verifyJwtUserRefresh,
+} from "../middlewares/verifyJwt.middleware.js";
 import {
   getProducts,
   productDetail,
@@ -37,6 +41,7 @@ import {
   orderCartProducts,
   orderSoloProduct,
 } from "../controllers/order.controller.js";
+import newEmailVerification from "../middlewares/NewEmailVerification.middleware.js";
 
 const router = Router();
 
@@ -64,20 +69,30 @@ router
   .patch(resetJwt("resetPasswordVerify"), handleNewPasswordSet);
 
 // reset Email
+
 router
-  .route("/email/reset/send-otp")
-  .post(verifyJwtUser, sendOtp("resetEmail"), handleEmailResetSendOtp);
-router
-  .route("/email/reset/verify-otp")
+  .route("/email-change/send-otp")
   .post(
     verifyJwtUser,
-    resetJwt("resetEmail"),
-    verifyOtp,
-    handleEmailResetVerifyOtp
+    newEmailVerification,
+    sendOtp("resetEmail"),
+    handleEmailChangeSendOtp
   );
-router
-  .route("/email/reset")
-  .patch(verifyJwtUser, resetJwt("resetEmailVerify"), handleNewEmailSet);
+
+// router
+//   .route("/email/reset/send-otp")
+//   .post(verifyJwtUser, sendOtp("resetEmail"), handleEmailResetSendOtp);
+// router
+//   .route("/email/reset/verify-otp")
+//   .post(
+//     verifyJwtUser,
+//     resetJwt("resetEmail"),
+//     verifyOtp,
+//     handleEmailResetVerifyOtp
+//   );
+// router
+//   .route("/email/reset")
+//   .patch(verifyJwtUser, resetJwt("resetEmailVerify"), handleNewEmailSet);
 
 // reset contact
 router
@@ -100,9 +115,8 @@ router
   .route("/update/auth-tokens")
   .patch(verifyJwtUserRefresh, handleUpdateAccessToken);
 
-
 //check resetToken
-router.route("/resettoken").get(checkResetToken)
+router.route("/resettoken").get(checkResetToken);
 // get all products
 router.route("/products").get(verifyJwtUser, getProducts);
 router.route("/product/detail/:productId").get(verifyJwtUser, productDetail);
