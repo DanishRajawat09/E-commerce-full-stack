@@ -26,6 +26,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { persistor } from "./store/store.js";
 import ProtectedRoute from "./components/protactedRoute/ProtectedRoute.jsx";
 import SnackBar from "./components/SnackBar.jsx";
+import ChangeEmail from "./pages/changeEmail/ChangeEmail.jsx";
 // import { useEffect } from "react";
 // const router = createBrowserRouter(
 //   createRoutesFromElements(
@@ -71,6 +72,14 @@ function App() {
               <Route path="shop" element={<CasualPage />} />
             </Route>
             <Route path="cart" element={<Cart />} />
+            <Route
+              path="/change-email"
+              element={
+                <ProtectedRoute>
+                  <ChangeEmail />
+                </ProtectedRoute>
+              }
+            />
           </Route>
 
           {/* ---------- Auth Routes ---------- */}

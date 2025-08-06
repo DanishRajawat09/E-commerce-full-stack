@@ -113,7 +113,7 @@ const Navbar = ({ user, isLoggedIn }) => {
               </li>
               <li>
                 <NavLink
-                  to={"/user/address"}
+                  to={"/change-email"}
                   className={({ isActive }) =>
                     `shop ${isActive && `navTextColor`}`
                   }
