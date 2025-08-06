@@ -3,14 +3,14 @@ import {
   afterSend,
   afterVerify,
   handleContactResetSendOtp,
-  handleEmailResetSendOtp,
+  // handleEmailResetSendOtp,
   handleForgotOtpSent,
   handleForgotOtpVerified,
   handleNewContactSet,
-  handleNewEmailSet,
+  // handleNewEmailSet,
   handleNewPasswordSet,
   handleContactResetVerifyOtp,
-  handleEmailResetVerifyOtp,
+  // handleEmailResetVerifyOtp,
   loginUser,
   logoutUser,
   registerUser,
@@ -19,7 +19,11 @@ import {
 } from "../controllers/adminUser.controller.js";
 import sendOtp from "../middlewares/sendOtp.middleware.js";
 import resetJwt from "../middlewares/resetJwtverify.middleware.js";
-import { verifyJwtAdmin, verifyJwtAdminRefresh, verifyJwtUserRefresh } from "../middlewares/verifyJwt.middleware.js";
+import {
+  verifyJwtAdmin,
+  verifyJwtAdminRefresh,
+  verifyJwtUserRefresh,
+} from "../middlewares/verifyJwt.middleware.js";
 import isAdmin from "../middlewares/isAdmin.middleware.js";
 import verifyOtp from "../middlewares/verifyOtp.js";
 import {
@@ -67,35 +71,29 @@ router
 
 // reset email
 
-router
-  .route("/email/reset/send-otp")
-  .post(
-    verifyJwtAdmin,
-    isAdmin,
-    CheckAdminProfile,
-    sendOtp("resetAdminEmail"),
-    handleEmailResetSendOtp
-  );
-router
-  .route("/email/reset/verify-otp")
-  .post(
-    verifyJwtAdmin,
-    isAdmin,
-    CheckAdminProfile,
-    resetJwt("resetAdminEmail"),
-    verifyOtp,
-    handleEmailResetVerifyOtp
-  );
+router.route("/email/reset/send-otp").post(
+  verifyJwtAdmin,
+  isAdmin,
+  CheckAdminProfile,
+  sendOtp("resetAdminEmail")
+  // handleEmailResetSendOtp
+);
+router.route("/email/reset/verify-otp").post(
+  verifyJwtAdmin,
+  isAdmin,
+  CheckAdminProfile,
+  resetJwt("resetAdminEmail"),
+  verifyOtp
+  // handleEmailResetVerifyOtp
+);
 
-router
-  .route("/new-email")
-  .patch(
-    verifyJwtAdmin,
-    isAdmin,
-    CheckAdminProfile,
-    resetJwt("resetAdminEmailVerify"),
-    handleNewEmailSet
-  );
+router.route("/new-email").patch(
+  verifyJwtAdmin,
+  isAdmin,
+  CheckAdminProfile,
+  resetJwt("resetAdminEmailVerify")
+  // handleNewEmailSet
+);
 
 // resetContact
 
@@ -134,25 +132,41 @@ router
   .route("/update/auth-token")
   .patch(verifyJwtAdminRefresh, handleUpdateAccessToken);
 
-  //check resetToken
-router.route("/resettoken").get(checkResetToken)
+//check resetToken
+router.route("/resettoken").get(checkResetToken);
 // admin products contol
 router
   .route("/product/add")
-  .post(verifyJwtAdmin, isAdmin,CheckAdminProfile, upload.array("images", 3), addProducts);
+  .post(
+    verifyJwtAdmin,
+    isAdmin,
+    CheckAdminProfile,
+    upload.array("images", 3),
+    addProducts
+  );
 router
   .route("/product/delete/:productId")
-  .delete(verifyJwtAdmin, isAdmin,CheckAdminProfile, deleteProduct);
+  .delete(verifyJwtAdmin, isAdmin, CheckAdminProfile, deleteProduct);
 router
   .route("/product/update/:productId")
-  .put(verifyJwtAdmin, isAdmin,CheckAdminProfile, upload.array("images", 3), updateProduct);
-router.route("/product").get(verifyJwtAdmin, isAdmin,CheckAdminProfile, getAdminProducts);
+  .put(
+    verifyJwtAdmin,
+    isAdmin,
+    CheckAdminProfile,
+    upload.array("images", 3),
+    updateProduct
+  );
+router
+  .route("/product")
+  .get(verifyJwtAdmin, isAdmin, CheckAdminProfile, getAdminProducts);
 
 // order
 
-router.route("/order").get(verifyJwtAdmin, isAdmin,CheckAdminProfile, orderDetailsAdmin);
+router
+  .route("/order")
+  .get(verifyJwtAdmin, isAdmin, CheckAdminProfile, orderDetailsAdmin);
 router
   .route("/order/status/:productId")
-  .patch(verifyJwtAdmin, isAdmin,CheckAdminProfile, editOrderDetails);
+  .patch(verifyJwtAdmin, isAdmin, CheckAdminProfile, editOrderDetails);
 
 export default router;

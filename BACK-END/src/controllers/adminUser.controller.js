@@ -483,7 +483,7 @@ const handleEmailChangeSendOtp = asyncHandler(async (req, res) => {
       )
     );
 });
-const handleEmailResetVerifyOtp = asyncHandler(async (req, res) => {
+const handleEmailchangeVerifyOtp = asyncHandler(async (req, res) => {
   const user = req.user;
   const newEmail = req.newEmail;
   if (!newEmail) {
@@ -712,7 +712,7 @@ export {
   handleForgotOtpVerified,
   handleNewPasswordSet,
   handleEmailChangeSendOtp,
-  handleEmailResetVerifyOtp,
+  handleEmailchangeVerifyOtp,
   handleContactResetSendOtp,
   handleContactResetVerifyOtp,
   handleNewContactSet,

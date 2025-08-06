@@ -1,7 +1,7 @@
-import { User } from "../models/user.models";
-import ApiError from "../utils/apiError";
-import asyncHandler from "../utils/asyncHandler";
-import { emailRegex } from "../utils/regexValidator";
+import { User } from "../models/user.models.js";
+import ApiError from "../utils/apiError.js";
+import asyncHandler from "../utils/asyncHandler.js";
+import { emailRegex } from "../utils/regexValidator.js";
 
 const newEmailVerification = asyncHandler(async (req, res, next) => {
   const currentPassword = req.body.currentPassword;

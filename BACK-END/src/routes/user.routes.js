@@ -8,7 +8,6 @@ import {
   handleForgotOtpSent,
   handleForgotOtpVerified,
   handleNewPasswordSet,
-  handleEmailResetVerifyOtp,
   handleContactResetSendOtp,
   handleContactResetVerifyOtp,
   handleNewContactSet,
@@ -16,6 +15,7 @@ import {
   getUserAdminInfo,
   checkResetToken,
   handleEmailChangeSendOtp,
+  handleEmailchangeVerifyOtp,
 } from "../controllers/adminUser.controller.js";
 import sendOtp from "../middlewares/sendOtp.middleware.js";
 import verifyOtp from "../middlewares/verifyOtp.js";
@@ -78,7 +78,7 @@ router
   );
 router
   .route("/email-change/verify-otp")
-  .post(resetJwt("resetEmail"), verifyOtp, handleEmailResetVerifyOtp);
+  .post(resetJwt("resetEmail"), verifyOtp, handleEmailchangeVerifyOtp);
 // reset contact
 router
   .route("/contact/reset/send-otp")

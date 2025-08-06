@@ -3,6 +3,7 @@ import ApiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { generateOtp } from "../utils/basicUtils.js";
 import bcrypt from "bcrypt";
+import { emailRegex, phoneRegex } from "../utils/regexValidator.js";
 const sendOtp = (purpose) =>
   asyncHandler(async (req, res, next) => {
     const userData = {};
@@ -25,11 +26,13 @@ const sendOtp = (purpose) =>
       userData.contact = req.body.contact;
     }
     if (ResetPasswordPurposes.includes(purpose)) {
-      if (!req.body?.email && !req.body?.contact) {
+      if (emailRegex.test(req.body.emailContact)) {
+        userData.email = req.body.emailContact;
+      } else if (phoneRegex.test(req.body.emailContact)) {
+        userData.contact = req.body.emailContact;
+      } else {
         throw new ApiError(422, "Please Enter a Valid Email or Phone Number");
       }
-      userData.email = req.body?.email;
-      userData.contact = req.body?.contact;
     }
 
     if (emailResetPurposes.includes(purpose)) {
