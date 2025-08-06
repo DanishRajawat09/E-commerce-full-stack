@@ -8,9 +8,7 @@ import {
   handleForgotOtpSent,
   handleForgotOtpVerified,
   handleNewPasswordSet,
-  handleEmailResetSendOtp,
   handleEmailResetVerifyOtp,
-  handleNewEmailSet,
   handleContactResetSendOtp,
   handleContactResetVerifyOtp,
   handleNewContactSet,
@@ -78,22 +76,9 @@ router
     sendOtp("resetEmail"),
     handleEmailChangeSendOtp
   );
-
-// router
-//   .route("/email/reset/send-otp")
-//   .post(verifyJwtUser, sendOtp("resetEmail"), handleEmailResetSendOtp);
-// router
-//   .route("/email/reset/verify-otp")
-//   .post(
-//     verifyJwtUser,
-//     resetJwt("resetEmail"),
-//     verifyOtp,
-//     handleEmailResetVerifyOtp
-//   );
-// router
-//   .route("/email/reset")
-//   .patch(verifyJwtUser, resetJwt("resetEmailVerify"), handleNewEmailSet);
-
+router
+  .route("/email-change/verify-otp")
+  .post(resetJwt("resetEmail"), verifyOtp, handleEmailResetVerifyOtp);
 // reset contact
 router
   .route("/contact/reset/send-otp")

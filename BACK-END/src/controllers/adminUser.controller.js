@@ -485,11 +485,14 @@ const handleEmailChangeSendOtp = asyncHandler(async (req, res) => {
 });
 const handleEmailResetVerifyOtp = asyncHandler(async (req, res) => {
   const user = req.user;
-
+  const newEmail = req.newEmail;
+  if (!newEmail) {
+    throw new ApiError(422, "Failed to get new email for Send to DB");
+  }
   if (!user) {
     throw new ApiError(401, "User not found during email reset verification.");
   }
-
+  user.email = newEmail
   user.otp = null;
   user.otpExpiry = null;
   await user.save({ validateBeforeSave: false });
@@ -506,54 +509,54 @@ const handleEmailResetVerifyOtp = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "OTP verified successfully. Reset token set."));
 });
 
-const handleNewEmailSet = asyncHandler(async (req, res) => {
-  const { newEmail } = req.body;
+// const handleNewEmailSet = asyncHandler(async (req, res) => {
+//   const { newEmail } = req.body;
 
-  if (!newEmail) {
-    throw new ApiError(400, "Please enter a new email address.");
-  }
+//   if (!newEmail) {
+//     throw new ApiError(400, "Please enter a new email address.");
+//   }
 
-  const user = req.user;
+//   const user = req.user;
 
-  if (!user) {
-    throw new ApiError(401, "Unauthorized request. Please try again.");
-  }
+//   if (!user) {
+//     throw new ApiError(401, "Unauthorized request. Please try again.");
+//   }
 
-  if (user.email === newEmail) {
-    throw new ApiError(
-      400,
-      "New email must be different from the current one."
-    );
-  }
-  const existingEmail = await User.findOne({ email: newEmail });
+//   if (user.email === newEmail) {
+//     throw new ApiError(
+//       400,
+//       "New email must be different from the current one."
+//     );
+//   }
+//   const existingEmail = await User.findOne({ email: newEmail });
 
-  if (existingEmail) {
-    throw new ApiError(
-      400,
-      `email already exist for ${existingEmail.role} try again`
-    );
-  }
+//   if (existingEmail) {
+//     throw new ApiError(
+//       400,
+//       `email already exist for ${existingEmail.role} try again`
+//     );
+//   }
 
-  const updatedUser = await User.findByIdAndUpdate(
-    { _id: user._id, role: user.role },
-    { email: newEmail },
-    { new: true }
-  );
+//   const updatedUser = await User.findByIdAndUpdate(
+//     { _id: user._id, role: user.role },
+//     { email: newEmail },
+//     { new: true }
+//   );
 
-  if (!updatedUser) {
-    throw new ApiError(404, "User not found or unauthorized request.");
-  }
+//   if (!updatedUser) {
+//     throw new ApiError(404, "User not found or unauthorized request.");
+//   }
 
-  const resetTokenName = await resetTokenNameFunc(user.role);
-  const resetCookieOptions = cookieOption(ms(JWT_RESET_EXPIRY), "strict");
+//   const resetTokenName = await resetTokenNameFunc(user.role);
+//   const resetCookieOptions = cookieOption(ms(JWT_RESET_EXPIRY), "strict");
 
-  res
-    .status(200)
-    .clearCookie(resetTokenName, resetCookieOptions)
-    .json(
-      new ApiResponse(200, "Email updated successfully.", updatedUser.email)
-    );
-});
+//   res
+//     .status(200)
+//     .clearCookie(resetTokenName, resetCookieOptions)
+//     .json(
+//       new ApiResponse(200, "Email updated successfully.", updatedUser.email)
+//     );
+// });
 
 const handleContactResetSendOtp = asyncHandler(async (req, res) => {
   const { _id, email, purpose, role } = req?.user;
@@ -710,7 +713,6 @@ export {
   handleNewPasswordSet,
   handleEmailChangeSendOtp,
   handleEmailResetVerifyOtp,
-  handleNewEmailSet,
   handleContactResetSendOtp,
   handleContactResetVerifyOtp,
   handleNewContactSet,

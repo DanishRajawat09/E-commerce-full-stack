@@ -39,6 +39,10 @@ const resetJwt = (expectedPurpose = "") =>
       throw new ApiError(404, "User associated with this token was not found.");
     }
 
+    if (expectedPurpose === "resetEmail") {
+      req.newEmail = decoded.newEmail;
+    }
+
     req.user = user;
 
     next();
