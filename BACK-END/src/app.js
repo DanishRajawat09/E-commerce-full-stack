@@ -6,7 +6,7 @@ import userRouter from "./routes/user.routes.js";
 import profileRouter from "./routes/profile.routes.js";
 import addressRouter from "./routes/address.routes.js";
 import adminRouter from "./routes/admin.routes.js";
-import adminProfileRouter from "./routes/adminProfile.routes.js"
+import adminProfileRouter from "./routes/adminProfile.routes.js";
 const app = express();
 // middlewares
 app.use(express.json({ limit: "16kb" }));
