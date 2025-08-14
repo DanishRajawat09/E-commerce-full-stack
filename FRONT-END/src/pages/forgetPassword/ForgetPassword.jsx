@@ -10,7 +10,10 @@ import Typography from "@mui/material/Typography";
 import { useMutation } from "@tanstack/react-query";
 import { forgotPassword } from "../../api/handleAPi";
 import { useDispatch } from "react-redux";
-import { showErrorMessage, showSuccessMessage } from "../../features/snackbarSlice";
+import {
+  showErrorMessage,
+  showSuccessMessage,
+} from "../../features/snackbarSlice";
 import getApiPath from "../../utils/getApiPath";
 import { addOTPData } from "../../features/resendOTP";
 import Box from "@mui/material/Box";
@@ -24,56 +27,57 @@ const ForgetPassword = ({ role }) => {
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
-   const {path , route} = getApiPath({role : role , purpose : "forgotpassword"})
+  const { path, route } = getApiPath({ role: role, purpose: "forgotpassword" });
   const forgotPasswordMutation = useMutation({
     mutationFn: (formData) => {
-   
       return forgotPassword(path, formData);
     },
     onSuccess: (res) => {
       dispatch(
         showSuccessMessage({
           successMessage: `OTP Send to Your ${
-            (res.email && "email") ||
-            (res.contact && "contact")
+            (res.email && "email") || (res.contact && "contact")
           } `,
         })
       );
 
-      dispatch(addOTPData({email: res.email || "" , contact : res.contact || ""}))
-    navigate(route) 
+      dispatch(
+        addOTPData({ email: res.email || "", contact: res.contact || "" })
+      );
+      navigate(route);
     },
     onError: (error) => {
-    if (error.response?.status === 422) {
-           dispatch(
-             showErrorMessage({
-               errorMessage:
-                 "Unauthorized Request or Unable to retrieve information",
-               open: true,
-             })
-           );
-         } else if (error.response?.status === 404) {
-           dispatch(
-             showErrorMessage({
-               errorMessage: `${role.toUpperCase()} Not Found`,
-               open: true,
-             })
-           );
-         } else if (error.response?.status === 400) {
-           dispatch(
-             showErrorMessage({
-               errorMessage: "Credentials did'nt Send Properly",
-               open: true,
-             })
-           );
-         } else {
-           dispatch(
-             showErrorMessage({
-               errorMessage: "Something went wrong while sending OTP. Please try again.",
-               open: true,
-             })
-           );
-         }
+      if (error.response?.status === 422) {
+        dispatch(
+          showErrorMessage({
+            errorMessage:
+              "Unauthorized Request or Unable to retrieve information",
+            open: true,
+          })
+        );
+      } else if (error.response?.status === 404) {
+        dispatch(
+          showErrorMessage({
+            errorMessage: `${role.toUpperCase()} Not Found`,
+            open: true,
+          })
+        );
+      } else if (error.response?.status === 400) {
+        dispatch(
+          showErrorMessage({
+            errorMessage: "Credentials did'nt Send Properly",
+            open: true,
+          })
+        );
+      } else {
+        dispatch(
+          showErrorMessage({
+            errorMessage:
+              "Something went wrong while sending OTP. Please try again.",
+            open: true,
+          })
+        );
+      }
     },
   });
 
@@ -156,7 +160,9 @@ const ForgetPassword = ({ role }) => {
                   ? "forgetSubmitButtonAdmin"
                   : "forgetSubmitButton"
               }
-              disabled={forgotPasswordMutation.isPending && forgotPasswordMutation }
+              disabled={
+                forgotPasswordMutation.isPending && forgotPasswordMutation
+              }
             >
               {forgotPasswordMutation.isPending && forgotPasswordMutation ? (
                 <Box sx={{ display: "flex", justifyContent: "center" }}>

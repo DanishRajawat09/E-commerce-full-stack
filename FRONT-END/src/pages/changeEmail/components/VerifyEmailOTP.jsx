@@ -92,8 +92,7 @@ const VerifyEmailOTP = () => {
                 Didn’t receive the code?{" "}
                 <span
                   className={"otpResendLink"}
-                  // disabled={resendMutation.isLoading}
-                  // onClick={() => resendMutation.mutate(OTPData)}
+                
                 >
                   Resend
                 </span>
