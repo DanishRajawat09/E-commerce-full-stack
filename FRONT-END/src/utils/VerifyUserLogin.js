@@ -14,9 +14,9 @@ const useCheckUserLogin = () => {
     retry: false,
     refetchOnMount: true,
     refetchOnWindowFocus: false,
-    staleTime: Infinity, // ✅ Don't mark data stale unless you say so
-    enabled: true, // ✅ Always run on mount
+    staleTime:0 , // ✅ Don't mark data stale unless you say so
   });
+console.log(userData);
 
   return {
     userData,

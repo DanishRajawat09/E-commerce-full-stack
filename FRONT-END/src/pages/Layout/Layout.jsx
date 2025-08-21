@@ -9,6 +9,7 @@ import AccountSideBar from '../../components/accountSideBar/AccountSideBar'
 const Layout = () => {
   const {isLoggedIn , userData} = useCheckUserLogin()
   useAutoCloseSidebar()
+console.log(userData);
 
   return (
     <>

@@ -94,6 +94,7 @@ const VerifyOtp = ({ role, purpose }) => {
 
         return Promise.reject("Invalid OTP purpose.");
       }
+console.log(path , route);
 
       return verifyOTP(path, formData);
     },

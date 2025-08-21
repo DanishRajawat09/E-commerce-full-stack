@@ -1,7 +1,7 @@
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useNavigate } from "react-router-dom";
-import Input from "../../components/input/Input";
+
 import "./address.css";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
