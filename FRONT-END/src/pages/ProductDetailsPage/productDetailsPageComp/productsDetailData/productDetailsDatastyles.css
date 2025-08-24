@@ -101,6 +101,9 @@
 .addToCartArea {
     gap: 20px;
 }
+.addToCartArea .link {
+    margin-bottom: 0px;
+}
 
 .addToCartBtn {
     background-color: var(--black);
@@ -114,7 +117,7 @@
 
 }
 
-.link {
+.addToCartArea .link , .sizeArea .link {
     flex-grow: 1;
     text-decoration: none;
 }

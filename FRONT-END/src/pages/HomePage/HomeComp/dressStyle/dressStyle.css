@@ -78,6 +78,15 @@ background-size: 400px;
 }
 
 @media screen and (width < 680px) {
+    .casual{
+   
+  grid-area: casual;
+  background-image: url("casual.png");
+  
+ 
+  background-position: left left;
+  background-size: 600px;
+}
     .formal{
         grid-area: formal;
         background-image: url("formal.png");

@@ -1,48 +1,19 @@
-.side-nav-bar-screen{
-    width: 100vw;
-    height: 100vh;
-    background-color: transparent;
-    position: fixed;
-    top: 0;
-    bottom: 0;
-z-index: 50;
-}
-
 .sideNav{
     width: 60%;
     height: 100vh;
     background-color: white;
-    position: absolute;
-    z-index:100;
-    padding-inline: 10px;
-    padding-block: 20px;
+    position: fixed;
+    z-index: 10;
+    padding: 20px;
     display: block;
     visibility: visible;
-    translate: 0%;
-    transition: all linear 0.5s ;
-    -webkit-transition: all linear 0.5s ;
-    -moz-transition: all linear 0.5s ;
-    -ms-transition: all linear 0.5s ;
-    -o-transition: all linear 0.5s ;
-}
-.sideNavBarLink{
-    color: black;
-    text-decoration: none;
-}
 
+}
 .topArea{
-   padding-inline: 20px;
-   padding-block: 10px;
-    margin-bottom: 10px;
-position: relative;
-}
-#sideNavTitle{
-    /* text-align: center; */
-margin-top: 20px;
-font-size: 26px;
-}
-#sideNavSubHeading{
-font-size: 14px;   
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+
 }
 .topArea .icon{
     font-size: 32px;
@@ -67,19 +38,11 @@ font-size: 14px;
 .discard{
     visibility: hidden;
     display: none;
-    transform:translate(-100%) ;
-    -webkit-transform:translate(-100%) ;
-    -moz-transform:translate(-100%) ;
-    -ms-transform:translate(-100%) ;
-    -o-transform:translate(-100%) ;
 }
 
 
 @media screen and (width > 630px) {
     .sideNav{
-        display: none;
-    }
-    .side-nav-bar-screen{
         display: none;
     }
 }
@@ -91,15 +54,4 @@ font-size: 14px;
         width: 30px;
     }
     .sideBarNav{font-size: 14px;}
-    #sideNavTitle{
-    /* text-align: center; */
-margin-top: 20px;
-font-size: 20px;
-}
-.topArea{
-   padding-inline: 10px;
-   padding-block: 10px;
-    margin-bottom: 10px;
-position: relative;
-}
 }

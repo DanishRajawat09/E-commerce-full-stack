@@ -1,6 +1,6 @@
 .brandSection{
     background-color: var(--black);
-   
+   overflow: hidden;
 }
 .brandContainer{
     
@@ -10,6 +10,7 @@ flex-wrap: wrap;
 align-items: center;
 padding: 44px 0px;
 gap: 20px; 
+overflow: hidden;
 }
 
 @media screen and (width < 550px) {

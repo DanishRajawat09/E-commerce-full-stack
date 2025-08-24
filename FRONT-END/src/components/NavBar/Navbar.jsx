@@ -1,247 +1,60 @@
-/* eslint-disable react/prop-types */
-import "./navbar.css";
-import { isOpen } from "../../features/stateSlice";
-import { useDispatch } from "react-redux";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { logOut } from "../../api/handleAPi";
-import Box from "@mui/material/Box";
-import Avatar from "@mui/material/Avatar";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import Logout from "@mui/icons-material/Logout";
-import Login from "@mui/icons-material/Login";
-import getApiPath from "../../utils/getApiPath";
-import { openAccountBar } from "../../features/accountBarSlice";
+import React, { useState } from 'react'
+import "./navbar.css"
+import Headline from './Headline'
+import SideNavBar from './SideNavBar'
+import { isOpen } from '../../features/stateSlice'
+import { useDispatch,  } from 'react-redux'
+import { NavLink } from 'react-router-dom'
+const Navbar = () => {
 
-const Navbar = ({ user, isLoggedIn }) => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+    const dispatch = useDispatch()
 
-  const useScrollLock = (lock = false) => {
-    useEffect(() => {
-      const scrollbarWidth =
-        window.innerWidth - document.documentElement.clientWidth;
+    const handleSideNav =  () => {
+            dispatch(isOpen({open : true}))
+    }
 
-      if (lock) {
-        document.body.style.overflow = "hidden";
-        document.body.style.position = "relative";
-        document.body.style.paddingRight = `${scrollbarWidth}px`;
+    return (
+        <header className='navHeader'>
+            
+            <div className='container  '>
+                <div className="flexContainer navData">
+                    <div className='navLogo flexContainer'>
+                        <img className='menuBar' src="burger.png" alt="menuBar" onClick={handleSideNav} />
+                        <h1 className='icon'>shop.co</h1>
+                    </div>
+                    <nav className="navigation">
 
-        // Mobile fixes
-        document.documentElement.style.overflow = "hidden";
-        document.documentElement.style.position = "relative";
-      } else {
-        document.body.style.overflow = "";
-        document.body.style.position = "";
-        document.body.style.paddingRight = "";
+                        <ul className='flexContainer'>
+                            <li>
+                                <NavLink to={"/"} className={({isActive})=>`shop ${isActive && `navTextColor`}`}>Home</NavLink>
+                                </li>
+                                <li>
+                                <NavLink to={'/shop'} className={({isActive})=>`shop ${isActive && `navTextColor`}`}>Products</NavLink>
+                                </li>
+                               
+                               
+                           
+                        </ul>
 
-        document.documentElement.style.overflow = "";
-        document.documentElement.style.position = "";
-      }
+                    </nav>
+                    <div className="searchBar">
+                        <div className='userInput flexContainer'>
+                            <img src="Search.png" alt="searchIcon" />
+                            <input type="text" className='searchInput' placeholder='Search for Products...' />
 
-      return () => {
-        document.body.style.overflow = "";
-        document.body.style.position = "";
-        document.body.style.paddingRight = "";
-
-        document.documentElement.style.overflow = "";
-        document.documentElement.style.position = "";
-      };
-    }, [lock]);
-  };
-
-  useScrollLock(open);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const queryClient = useQueryClient();
-
-  const { path, route } = getApiPath({ role: "user", purpose: "logout" });
-  const logoutMutation = useMutation({
-    mutationFn: () => logOut(path),
-    onSuccess: async () => {
-      queryClient.setQueryData(["me"], null);
-      await queryClient.invalidateQueries({ queryKey: ["me"] });
-      navigate(route, { replace: true });
-    },
-    onError: (error) => {
-      console.log(error);
-    },
-  });
-
-  const handleSideNav = () => {
-    dispatch(isOpen({ open: true }));
-  };
-
-  return (
-    <header className="navHeader">
-      <div className="container  ">
-        <div className="flexContainer navData">
-          <div className="navLogo flexContainer">
-            <img
-              className="menuBar"
-              src="burger.png"
-              alt="menuBar"
-              onClick={handleSideNav}
-            />
-            <h1 className="icon">shop.co</h1>
-          </div>
-          <nav className="navigation">
-            <ul className="flexContainer">
-              <li>
-                <NavLink
-                  to={"/"}
-                  className={({ isActive }) =>
-                    `shop ${isActive && `navTextColor`}`
-                  }
-                >
-                  Home
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to={"/change-email"}
-                  className={({ isActive }) =>
-                    `shop ${isActive && `navTextColor`}`
-                  }
-                >
-                  Products
-                </NavLink>
-              </li>
-            </ul>
-          </nav>
-          <div className="searchBar">
-            <div className="userInput flexContainer">
-              <img src="Search.png" alt="searchIcon" />
-              <input
-                type="text"
-                className="searchInput"
-                placeholder="Search for Products..."
-              />
+                        </div>
+                    </div>
+                    <div className="cartIdIcon">
+                        <img className='searchIcon' src="search2.png" alt="searchIcon" />
+                     <NavLink to={"/cart"}>
+                     <img src="cart.png" alt="CartIcon" />
+                     </NavLink>
+                        <img src="id.png" alt="IdIcon" />
+                    </div>
+                </div>
             </div>
-          </div>
-          <div className="cartIdIcon">
-            <img className="searchIcon" src="search2.png" alt="searchIcon" />
-            <NavLink to={"/cart"}>
-              <img src="cart.png" alt="CartIcon" />
-            </NavLink>
-            <div className="loginZone">
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  textAlign: "center",
-                }}
-              >
-                <Tooltip title="Account settings">
-                  <IconButton
-                    onClick={handleClick}
-                    size="small"
-                    sx={{ ml: 2 }}
-                    aria-controls={open ? "account-menu" : undefined}
-                    aria-haspopup="true"
-                    aria-expanded={open ? "true" : undefined}
-                  >
-                    <Avatar
-                      sx={{ width: 32, height: 32 }}
-                      src={
-                        isLoggedIn
-                          ? user?.profile?.avatar?.url
-                          : "/broken-image.svg"
-                      }
-                    ></Avatar>
-                  </IconButton>
-                </Tooltip>
-              </Box>
+        </header>
+    )
+}
 
-              <Menu
-                anchorEl={anchorEl}
-                id="account-menu"
-                open={open}
-                onClose={handleClose}
-                onClick={handleClose}
-                slotProps={{
-                  paper: {
-                    elevation: 0,
-                    sx: {
-                      overflow: "visible",
-                      filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                      mt: 1.5,
-                      "& .MuiAvatar-root": {
-                        width: 32,
-                        height: 32,
-                        ml: -0.5,
-                        mr: 1,
-                      },
-                      "&::before": {
-                        content: '""',
-                        display: "block",
-                        position: "absolute",
-                        top: 0,
-                        right: 14,
-                        width: 10,
-                        height: 10,
-                        bgcolor: "background.paper",
-                        transform: "translateY(-50%) rotate(45deg)",
-                        zIndex: 0,
-                      },
-                    },
-                  },
-                }}
-                transformOrigin={{ horizontal: "right", vertical: "top" }}
-                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-              >
-                {isLoggedIn ? (
-                  <>
-                    <MenuItem onClick={() =>{ handleClose() ,setTimeout(() => {
-                       dispatch(openAccountBar())
-                    }, 50);}}>
-                      <Avatar src={user.profile?.avatar?.url} /> My account
-                    </MenuItem>
-                    <Divider />
-                    <MenuItem
-                      onClick={() => {
-                        handleClose(), logoutMutation.mutate();
-                      }}
-                    >
-                      <ListItemIcon>
-                        <Logout fontSize="small" />
-                      </ListItemIcon>
-                      Logout
-                    </MenuItem>
-                  </>
-                ) : (
-                  <>
-                    <Link to={"/user/login"} className="LoginNavBarLink">
-                      <MenuItem onClick={handleClose}>
-                        <ListItemIcon>
-                          <Login fontSize="small" />
-                        </ListItemIcon>
-                        LogIn
-                      </MenuItem>
-                    </Link>
-                  </>
-                )}
-              </Menu>
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
-  );
-};
-
-export default Navbar;
+export default Navbar

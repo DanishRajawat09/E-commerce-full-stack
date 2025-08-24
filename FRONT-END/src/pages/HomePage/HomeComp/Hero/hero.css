@@ -5,6 +5,7 @@
 }
 .heroSection .heroContainer{
     padding-bottom: 0px;
+
 }
 .btn{
     background-color: var(--black);
@@ -148,7 +149,7 @@
     
     }
     .heroContent{
-        padding-top: 60px;
+        padding-top: 40px;
         padding-bottom:0px;
     }
     .heroHeading{

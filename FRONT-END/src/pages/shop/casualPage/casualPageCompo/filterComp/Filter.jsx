@@ -8,10 +8,11 @@ import{ filterOpen} from "../../../../../features/stateSlice"
 const Filter = () => {
     const [slctSize , setSize] = useState("")
     const [rangeVal, setRangeVal] = useState(0)
-    const {filOpen} = useSelector((state) => state.sideBarState)
+    const openFilter = useSelector((state) => state.state.filOpen)
+    console.log(openFilter)
     const dispatch = useDispatch()
     return (
-        <aside className={filOpen ? " filterSection show" : "filterSection"}>
+        <aside className={openFilter ? " filterSection show" : "filterSection"}>
             <div className="filterHeadingArea flexContainer">
                 <h2 className='filterHeadings'>Filters</h2>
                 <img className='filterArrowLeft'  onClick={() => { dispatch(filterOpen({filOpen : false}))}} width={30} height={30} src="arrowLeft.svg" alt="arrow" />
@@ -28,8 +29,8 @@ const Filter = () => {
             <div className="filterHeadingArea flexContainer">
                 <h2 className='filterHeadings'>Price</h2>
             </div>
-            <div className="rangeContainer">
-                <input type="range" className="customRange" min={100} max={10000}
+            <div class="rangeContainer">
+                <input type="range" class="customRange" min={100} max={10000}
                     onChange={(e) => setRangeVal(e.target.value)} />
                 <p className='rangeValue'>${rangeVal}</p>
             </div>

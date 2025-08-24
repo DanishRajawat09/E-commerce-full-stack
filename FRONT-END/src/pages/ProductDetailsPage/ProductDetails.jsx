@@ -1,4 +1,4 @@
-
+import React from 'react'
 import ProductDetailsData from "../ProductDetailsPage/productDetailsPageComp/productsDetailData/ProductDetailsData"
 import { productsPageData } from '../../api/HomePageProducts'
 import ProductInfo from "../ProductDetailsPage/productDetailsPageComp/productInformation/ProductInfo"
