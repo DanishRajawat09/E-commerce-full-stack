@@ -1,69 +1,159 @@
-@import url('https://fonts.googleapis.com/css2?family=Candal&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@font-face {
+  font-family: "IntegralCF";
+  src: url("./assets/fonts/IntegralCF/FONTSPRINGDEMO-IntegralCFRegular.woff")
+      format("woff"),
+    url("./assets/fonts/IntegralCF/FONTSPRINGDEMO-IntegralCFRegular.woff2")
+      format("woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "IntegralCF";
+  src: url("./assets/fonts/IntegralCF/FONTSPRINGDEMO-IntegralCFMediumRegular.woff")
+      format("woff"),
+    url("./assets/fonts/IntegralCF/FONTSPRINGDEMO-IntegralCFMediumRegular.woff2")
+      format("woff2");
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: "IntegralCF";
+  src: url("./assets/fonts/IntegralCF/FONTSPRINGDEMO-IntegralCFDemiBoldRegular.woff")
+      format("woff"),
+    url("./assets/fonts/IntegralCF/FONTSPRINGDEMO-IntegralCFDemiBoldRegular.woff2")
+      format("woff2");
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: "IntegralCF";
+  src: url("./assets/fonts/IntegralCF/FONTSPRINGDEMO-IntegralCFBoldRegular.woff")
+      format("woff"),
+    url("./assets/fonts/IntegralCF/FONTSPRINGDEMO-IntegralCFBoldRegular.woff2")
+      format("woff2");
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: "IntegralCF";
+  src: url("./assets/fonts/IntegralCF/FONTSPRINGDEMO-IntegralCFExtraBoldRegular.woff")
+      format("woff"),
+    url("./assets/fonts/IntegralCF/FONTSPRINGDEMO-IntegralCFExtraBoldRegular.woff2")
+      format("woff2");
+  font-weight: 800;
+  font-style: normal;
+}
+@font-face {
+  font-family: "IntegralCF";
+  src: url("./assets/fonts/IntegralCF/FONTSPRINGDEMO-IntegralCFHeavyRegular.woff")
+      format("woff"),
+    url("./assets/fonts/IntegralCF/FONTSPRINGDEMO-IntegralCFHeavyRegular.woff2")
+      format("woff2");
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("./assets/fonts/Satoshi/Satoshi-Regular.woff") format("woff"),
+    url("./assets/fonts/Satoshi/Satoshi-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("./assets/fonts/Satoshi/Satoshi-Medium.woff") format("woff"),
+    url("./assets/fonts/Satoshi/Satoshi-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("./assets/fonts/Satoshi/Satoshi-Light.woff") format("woff"),
+    url("./assets/fonts/Satoshi/Satoshi-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("./assets/fonts/Satoshi/Satoshi-Variable.woff")
+      format("woff-variations"),
+    url("./assets/fonts/Satoshi/Satoshi-Variable.woff2")
+      format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("./assets/fonts/Satoshi/Satoshi-Bold.woff") format("woff"),
+    url("./assets/fonts/Satoshi/Satoshi-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("./assets/fonts/Satoshi/Satoshi-Black.woff") format("woff"),
+    url("./assets/fonts/Satoshi/Satoshi-Black.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+}
 
 :root {
-  --primaryFont: Poppins;
-  --secFont: candal;
-  --searchBar : #F0F0F0 ;
-  --heroBG : #F2F0F1 ;
-  --productBG : #F0EEED;
-  --white : #ffffff;
-  --black : #000000;
+  --primaryFont: IntegralCF;
+  --secFont: Satoshi;
+  --searchBar: #f0f0f0;
+  --heroBG: #f2f0f1;
+  --productBG: #f0eeed;
+  --white: #ffffff;
+  --black: #000000;
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: var(--primaryFont);
-
 }
-
 
 .container {
-max-width: 1240px;
-margin: 0 auto;
-padding: 0 16px;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 16px;
 }
-.flexContainer{
+.flexContainer {
   display: flex;
 }
-.grid{
+.grid {
   display: grid;
 }
 
-.commonHeading{
+.commonHeading {
   font-size: 48px;
   font-weight: 700;
- 
+
   line-height: 58px;
 }
-ul{
-list-style: none;
+ul {
+  list-style: none;
 }
 
-
-
-  
 /* Styling the review section with padding for content and scrollbar */
 
-  
-  /* Custom scrollbar styles for WebKit browsers (Chrome, Safari, Edge) */
-  .reviewArea::-webkit-scrollbar {
-    width: 12px; /* Width of the scrollbar */
-  }
-  
-  .reviewArea::-webkit-scrollbar-track {
-    background-color: #f1f1f1; /* Light grey background */
-    border-radius: 10px; /* Rounded track corners */
-  }
-  
-  .reviewArea::-webkit-scrollbar-thumb {
-    background-color:  #000000; /* Sleek orange scrollbar thumb */
-    border-radius: 10px; /* Rounded thumb corners */
-    border: 3px solid #ffffff; /* White border for spacing effect */
-  }
-  
-  .reviewArea::-webkit-scrollbar-thumb:hover {
-    background-color: #333333; /* Slightly lighter orange on hover */
-  }
-  
+/* Custom scrollbar styles for WebKit browsers (Chrome, Safari, Edge) */
+.reviewArea::-webkit-scrollbar {
+  width: 12px; /* Width of the scrollbar */
+}
+
+.reviewArea::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* Light grey background */
+  border-radius: 10px; /* Rounded track corners */
+}
+
+.reviewArea::-webkit-scrollbar-thumb {
+  background-color: #000000; /* Sleek orange scrollbar thumb */
+  border-radius: 10px; /* Rounded thumb corners */
+  border: 3px solid #ffffff; /* White border for spacing effect */
+}
+
+.reviewArea::-webkit-scrollbar-thumb:hover {
+  background-color: #333333; /* Slightly lighter orange on hover */
+}
