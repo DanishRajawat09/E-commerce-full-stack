@@ -19,6 +19,7 @@
     font-weight: 500;
     margin-bottom: 48px;
   cursor: pointer;
+  font-size: 16px;
 }
 
 
@@ -39,19 +40,20 @@
 .subHeading{
     font-weight: 400;
     line-height: 22px;
-    color: #0000009c;
+    color: var(--subtextclr);
     margin-bottom: 32px;
     font-size: 16px;
-    font-family: var(--primaryFont);
+    font-family: var(--secFont);
 }
 .inBrandNum{
     font-weight: 700;
     font-size: 40px;
-
+font-family: var(--secFont);
 }
 .inBrandText{
     font-weight: 400;
-    color: #0000009a;
+    color: var(--subtextclr);
+    font-family: var(--secFont);
 }
 .line{
   background-color: #0000001d;

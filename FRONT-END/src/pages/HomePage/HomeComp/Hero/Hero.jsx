@@ -15,7 +15,7 @@ const Hero = () => {
           <p className='subHeading'>
             Browse through our diverse range of meticulously crafted garments, designed to bring out your individuality and cater to your sense of style.
           </p>
-          <Button title="shop now" classname="btn" linkTo={"/shop"} />
+          <Button title="Shop Now" classname="btn" linkTo={"/shop"} />
           <div className="brandStatics flexContainer">
             <div className="inBrand">
               <p className='inBrandNum'>2000+</p>

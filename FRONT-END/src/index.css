@@ -106,6 +106,7 @@
   --productBG: #f0eeed;
   --white: #ffffff;
   --black: #000000;
+  --subtextclr : #00000099;
 }
 
 * {
@@ -131,6 +132,9 @@
   font-weight: 700;
 
   line-height: 58px;
+}
+a{
+  text-decoration: none;
 }
 ul {
   list-style: none;

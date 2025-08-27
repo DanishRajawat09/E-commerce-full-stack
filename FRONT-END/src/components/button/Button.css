@@ -11,6 +11,7 @@
 }
 .btn{
     margin-bottom: 0;
+    font-family: var(--secFont);
 }
 @media screen and (width < 620px) {
     .btn{
