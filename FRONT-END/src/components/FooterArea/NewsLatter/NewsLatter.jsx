@@ -11,10 +11,10 @@ const NewsLatter = () => {
   return (
     <div
       data-aos="fade-up"
-      className="relative top-24 z-20 bg-black rounded-2xl w-full px-6 md:px-16 py-9 flex flex-wrap items-center justify-between max-w-[var(--containers-max)] mx-auto"
+      className="relative top-24 z-20 bg-black rounded-2xl w-full px-6   md:px-16 py-9 flex flex-wrap max-[1000px]:gap-8  max-[1000px]:justify-center items-center justify-between max-w-[var(--containers-max)] mx-auto"
     >
       {/* Left text */}
-      <div className="text-white font-bold text-2xl md:text-4xl mb-6 md:mb-0">
+      <div className="text-white font-bold text-3xl max-[500px]::text-4xl mb-6 font-primary md:mb-0">
         STAY UPTO DATE ABOUT <br /> OUR LATEST OFFERS
       </div>
 

@@ -1,17 +1,19 @@
-
 import "./footer.css";
 
 const Footer = () => {
   return (
-    <footer className="bg-[var(--color-searchBar)] pt-36 min-h-[499px]">
+    <footer className="bg-[var(--color-searchBar)] pt-36 min-h-[499px] px-4">
       <div className="max-w-[var(--containers-max)] mx-auto">
         {/* Top Section */}
         <div className="grid md:grid-cols-[248px_1fr] gap-8 mb-12 px-4 md:px-0">
           {/* Left Company Info */}
           <div>
-            <h2 className="text-[34px] font-extrabold mb-6">shop.co</h2>
-            <p className="text-sm text-[var(--color-subtext)] mb-8">
-              We have clothes that suit your style and which you’re proud to wear. From women to men.
+            <h2 className="text-[34px] font-extrabold font-primary mb-6">
+              shop.co
+            </h2>
+            <p className="text-sm text-[var(--color-subtext)] font-secondary mb-8">
+              We have clothes that suit your style and which you’re proud to
+              wear. From women to men.
             </p>
             <div className="flex gap-3">
               <img src="1.png" alt="social" />
@@ -24,8 +26,8 @@ const Footer = () => {
           {/* Footer Navigation */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 md:justify-items-end">
             <div>
-              <h3 className="text-lg font-bold mb-6">COMPANY</h3>
-              <ul className="flex flex-col gap-4 text-[var(--color-subtext)] text-sm">
+              <h3 className="text-lg font-bold mb-6 font-secondary">COMPANY</h3>
+              <ul className="flex flex-col gap-4 text-[var(--color-subtext)] font-secondary text-sm">
                 <li>About</li>
                 <li>Feature</li>
                 <li>Works</li>
@@ -33,8 +35,8 @@ const Footer = () => {
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-bold mb-6">HELP</h3>
-              <ul className="flex flex-col gap-4 text-[var(--color-subtext)] text-sm">
+              <h3 className="text-lg font-secondary font-bold mb-6">HELP</h3>
+              <ul className="flex flex-col gap-4 text-[var(--color-subtext)] font-secondary text-sm">
                 <li>Customer Support</li>
                 <li>Delivery Details</li>
                 <li>Terms & Conditions</li>
@@ -42,8 +44,8 @@ const Footer = () => {
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-bold mb-6">FAQ</h3>
-              <ul className="flex flex-col gap-4 text-[var(--color-subtext)] text-sm">
+              <h3 className="text-lg font-secondary font-bold mb-6">FAQ</h3>
+              <ul className="flex flex-col gap-4 text-[var(--color-subtext)] font-secondary text-sm">
                 <li>Account</li>
                 <li>Manage Deliveries</li>
                 <li>Orders</li>
@@ -51,8 +53,10 @@ const Footer = () => {
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-bold mb-6">RESOURCES</h3>
-              <ul className="flex flex-col gap-4 text-[var(--color-subtext)] text-sm">
+              <h3 className="text-lg font-secondary font-bold mb-6">
+                RESOURCES
+              </h3>
+              <ul className="flex flex-col gap-4 text-[var(--color-subtext)] font-secondary text-sm">
                 <li>Free eBooks</li>
                 <li>Development Tutorial</li>
                 <li>How to - Blog</li>
@@ -66,10 +70,10 @@ const Footer = () => {
 
         {/* Bottom Section */}
         <div className="flex flex-wrap justify-between items-center mt-6 gap-4 px-4 md:px-0">
-          <p className="text-sm text-[var(--color-subtext)]">
+          <p className="text-sm text-[var(--color-subtext)] font-secondary">
             Shop.co © 2000-2023, All Rights Reserved
           </p>
-          <div className="flex gap-3">
+          <div className="flex  flex-wrap max-[410px]:justify-center gap-3">
             <img src="visa.png" alt="Visa" />
             <img src="debit.png" alt="Debit" />
             <img src="paypal.png" alt="Paypal" />

@@ -5,7 +5,7 @@
     "party party party gym gym";
 }
 
-@media screen and (width < 600px) {
+@media screen and (width < 750px) {
   .styleContainer {
     grid-template-areas:
       "casual"

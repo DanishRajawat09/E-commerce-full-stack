@@ -1,4 +1,3 @@
-
 import AOS from "aos";
 import "aos/dist/aos.css";
 import "./BrandBelt.css"; // only for responsive img sizes
@@ -8,7 +7,7 @@ const BrandBelt = () => {
 
   return (
     <section className="bg-black overflow-hidden">
-      <div className="max-w-[var(--containers-max)] mx-auto flex justify-between flex-wrap items-center py-11 gap-5 overflow-hidden">
+      <div className="max-w-[var(--containers-max)] mx-auto flex justify-between max-[930px]:justify-center flex-wrap items-center py-11 gap-5 px-4 overflow-hidden">
         <img
           data-aos="fade-left"
           className="versache"
