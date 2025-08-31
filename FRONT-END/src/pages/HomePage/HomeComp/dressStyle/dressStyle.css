@@ -1,136 +1,30 @@
-.dressStyleContainer{
-    background-color: var(--searchBar);
-    padding: 72px 64px;
-    border-radius: 40px;
-    -webkit-border-radius: 40px;
-    -moz-border-radius: 40px;
-    -ms-border-radius: 40px;
-    -o-border-radius: 40px;
-    overflow: hidden;
-}
-.styleContainer{
-    grid-template-rows:repeat(2 , 289px) ;
-    grid-template-areas: "casual casual formal formal formal" 
-                            "party party party gym gym";
-                  gap: 20px;
-}
-.style{
-    padding: 25px 36px; border-radius: 20px;
-    -webkit-border-radius: 20px;
-    -moz-border-radius: 20px;
-    -ms-border-radius: 20px;
-    -o-border-radius: 20px;
-    font-size: 36px ;
-    font-weight: 700;
-}
-.casual{
-   
-  grid-area: formal;
-  background-image: url("casual.png");
-  
- 
-  background-position: left left;
-  background-size: 600px;
-}
-.formal{
-    grid-area: casual;
-    background-image: url("formal.png");
-
-    background-position: left left;
-    background-size: 600px;
-}
-.party{
-  grid-area: party;
-  background-image: url("party.png");
- 
-
-  background-position: left left;
-  background-size: 600px;
-}
-.gym{
-grid-area: gym;
-background-image: url("gym.png");
-
-background-position: left left;
-background-repeat: no-repeat;
-background-size: 400px;
+/* Handle grid-template-areas only */
+.styleContainer {
+  grid-template-areas:
+    "casual casual formal formal formal"
+    "party party party gym gym";
 }
 
-@media screen and (width < 1040px) {
-    .party{
-    
-        background-position: right top;
-     
-      }
-}
-@media screen and (width < 890px) {
-    .party{
-    
-        background-position: center top;
-     
-      }
-      .gym{
-     
-        background-position: center top;
-        
-        background-size: 400px;
-        }
-}
-
-@media screen and (width < 680px) {
-    .casual{
-   
-  grid-area: casual;
-  background-image: url("casual.png");
-  
- 
-  background-position: left left;
-  background-size: 600px;
-}
-    .formal{
-        grid-area: formal;
-        background-image: url("formal.png");
-       
-        background-position: left left;
-        background-size: 550px;
-    }
-}
 @media screen and (width < 600px) {
-    .styleContainer{
-    grid-template-areas: "casual"
-                        "formal"
-                        "party"
-                        "gym";
-    
-   grid-template-rows: repeat(4, 190px );
-    }
-    .style{
-        font-size: 24px;
-        padding: 16px 24px;
-    }
-
-
+  .styleContainer {
+    grid-template-areas:
+      "casual"
+      "formal"
+      "party"
+      "gym";
+  }
 }
-@media screen and (width < 400px) {
-    .casual{
-   
-        grid-area: casual;
-        background-image: url("casual.png");
-  
-        background-position: left top;
-        background-size: 500px;
-      }
-      .formal{
-      
-        background-position: left top;
-        background-size: 400px;
-    }
-    .party{
-        background-position: center top;
-        background-size: 400px;
-    }
-    .gym{
-        background-position: center top;
-        background-size: 200px;
-    }
+
+/* Map grid areas */
+.casual {
+  grid-area: casual;
+}
+.formal {
+  grid-area: formal;
+}
+.party {
+  grid-area: party;
+}
+.gym {
+  grid-area: gym;
 }

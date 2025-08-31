@@ -1,3 +1,4 @@
+@import "tailwindcss";
 @font-face {
   font-family: "IntegralCF";
   src: url("./assets/fonts/IntegralCF/FONTSPRINGDEMO-IntegralCFRegular.woff")
@@ -98,47 +99,24 @@
   font-style: normal;
 }
 
-:root {
-  --primaryFont: IntegralCF;
-  --secFont: Satoshi;
-  --searchBar: #f0f0f0;
-  --heroBG: #f2f0f1;
-  --productBG: #f0eeed;
-  --white: #ffffff;
-  --black: #000000;
-  --subtextclr : #00000099;
+@theme {
+  --font-primary: IntegralCF, sans-serif;
+  --font-secondary: Satoshi, sans-serif;
+
+  --color-searchBar: #f0f0f0;
+  --color-heroBG: #f2f0f1;
+  --color-productBG: #f0eeed;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-subtext: #00000099;
+
+  --containers-max: 1240px;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 
-.container {
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: 0 16px;
-}
-.flexContainer {
-  display: flex;
-}
-.grid {
-  display: grid;
-}
 
-.commonHeading {
-  font-size: 48px;
-  font-weight: 700;
 
-  line-height: 58px;
-}
-a{
-  text-decoration: none;
-}
-ul {
-  list-style: none;
-}
+
 
 /* Styling the review section with padding for content and scrollbar */
 

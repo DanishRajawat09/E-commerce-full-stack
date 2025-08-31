@@ -1,10 +1,7 @@
-import React, { useState } from "react";
-import "./navbar.css";
-import Headline from "./Headline";
-import SideNavBar from "./SideNavBar";
 import { isOpen } from "../../features/stateSlice";
 import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
+
 const Navbar = () => {
   const dispatch = useDispatch();
 
@@ -13,35 +10,38 @@ const Navbar = () => {
   };
 
   return (
-    <header className="navHeader">
-      <div className="container  ">
-        <div className="flexContainer navData">
-          <div className="navLogo flexContainer">
+    <header>
+      <div className="max-w-[var(--containers-max)] md:m-auto px-4 py-6">
+        <div className="flex justify-between items-center gap-10">
+          {/* Logo + Menu */}
+          <div className="flex justify-between items-center">
             <img
-              className="menuBar"
+              className="w-[34px] h-[34px]  mr-4  md:hidden"
               src="burger.png"
               alt="menuBar"
               onClick={handleSideNav}
             />
-            <h1 className="icon">shop.co</h1>
+            <h1 className="text-[32px] font-bold font-primary">shop.co</h1>
           </div>
-          <nav className="navigation">
-            <ul className="flexContainer">
-              <li>
+
+          {/* Navigation */}
+          <nav className="hidden md:block">
+            <ul className="flex justify-center items-center gap-6">
+              <li className="font-secondary font-normal text-base">
                 <NavLink
                   to={"/"}
                   className={({ isActive }) =>
-                    `shop ${isActive && `navTextColor`}`
+                    `text-black no-underline ${isActive ? "font-extrabold" : ""}`
                   }
                 >
                   Home
                 </NavLink>
               </li>
-              <li>
+              <li className="font-secondary font-normal text-base">
                 <NavLink
                   to={"/shop"}
                   className={({ isActive }) =>
-                    `shop ${isActive && `navTextColor`}`
+                    `text-black no-underline ${isActive ? "font-extrabold" : ""}`
                   }
                 >
                   Products
@@ -49,18 +49,26 @@ const Navbar = () => {
               </li>
             </ul>
           </nav>
-          <div className="searchBar">
-            <div className="userInput flexContainer">
+
+          {/* Search */}
+          <div className="flex-1 hidden md:block">
+            <div className="flex gap-3 bg-searchBar py-3 px-4 rounded-[62px]">
               <img src="Search.png" alt="searchIcon" />
               <input
                 type="text"
-                className="searchInput"
                 placeholder="Search for Products..."
+                className="bg-transparent border-none flex-1 focus:outline-none placeholder:text-[#00000067] placeholder:font-normal"
               />
             </div>
           </div>
-          <div className="cartIdIcon">
-            <img className="searchIcon" src="search2.png" alt="searchIcon" />
+
+          {/* Cart + Icons */}
+          <div className="flex items-center gap-[14px]">
+            <img
+              className="hidden md:inline-block"
+              src="search2.png"
+              alt="searchIcon"
+            />
             <NavLink to={"/cart"}>
               <img src="cart.png" alt="CartIcon" />
             </NavLink>

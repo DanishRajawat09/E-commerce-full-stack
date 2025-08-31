@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import  { useRef } from 'react'
 import "./testimonials.css"
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -87,47 +87,49 @@ testimonialText : "Shop.co created a professional, responsive website for my bus
           },
         ],
       };
-    return (
-        <section className='testimonialSection'>
-            <div className='container'>
-                <div data-aos="zoom-in" className="headArea flexContainer">
-                    <h1 className='commonHeading'>OUR HAPPY CUSTOMERS</h1>
-                    <div className="arrows">
-                    <img
-              src="arrow-l.png"
-              alt="arrow-left"
-              onClick={() => sliderRef.current.slickPrev()}
-              style={{ cursor: "pointer" }}
-            />
-            <img
-              src="arrow-r.png"
-              alt="arrow-right"
-              onClick={() => sliderRef.current.slickNext()}
-              style={{ cursor: "pointer" }}
-            />
-                    </div>
-                </div>
-                <div className="testimonials">
-<Slider ref={sliderRef} {...settings}>
-{testimonialData.map((testimonial) => (
-    <div key={testimonial.id}>
-    <div  className='testimonialCard'>
-        <div className="stars">
-            <img src={testimonial.starImg} alt="stars" />
+   return (
+  <section className="overflow-hidden">
+    <div className="max-w-[var(--containers-max)] mx-auto px-0">
+      <div data-aos="zoom-in" className="flex justify-between items-center mb-10">
+        <h1 className="text-left mb-0 text-4xl font-extrabold">OUR HAPPY CUSTOMERS</h1>
+        <div className="flex items-center gap-2">
+          <img
+            src="arrow-l.png"
+            alt="arrow-left"
+            onClick={() => sliderRef.current.slickPrev()}
+            className="cursor-pointer"
+          />
+          <img
+            src="arrow-r.png"
+            alt="arrow-right"
+            onClick={() => sliderRef.current.slickNext()}
+            className="cursor-pointer"
+          />
         </div>
-        <div className="textMark flexContainer">
-        <h3 className='titleTestimonial'>{testimonial.title}</h3>
-        <img src={testimonial.rightMark} alt="rightMark" />
-        </div>
-        <p className='testimonialText'>{testimonial.testimonialText}</p>
-    </div>
-    </div>
-))}
-</Slider>
+      </div>
+
+      <div>
+        <Slider ref={sliderRef} {...settings}>
+          {testimonialData.map((testimonial) => (
+            <div key={testimonial.id}>
+              <div className="mr-5 p-7 border border-black/10 rounded-2xl">
+                <div className="mb-4">
+                  <img src={testimonial.starImg} alt="stars" />
                 </div>
+                <div className="flex items-center gap-1 mb-3">
+                  <h3 className="text-xl font-bold">{testimonial.title}</h3>
+                  <img src={testimonial.rightMark} alt="rightMark" />
+                </div>
+                <p className="text-black/60 text-sm">{testimonial.testimonialText}</p>
+              </div>
             </div>
-        </section>
-    )
+          ))}
+        </Slider>
+      </div>
+    </div>
+  </section>
+)
+
 }
 
 export default Testimonials
