@@ -1,4 +1,4 @@
-import "./footerArea.css";
+
 import NewsLatter from "./NewsLatter/NewsLatter";
 import Footer from "./Footer/Footer";
 const FooterArea = () => {
