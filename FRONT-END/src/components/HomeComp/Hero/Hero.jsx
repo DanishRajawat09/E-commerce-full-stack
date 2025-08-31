@@ -1,4 +1,4 @@
-import Button from "../../../../components/button/Button";
+import Button from "../../button/Button";
 import AOS from "aos";
 import "aos/dist/aos.css";
 

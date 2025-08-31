@@ -1,10 +1,10 @@
-import React, { useRef, useState } from 'react'
+import{ useRef, useState } from 'react'
 import "./productInfoStyles.css"
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
-import { reviews, FAQs } from '../../../../api/HomePageProducts';
-import Arrivals from "../../../HomePage/HomeComp/new arrivlas/Arrivals"
+import { reviews} from '../../../api/HomePageProducts';
+// import Arrivals from "../../../HomePage/HomeComp/new arrivlas/Arrivals"
 
   
 const ProductSecNav = () => {
@@ -52,8 +52,8 @@ const [activeSec , setActiveSec] = useState("selectDetails")
 <h3 className='reviewHeading'>All Review</h3>
 </div>
 <div className="reviewArea grid">
-{reviews.map(({date , title , starImg , desc ,markImg}) => (
-   <div className='reviewCard'>
+{reviews.map(({date , title , starImg , desc ,markImg} , index) => (
+   <div key={index} className='reviewCard'>
 <div className="ratingOptions flexCOntainer">
     <img src={starImg} alt="starImg" />
 

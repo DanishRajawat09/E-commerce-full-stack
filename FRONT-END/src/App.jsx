@@ -5,7 +5,7 @@ import './App.css'
 import Home from './pages/HomePage/Home'
 import Layout from './pages/Layout/Layout'
 import ProductDetails from "./pages/ProductDetailsPage/ProductDetails"
-import CasualPage from "./pages/shop/casualPage/CasualPage"
+import CasualPage from "./pages/shop/CasualPage"
 import Cart from './pages/CartPage/Cart'
 import ScrollToTop from "./components/ScrollToTop";
 // const router = createBrowserRouter(

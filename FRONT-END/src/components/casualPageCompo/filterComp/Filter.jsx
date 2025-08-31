@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import "./filterStyle.css"
 import { Link, NavLink } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import{ filterOpen} from "../../../../../features/stateSlice"
+import{ filterOpen} from "../../../features/stateSlice"
 
 
 const Filter = () => {

@@ -1,7 +1,7 @@
-import React from 'react'
-import ProductDetailsData from "../ProductDetailsPage/productDetailsPageComp/productsDetailData/ProductDetailsData"
+
+import ProductDetailsData from "../../components/productDetailsPageComp/productsDetailData/ProductDetailsData"
 import { productsPageData } from '../../api/HomePageProducts'
-import ProductInfo from "../ProductDetailsPage/productDetailsPageComp/productInformation/ProductInfo"
+import ProductInfo from "../../components/productDetailsPageComp/productInformation/ProductInfo"
 const ProductPage = () => {
 
   return (

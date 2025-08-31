@@ -1,7 +1,8 @@
-import React from 'react'
+
 import "./casualStyle.css"
-import Filter from './casualPageCompo/filterComp/Filter'
-import CasualProduct from './casualPageCompo/casualProductArea/CasualProduct'
+
+import CasualProduct from '../../components/casualPageCompo/casualProductArea/CasualProduct'
+import Filter from '../../components/casualPageCompo/filterComp/Filter'
 const CasualPage = () => {
   return (
     <main className='pageCasual'>

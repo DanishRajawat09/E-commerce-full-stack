@@ -1,10 +1,10 @@
 
 
-import Hero from "./HomeComp/Hero/Hero"
-import BrandBelt from "./HomeComp/BrandBelt/BrandBelt"
+import Hero from "../../components/HomeComp/Hero/Hero"
+import BrandBelt from "../../components/HomeComp/BrandBelt/BrandBelt"
 // import Arrivals from "./HomeComp/new arrivlas/Arrivals"
-import DressStyle from "./HomeComp/dressStyle/DressStyle"
-import Testimonials from "./HomeComp/Testimonials/Testimonials"
+import DressStyle from "../../components/HomeComp/dressStyle/DressStyle"
+import Testimonials from "../../components/HomeComp/Testimonials/Testimonials"
 // import productApi from '../../api/productApi'
 const Home = () => {
   // const product = productApi.slice(0,5)
