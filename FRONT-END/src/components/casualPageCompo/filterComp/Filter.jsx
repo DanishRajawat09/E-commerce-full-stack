@@ -1,80 +1,110 @@
-import React, { useState } from 'react'
-import "./filterStyle.css"
-import { Link, NavLink } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
-import{ filterOpen} from "../../../features/stateSlice"
-
+import React, { useState } from "react";
+import "./filterStyle.css";
+import { NavLink } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { filterOpen } from "../../../features/stateSlice";
 
 const Filter = () => {
-    const [slctSize , setSize] = useState("")
-    const [rangeVal, setRangeVal] = useState(0)
-    const openFilter = useSelector((state) => state.state.filOpen)
-    console.log(openFilter)
-    const dispatch = useDispatch()
-    return (
-        <aside className={openFilter ? " filterSection show" : "filterSection"}>
-            <div className="filterHeadingArea flexContainer">
-                <h2 className='filterHeadings'>Filters</h2>
-                <img className='filterArrowLeft'  onClick={() => { dispatch(filterOpen({filOpen : false}))}} width={30} height={30} src="arrowLeft.svg" alt="arrow" />
-            </div>
-            <hr className='filterLine' />
-            <div className="filterLinks flexContainer">
-                <div className='tShirt'>T-Shirts</div>
-                <div className='shorts'>Shorts</div>
-                <div className='shirts'>Shirts</div>
-                <div className='Jeans'>Jeans</div>
-                <div className='hoodie'>Hoodie</div>
-            </div>
-            <hr className='filterLine' />
-            <div className="filterHeadingArea flexContainer">
-                <h2 className='filterHeadings'>Price</h2>
-            </div>
-            <div class="rangeContainer">
-                <input type="range" class="customRange" min={100} max={10000}
-                    onChange={(e) => setRangeVal(e.target.value)} />
-                <p className='rangeValue'>${rangeVal}</p>
-            </div>
-            <hr className='filterLine' />
-            <div className="filterHeadingArea flexContainer">
-                <h2 className='filterHeadings'>Colors</h2>
-            </div>
-            <hr className='filterLine' />
-            <div className="filterHeadingArea flexContainer">
-                <h2 className='filterHeadings'>Size</h2>
-            </div>
-            <div className="sizeSelectArea ">
-<button onClick={() => setSize("xxSmall")} className={`sizeBtn ${slctSize === "xxSmall" && "xxSmall"}`}>XX-Small</button>
-<button onClick={() => setSize("xSmall")} className={`sizeBtn ${slctSize === "xSmall" && "xSmall"}`}>X-Small</button>
-<button onClick={() => setSize("small")} className={`sizeBtn ${slctSize === "small" && "small"}`}>Small</button>
-<button onClick={() => setSize("mdm")} className={`sizeBtn ${slctSize === "mdm" && "mdm"}`}>Medium</button>
-<button onClick={() => setSize("large")} className={`sizeBtn ${slctSize === "large" && "large"}`}>Large</button>
-<button onClick={() => setSize("xl")} className={`sizeBtn ${slctSize === "xl" && "xl"}`}>X-Large</button>
-<button onClick={() => setSize("xxl")} className={`sizeBtn ${slctSize === "xxl" && "xxl"}`}>xx-Large</button>
-<button onClick={() => setSize("xxxl")} className={`sizeBtn ${slctSize === "xxxl" && "xxxl"}`}>3X-Large</button>
-<button onClick={() => setSize("xxxxl")} className={`sizeBtn ${slctSize === "xxxxl" && "xxxxl"}`}>4X-Large</button>
-            </div>
-            <hr className='filterLine' />
-            <div className="filterHeadingArea flexContainer">
-                <h2 className='filterHeadings'>Dress Style</h2>
-            </div>
-            <div className="filterLinks flexContainer">
-             <NavLink to={""} className={({isActive}) => {`${isActive && ""}`}}>
-             <button className='casualBtn'>Casual</button>
-             </NavLink>   
-             <NavLink to={""} className={({isActive}) => {`${isActive && ""}`}}>
-             <button className='formalBtn'>Formal</button>
-             </NavLink>   
-             <NavLink to={""} className={({isActive}) => {`${isActive && ""}`}}>
-             <button className='PartyBtn'>Party</button>
-             </NavLink>   
-             <NavLink to={""} className={({isActive}) => {`${isActive && ""}`}}>
-             <button className='gymBtn'>Gym</button>
-             </NavLink>   
-            
-            </div>
-          <button className='apllyFilterBtn'>Apply Filter</button>
-        </aside>
-    )
-}
+  const [slctSize, setSize] = useState("");
+  const [rangeVal, setRangeVal] = useState(0);
+  const openFilter = useSelector((state) => state.state.filOpen);
+  const dispatch = useDispatch();
 
-export default Filter
+  return (
+    <aside
+      className={`filterSection ${
+        openFilter ? "show" : ""
+      } p-6 border border-black/10 rounded-2xl h-fit`}
+    >
+      {/* Heading */}
+      <div className="flex justify-between items-center mb-5">
+        <h2 className="text-xl font-semibold">Filters</h2>
+        <img
+          className="filterArrowLeft cursor-pointer"
+          onClick={() => dispatch(filterOpen({ filOpen: false }))}
+          width={30}
+          height={30}
+          src="arrowLeft.svg"
+          alt="arrow"
+        />
+      </div>
+
+      <hr className="border border-black/10 my-6" />
+
+      {/* Categories */}
+      <div className="flex flex-col gap-5 text-[var(--color-subtext)]">
+        <div>T-Shirts</div>
+        <div>Shorts</div>
+        <div>Shirts</div>
+        <div>Jeans</div>
+        <div>Hoodie</div>
+      </div>
+
+      <hr className="border border-black/10 my-6" />
+
+      {/* Price */}
+      <h2 className="text-xl font-semibold mb-5">Price</h2>
+      <div className="rangeContainer">
+        <input
+          type="range"
+          className="customRange"
+          min={100}
+          max={10000}
+          onChange={(e) => setRangeVal(e.target.value)}
+        />
+        <p className="mt-2">${rangeVal}</p>
+      </div>
+
+      <hr className="border border-black/10 my-6" />
+
+      {/* Colors */}
+      <h2 className="text-xl font-semibold mb-5">Colors</h2>
+      <hr className="border border-black/10 my-6" />
+
+      {/* Size */}
+      <h2 className="text-xl font-semibold mb-5">Size</h2>
+      <div className="flex flex-wrap gap-2">
+        {[
+          "XX-Small",
+          "X-Small",
+          "Small",
+          "Medium",
+          "Large",
+          "X-Large",
+          "XX-Large",
+          "3X-Large",
+          "4X-Large",
+        ].map((size) => (
+          <button
+            key={size}
+            onClick={() => setSize(size)}
+            className={`px-3 py-1 border rounded ${
+              slctSize === size ? "bg-black text-white" : "bg-transparent"
+            }`}
+          >
+            {size}
+          </button>
+        ))}
+      </div>
+
+      <hr className="border border-black/10 my-6" />
+
+      {/* Dress Style */}
+      <h2 className="text-xl font-semibold mb-5">Dress Style</h2>
+      <div className="flex flex-col gap-4 text-[var(--color-subtext)]">
+        {["Casual", "Formal", "Party", "Gym"].map((style) => (
+          <NavLink key={style} to="">
+            <button className="w-full text-left">{style}</button>
+          </NavLink>
+        ))}
+      </div>
+
+      {/* Apply Filter Button */}
+      <button className="mt-5 bg-black text-white w-full py-3 rounded-full cursor-pointer">
+        Apply Filter
+      </button>
+    </aside>
+  );
+};
+
+export default Filter;
